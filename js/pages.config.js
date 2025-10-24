@@ -8,7 +8,7 @@ const path = require('node:path');
 module.exports = {
   sourceDir: path.join(__dirname, '..'),
 
-  outputDir: path.join(__dirname, '..', 'html'),
+  outputDir: path.join(__dirname, '..', 'docs'),
 
   site: {
     title: 'JS/NodeJs Concepts',
