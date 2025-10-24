@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Data Types</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+</head>
+
+<body>
+    <!-- Header Toolbar -->
+    <div id="header-toolbar">
+        <button id="search-trigger" aria-label="Search" title="Search (Cmd+K)">
+            🔍
+        </button>
+        <button id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle Dark Mode (Cmd+D)">
+            <span id="dark-mode-icon">🌙</span>
+        </button>
+        <button id="shortcuts-help" onclick="window.Shortcuts.show()" aria-label="Keyboard shortcuts"
+            title="Shortcuts (?)">
+            ⌨️
+        </button>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button id="menu-toggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Progress Bar -->
+    <div id="progress-bar">
+        <div id="progress-fill"></div>
+    </div>
+
+    <!-- Overall Progress Indicator -->
+    <div id="overall-progress">
+        <div id="overall-progress-bar" style="width: 0%"></div>
+        <span id="progress-text">0/0 topics completed</span>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar">
+        <div id="sidebar-header">
+            <h2>JS/NodeJs Concepts</h2>
+        </div>
+        <ul id="nav-list">
+                        <li><a href="01-git-version-control.html"><span class="nav-number">1.</span>Git & Version Control</a></li>
+            <li><a href="02-javascript-data-types.html" class="active"><span class="nav-number">2.</span>JavaScript Data Types</a></li>
+            <li><a href="03-prototypal-inheritance.html"><span class="nav-number">3.</span>Prototypal Inheritance</a></li>
+            <li><a href="04-closures.html"><span class="nav-number">4.</span>Closures</a></li>
+            <li><a href="05-context.html"><span class="nav-number">5.</span>Context (this)</a></li>
+            <li><a href="06-classes.html"><span class="nav-number">6.</span>Classes</a></li>
+            <li><a href="07-event-loop-async.html"><span class="nav-number">7.</span>Event Loop & Async</a></li>
+            <li><a href="08-garbage-collection.html"><span class="nav-number">8.</span>Garbage Collection</a></li>
+        </ul>
+        <div id="sidebar-footer">
+            <button id="reset-progress" class="sidebar-btn">Reset Progress</button>
+            <button id="export-progress" class="sidebar-btn">Export</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        
+        <aside class="table-of-contents">
+            <h3>On This Page</h3>
+            <nav class="toc-nav">
+                <ul><li class=""><a href="#table-of-contents">Table of Contents</a></li>
+<li class=""><a href="#weakly-typed-language">Weakly Typed Language</a></li>
+<li class="toc-sub"><a href="#what-does-weakly-typed-mean">What Does "Weakly Typed" Mean?</a></li>
+<li class="toc-sub"><a href="#examples">Examples</a></li>
+<li class="toc-sub"><a href="#implications">Implications</a></li>
+<li class=""><a href="#primitive-data-types">Primitive Data Types</a></li>
+<li class="toc-sub"><a href="#1-number">1. Number</a></li>
+<li class="toc-sub"><a href="#2-string">2. String</a></li>
+<li class="toc-sub"><a href="#3-boolean">3. Boolean</a></li>
+<li class="toc-sub"><a href="#4-undefined">4. Undefined</a></li>
+<li class="toc-sub"><a href="#5-null">5. Null</a></li>
+<li class="toc-sub"><a href="#6-symbol-es6">6. Symbol (ES6)</a></li>
+<li class="toc-sub"><a href="#7-bigint-es2020">7. BigInt (ES2020)</a></li>
+<li class=""><a href="#primitive-vs-reference-types">Primitive vs Reference Types</a></li>
+<li class="toc-sub"><a href="#primitives">Primitives</a></li>
+<li class="toc-sub"><a href="#reference-types">Reference Types</a></li>
+<li class="toc-sub"><a href="#key-differences-table">Key Differences Table</a></li>
+<li class="toc-sub"><a href="#practical-implications">Practical Implications</a></li>
+<li class="toc-sub"><a href="#deep-vs-shallow-copy">Deep vs Shallow Copy</a></li>
+<li class=""><a href="#type-conversion-and-coercion">Type Conversion and Coercion</a></li>
+<li class="toc-sub"><a href="#type-conversion-explicit">Type Conversion (Explicit)</a></li>
+<li class="toc-sub"><a href="#type-coercion-implicit">Type Coercion (Implicit)</a></li>
+<li class="toc-sub"><a href="#falsy-values">Falsy Values</a></li>
+<li class="toc-sub"><a href="#equality-and-coercion">Equality and Coercion</a></li>
+<li class="toc-sub"><a href="#type-coercion-gotchas">Type Coercion Gotchas</a></li>
+<li class=""><a href="#typeof-operator">typeof Operator</a></li>
+<li class="toc-sub"><a href="#basic-usage">Basic Usage</a></li>
+<li class="toc-sub"><a href="#objects-and-functions">Objects and Functions</a></li>
+<li class="toc-sub"><a href="#special-cases">Special Cases</a></li>
+<li class="toc-sub"><a href="#limitations">Limitations</a></li>
+<li class=""><a href="#type-checking-and-conversion-functions">Type Checking and Conversion Functions</a></li>
+<li class="toc-sub"><a href="#comprehensive-type-checking">Comprehensive Type Checking</a></li>
+<li class="toc-sub"><a href="#safe-type-conversions">Safe Type Conversions</a></li>
+<li class="toc-sub"><a href="#type-guards-typescript-style-in-js">Type Guards (TypeScript-style in JS)</a></li>
+<li class="toc-sub"><a href="#advanced-type-checking">Advanced Type Checking</a></li>
+<li class=""><a href="#summary">Summary</a></li>
+<li class="toc-sub"><a href="#key-points">Key Points</a></li>
+<li class="toc-sub"><a href="#best-practices">Best Practices</a></li>
+<li class="toc-sub"><a href="#common-pitfalls-to-avoid">Common Pitfalls to Avoid</a></li></ul>
+            </nav>
+        </aside>
+    
+        <aside class="table-of-contents">
+            <h3>On This Page</h3>
+            <nav class="toc-nav">
+                <ul><li class=""><a href="#table-of-contents">Table of Contents</a></li>
+<li class=""><a href="#weakly-typed-language">Weakly Typed Language</a></li>
+<li class="toc-sub"><a href="#what-does-weakly-typed-mean">What Does "Weakly Typed" Mean?</a></li>
+<li class="toc-sub"><a href="#examples">Examples</a></li>
+<li class="toc-sub"><a href="#implications">Implications</a></li>
+<li class=""><a href="#primitive-data-types">Primitive Data Types</a></li>
+<li class="toc-sub"><a href="#1-number">1. Number</a></li>
+<li class="toc-sub"><a href="#2-string">2. String</a></li>
+<li class="toc-sub"><a href="#3-boolean">3. Boolean</a></li>
+<li class="toc-sub"><a href="#4-undefined">4. Undefined</a></li>
+<li class="toc-sub"><a href="#5-null">5. Null</a></li>
+<li class="toc-sub"><a href="#6-symbol-es6">6. Symbol (ES6)</a></li>
+<li class="toc-sub"><a href="#7-bigint-es2020">7. BigInt (ES2020)</a></li>
+<li class=""><a href="#primitive-vs-reference-types">Primitive vs Reference Types</a></li>
+<li class="toc-sub"><a href="#primitives">Primitives</a></li>
+<li class="toc-sub"><a href="#reference-types">Reference Types</a></li>
+<li class="toc-sub"><a href="#key-differences-table">Key Differences Table</a></li>
+<li class="toc-sub"><a href="#practical-implications">Practical Implications</a></li>
+<li class="toc-sub"><a href="#deep-vs-shallow-copy">Deep vs Shallow Copy</a></li>
+<li class=""><a href="#type-conversion-and-coercion">Type Conversion and Coercion</a></li>
+<li class="toc-sub"><a href="#type-conversion-explicit">Type Conversion (Explicit)</a></li>
+<li class="toc-sub"><a href="#type-coercion-implicit">Type Coercion (Implicit)</a></li>
+<li class="toc-sub"><a href="#falsy-values">Falsy Values</a></li>
+<li class="toc-sub"><a href="#equality-and-coercion">Equality and Coercion</a></li>
+<li class="toc-sub"><a href="#type-coercion-gotchas">Type Coercion Gotchas</a></li>
+<li class=""><a href="#typeof-operator">typeof Operator</a></li>
+<li class="toc-sub"><a href="#basic-usage">Basic Usage</a></li>
+<li class="toc-sub"><a href="#objects-and-functions">Objects and Functions</a></li>
+<li class="toc-sub"><a href="#special-cases">Special Cases</a></li>
+<li class="toc-sub"><a href="#limitations">Limitations</a></li>
+<li class=""><a href="#type-checking-and-conversion-functions">Type Checking and Conversion Functions</a></li>
+<li class="toc-sub"><a href="#comprehensive-type-checking">Comprehensive Type Checking</a></li>
+<li class="toc-sub"><a href="#safe-type-conversions">Safe Type Conversions</a></li>
+<li class="toc-sub"><a href="#type-guards-typescript-style-in-js">Type Guards (TypeScript-style in JS)</a></li>
+<li class="toc-sub"><a href="#advanced-type-checking">Advanced Type Checking</a></li>
+<li class=""><a href="#summary">Summary</a></li>
+<li class="toc-sub"><a href="#key-points">Key Points</a></li>
+<li class="toc-sub"><a href="#best-practices">Best Practices</a></li>
+<li class="toc-sub"><a href="#common-pitfalls-to-avoid">Common Pitfalls to Avoid</a></li></ul>
+            </nav>
+        </aside>
+    <h1 id="javascript-data-types">JavaScript Data Types</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#weakly-typed-language">Weakly Typed Language</a></li>
+<li><a href="#primitive-data-types">Primitive Data Types</a></li>
+<li><a href="#primitive-vs-reference-types">Primitive vs Reference Types</a></li>
+<li><a href="#type-conversion-and-coercion">Type Conversion and Coercion</a></li>
+<li><a href="#typeof-operator">typeof Operator</a></li>
+<li><a href="#type-checking-and-conversion-functions">Type Checking and Conversion Functions</a></li>
+</ul>
+<hr>
+<h2 id="weakly-typed-language">Weakly Typed Language</h2>
+<h3 id="what-does-weakly-typed-mean">What Does &quot;Weakly Typed&quot; Mean?</h3>
+<p>JavaScript is a <strong>weakly typed</strong> (or <strong>dynamically typed</strong>) language:</p>
+<ul>
+<li><strong>No type declarations</strong>: Variables don&#39;t have fixed types</li>
+<li><strong>Dynamic typing</strong>: Variable types can change at runtime</li>
+<li><strong>Type coercion</strong>: Automatic type conversion during operations</li>
+<li><strong>Flexible but risky</strong>: Can lead to unexpected behavior</li>
+</ul>
+<h3 id="examples">Examples</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Variable can hold any type</span>
+<span class="hljs-keyword">let</span> x = <span class="hljs-number">5</span>;           <span class="hljs-comment">// Number</span>
+x = <span class="hljs-string">&quot;hello&quot;</span>;         <span class="hljs-comment">// Now it&#x27;s a String</span>
+x = <span class="hljs-literal">true</span>;            <span class="hljs-comment">// Now it&#x27;s a Boolean</span>
+x = { <span class="hljs-attr">key</span>: <span class="hljs-string">&quot;value&quot;</span> };<span class="hljs-comment">// Now it&#x27;s an Object</span>
+<span class="hljs-comment">// All valid!</span>
+
+<span class="hljs-comment">// Compare to strongly typed (TypeScript)</span>
+<span class="hljs-keyword">let</span> <span class="hljs-attr">y</span>: number = <span class="hljs-number">5</span>;
+<span class="hljs-comment">// y = &quot;hello&quot;;  // Error: Type &#x27;string&#x27; is not assignable to type &#x27;number&#x27;</span>
+</code></pre><h3 id="implications">Implications</h3>
+<p><strong>Advantages:</strong></p>
+<ul>
+<li>Faster to write code</li>
+<li>More flexible</li>
+<li>Less boilerplate</li>
+</ul>
+<p><strong>Disadvantages:</strong></p>
+<ul>
+<li>Type errors at runtime instead of compile time</li>
+<li>Harder to catch bugs early</li>
+<li>IDE autocomplete less helpful</li>
+</ul>
+<hr>
+<h2 id="primitive-data-types">Primitive Data Types</h2>
+<p>JavaScript has <strong>7 primitive data types</strong>:</p>
+<h3 id="1-number">1. Number</h3>
+<p>Represents both integers and floating-point numbers.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">let</span> integer = <span class="hljs-number">42</span>;
+<span class="hljs-keyword">let</span> float = <span class="hljs-number">3.14159</span>;
+<span class="hljs-keyword">let</span> negative = -<span class="hljs-number">17</span>;
+<span class="hljs-keyword">let</span> scientific = <span class="hljs-number">5e3</span>;        <span class="hljs-comment">// 5000</span>
+<span class="hljs-keyword">let</span> binary = <span class="hljs-number">0b1010</span>;         <span class="hljs-comment">// 10</span>
+<span class="hljs-keyword">let</span> octal = <span class="hljs-number">0o744</span>;           <span class="hljs-comment">// 484</span>
+<span class="hljs-keyword">let</span> hex = <span class="hljs-number">0xFF</span>;              <span class="hljs-comment">// 255</span>
+
+<span class="hljs-comment">// Special numeric values</span>
+<span class="hljs-keyword">let</span> infinity = <span class="hljs-title class_">Infinity</span>;
+<span class="hljs-keyword">let</span> negInfinity = -<span class="hljs-title class_">Infinity</span>;
+<span class="hljs-keyword">let</span> notANumber = <span class="hljs-title class_">NaN</span>;        <span class="hljs-comment">// Not a Number</span>
+
+<span class="hljs-comment">// Check for NaN</span>
+<span class="hljs-built_in">isNaN</span>(<span class="hljs-title class_">NaN</span>);           <span class="hljs-comment">// true</span>
+<span class="hljs-built_in">isNaN</span>(<span class="hljs-string">&quot;hello&quot;</span>);       <span class="hljs-comment">// true (after coercion)</span>
+<span class="hljs-title class_">Number</span>.<span class="hljs-built_in">isNaN</span>(<span class="hljs-title class_">NaN</span>);    <span class="hljs-comment">// true</span>
+<span class="hljs-title class_">Number</span>.<span class="hljs-built_in">isNaN</span>(<span class="hljs-string">&quot;hello&quot;</span>);<span class="hljs-comment">// false (no coercion)</span>
+</code></pre><h3 id="2-string">2. String</h3>
+<p>Represents text data.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">let</span> single = <span class="hljs-string">&#x27;Single quotes&#x27;</span>;
+<span class="hljs-keyword">let</span> double = <span class="hljs-string">&quot;Double quotes&quot;</span>;
+<span class="hljs-keyword">let</span> template = <span class="hljs-string">`Template literal with <span class="hljs-subst">${single}</span>`</span>;
+
+<span class="hljs-comment">// Multi-line</span>
+<span class="hljs-keyword">let</span> multiline = <span class="hljs-string">`This is
+a multi-line
+string`</span>;
+
+<span class="hljs-comment">// Escape characters</span>
+<span class="hljs-keyword">let</span> escaped = <span class="hljs-string">&quot;Line 1\nLine 2\tTabbed&quot;</span>;
+
+<span class="hljs-comment">// String length</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;hello&quot;</span>.<span class="hljs-property">length</span>);  <span class="hljs-comment">// 5</span>
+</code></pre><h3 id="3-boolean">3. Boolean</h3>
+<p>Logical entity with two values.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">let</span> isTrue = <span class="hljs-literal">true</span>;
+<span class="hljs-keyword">let</span> isFalse = <span class="hljs-literal">false</span>;
+
+<span class="hljs-comment">// Boolean context</span>
+<span class="hljs-keyword">if</span> (<span class="hljs-literal">true</span>) { <span class="hljs-comment">/* executes */</span> }
+<span class="hljs-keyword">if</span> (<span class="hljs-literal">false</span>) { <span class="hljs-comment">/* doesn&#x27;t execute */</span> }
+
+<span class="hljs-comment">// Boolean conversion</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-number">1</span>);        <span class="hljs-comment">// true</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-number">0</span>);        <span class="hljs-comment">// false</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-string">&quot;text&quot;</span>);   <span class="hljs-comment">// true</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-string">&quot;&quot;</span>);       <span class="hljs-comment">// false</span>
+</code></pre><h3 id="4-undefined">4. Undefined</h3>
+<p>Variable declared but not assigned.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">let</span> x;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(x);  <span class="hljs-comment">// undefined</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">noReturn</span>(<span class="hljs-params"></span>) {}
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">noReturn</span>());  <span class="hljs-comment">// undefined</span>
+
+<span class="hljs-keyword">let</span> obj = {};
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">nonExistent</span>);  <span class="hljs-comment">// undefined</span>
+
+<span class="hljs-comment">// Explicit undefined</span>
+<span class="hljs-keyword">let</span> y = <span class="hljs-literal">undefined</span>;
+</code></pre><h3 id="5-null">5. Null</h3>
+<p>Intentional absence of value.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">let</span> empty = <span class="hljs-literal">null</span>;
+
+<span class="hljs-comment">// Null means &quot;no object&quot;</span>
+<span class="hljs-keyword">let</span> person = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;John&quot;</span>,
+  <span class="hljs-attr">age</span>: <span class="hljs-number">30</span>,
+  <span class="hljs-attr">spouse</span>: <span class="hljs-literal">null</span>  <span class="hljs-comment">// Intentionally no spouse</span>
+};
+
+<span class="hljs-comment">// Common use: reset/clear value</span>
+<span class="hljs-keyword">let</span> data = <span class="hljs-title function_">fetchData</span>();
+data = <span class="hljs-literal">null</span>;  <span class="hljs-comment">// Clear data</span>
+</code></pre><h3 id="6-symbol-es6">6. Symbol (ES6)</h3>
+<p>Unique and immutable identifier.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Each symbol is unique</span>
+<span class="hljs-keyword">let</span> sym1 = <span class="hljs-title class_">Symbol</span>();
+<span class="hljs-keyword">let</span> sym2 = <span class="hljs-title class_">Symbol</span>();
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(sym1 === sym2);  <span class="hljs-comment">// false</span>
+
+<span class="hljs-comment">// With description</span>
+<span class="hljs-keyword">let</span> sym3 = <span class="hljs-title class_">Symbol</span>(<span class="hljs-string">&quot;description&quot;</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(sym3.<span class="hljs-title function_">toString</span>());  <span class="hljs-comment">// &quot;Symbol(description)&quot;</span>
+
+<span class="hljs-comment">// Use as object property</span>
+<span class="hljs-keyword">const</span> <span class="hljs-variable constant_">ID</span> = <span class="hljs-title class_">Symbol</span>(<span class="hljs-string">&quot;id&quot;</span>);
+<span class="hljs-keyword">let</span> user = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;John&quot;</span>,
+  [<span class="hljs-variable constant_">ID</span>]: <span class="hljs-number">12345</span>  <span class="hljs-comment">// Hidden property</span>
+};
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(user[<span class="hljs-variable constant_">ID</span>]);  <span class="hljs-comment">// 12345</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(user));  <span class="hljs-comment">// [&quot;name&quot;] - symbol not shown</span>
+
+<span class="hljs-comment">// Global symbols</span>
+<span class="hljs-keyword">let</span> globalSym1 = <span class="hljs-title class_">Symbol</span>.<span class="hljs-title function_">for</span>(<span class="hljs-string">&quot;app.id&quot;</span>);
+<span class="hljs-keyword">let</span> globalSym2 = <span class="hljs-title class_">Symbol</span>.<span class="hljs-title function_">for</span>(<span class="hljs-string">&quot;app.id&quot;</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(globalSym1 === globalSym2);  <span class="hljs-comment">// true</span>
+</code></pre><h3 id="7-bigint-es2020">7. BigInt (ES2020)</h3>
+<p>Arbitrary precision integers.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Regular number limit</span>
+<span class="hljs-keyword">let</span> bigNum = <span class="hljs-number">9007199254740991</span>;  <span class="hljs-comment">// MAX_SAFE_INTEGER</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(bigNum + <span class="hljs-number">1</span>);  <span class="hljs-comment">// 9007199254740992</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(bigNum + <span class="hljs-number">2</span>);  <span class="hljs-comment">// 9007199254740992 (precision lost!)</span>
+
+<span class="hljs-comment">// BigInt (add &#x27;n&#x27; suffix)</span>
+<span class="hljs-keyword">let</span> bigInt = <span class="hljs-number">9007199254740991n</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(bigInt + <span class="hljs-number">1n</span>);  <span class="hljs-comment">// 9007199254740992n</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(bigInt + <span class="hljs-number">2n</span>);  <span class="hljs-comment">// 9007199254740993n (precise!)</span>
+
+<span class="hljs-comment">// Create BigInt</span>
+<span class="hljs-keyword">let</span> big1 = <span class="hljs-number">123n</span>;
+<span class="hljs-keyword">let</span> big2 = <span class="hljs-title class_">BigInt</span>(<span class="hljs-number">123</span>);
+<span class="hljs-keyword">let</span> big3 = <span class="hljs-title class_">BigInt</span>(<span class="hljs-string">&quot;9999999999999999999999999999&quot;</span>);
+
+<span class="hljs-comment">// Can&#x27;t mix with regular numbers</span>
+<span class="hljs-comment">// 1n + 1;  // Error: Cannot mix BigInt and other types</span>
+<span class="hljs-number">1n</span> + <span class="hljs-title class_">BigInt</span>(<span class="hljs-number">1</span>);  <span class="hljs-comment">// OK: 2n</span>
+</code></pre><hr>
+<h2 id="primitive-vs-reference-types">Primitive vs Reference Types</h2>
+<h3 id="primitives">Primitives</h3>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>Stored directly in variable location</li>
+<li>Immutable (operations create new values)</li>
+<li>Compared by value</li>
+<li>Stored on stack</li>
+<li>Copied by value</li>
+</ul>
+<p><strong>Types:</strong> Number, String, Boolean, Undefined, Null, Symbol, BigInt</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Primitives are copied by value</span>
+<span class="hljs-keyword">let</span> a = <span class="hljs-number">5</span>;
+<span class="hljs-keyword">let</span> b = a;  <span class="hljs-comment">// Copy of value</span>
+b = <span class="hljs-number">10</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(a);  <span class="hljs-comment">// 5 (unchanged)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(b);  <span class="hljs-comment">// 10</span>
+
+<span class="hljs-comment">// String immutability</span>
+<span class="hljs-keyword">let</span> str = <span class="hljs-string">&quot;hello&quot;</span>;
+str[<span class="hljs-number">0</span>] = <span class="hljs-string">&quot;H&quot;</span>;  <span class="hljs-comment">// Doesn&#x27;t work</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(str);  <span class="hljs-comment">// &quot;hello&quot; (unchanged)</span>
+
+str = str.<span class="hljs-title function_">toUpperCase</span>();  <span class="hljs-comment">// Creates NEW string</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(str);  <span class="hljs-comment">// &quot;HELLO&quot;</span>
+
+<span class="hljs-comment">// Comparison by value</span>
+<span class="hljs-keyword">let</span> x = <span class="hljs-number">5</span>;
+<span class="hljs-keyword">let</span> y = <span class="hljs-number">5</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(x === y);  <span class="hljs-comment">// true (same value)</span>
+</code></pre><h3 id="reference-types">Reference Types</h3>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>Variable stores memory reference (pointer)</li>
+<li>Mutable (can modify properties)</li>
+<li>Compared by reference</li>
+<li>Stored on heap</li>
+<li>Copied by reference</li>
+</ul>
+<p><strong>Types:</strong> Object, Array, Function, Date, RegExp, Map, Set</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Objects are copied by reference</span>
+<span class="hljs-keyword">let</span> obj1 = { <span class="hljs-attr">x</span>: <span class="hljs-number">5</span> };
+<span class="hljs-keyword">let</span> obj2 = obj1;  <span class="hljs-comment">// Copy of reference</span>
+obj2.<span class="hljs-property">x</span> = <span class="hljs-number">10</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj1.<span class="hljs-property">x</span>);  <span class="hljs-comment">// 10 (changed!)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj2.<span class="hljs-property">x</span>);  <span class="hljs-comment">// 10</span>
+
+<span class="hljs-comment">// Comparison by reference</span>
+<span class="hljs-keyword">let</span> a = { <span class="hljs-attr">x</span>: <span class="hljs-number">1</span> };
+<span class="hljs-keyword">let</span> b = { <span class="hljs-attr">x</span>: <span class="hljs-number">1</span> };
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(a === b);  <span class="hljs-comment">// false (different objects)</span>
+
+<span class="hljs-keyword">let</span> c = a;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(a === c);  <span class="hljs-comment">// true (same reference)</span>
+
+<span class="hljs-comment">// Arrays (also reference type)</span>
+<span class="hljs-keyword">let</span> arr1 = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>];
+<span class="hljs-keyword">let</span> arr2 = arr1;
+arr2.<span class="hljs-title function_">push</span>(<span class="hljs-number">4</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(arr1);  <span class="hljs-comment">// [1, 2, 3, 4] (changed!)</span>
+
+<span class="hljs-comment">// Functions (also reference type)</span>
+<span class="hljs-keyword">let</span> func1 = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) { <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;hi&quot;</span>); };
+<span class="hljs-keyword">let</span> func2 = func1;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(func1 === func2);  <span class="hljs-comment">// true (same reference)</span>
+</code></pre><h3 id="key-differences-table">Key Differences Table</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Primitives</th>
+<th>Reference Types</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Storage</td>
+<td>Stack (directly)</td>
+<td>Heap (reference on stack)</td>
+</tr>
+<tr>
+<td>Copy</td>
+<td>By value</td>
+<td>By reference</td>
+</tr>
+<tr>
+<td>Mutability</td>
+<td>Immutable</td>
+<td>Mutable</td>
+</tr>
+<tr>
+<td>Comparison</td>
+<td>By value</td>
+<td>By reference</td>
+</tr>
+<tr>
+<td>Size</td>
+<td>Fixed</td>
+<td>Dynamic</td>
+</tr>
+</tbody></table>
+<h3 id="practical-implications">Practical Implications</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Function parameters</span>
+
+<span class="hljs-comment">// Primitive - can&#x27;t modify original</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">modifyPrimitive</span>(<span class="hljs-params">x</span>) {
+  x = <span class="hljs-number">10</span>;
+}
+<span class="hljs-keyword">let</span> num = <span class="hljs-number">5</span>;
+<span class="hljs-title function_">modifyPrimitive</span>(num);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(num);  <span class="hljs-comment">// 5 (unchanged)</span>
+
+<span class="hljs-comment">// Reference - CAN modify original</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">modifyObject</span>(<span class="hljs-params">obj</span>) {
+  obj.<span class="hljs-property">x</span> = <span class="hljs-number">10</span>;
+}
+<span class="hljs-keyword">let</span> myObj = { <span class="hljs-attr">x</span>: <span class="hljs-number">5</span> };
+<span class="hljs-title function_">modifyObject</span>(myObj);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(myObj.<span class="hljs-property">x</span>);  <span class="hljs-comment">// 10 (changed!)</span>
+
+<span class="hljs-comment">// But reassignment doesn&#x27;t affect original</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">reassignObject</span>(<span class="hljs-params">obj</span>) {
+  obj = { <span class="hljs-attr">x</span>: <span class="hljs-number">99</span> };  <span class="hljs-comment">// New object</span>
+}
+<span class="hljs-keyword">let</span> myObj2 = { <span class="hljs-attr">x</span>: <span class="hljs-number">5</span> };
+<span class="hljs-title function_">reassignObject</span>(myObj2);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(myObj2.<span class="hljs-property">x</span>);  <span class="hljs-comment">// 5 (unchanged - reassignment doesn&#x27;t affect original)</span>
+</code></pre><h3 id="deep-vs-shallow-copy">Deep vs Shallow Copy</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Shallow copy (reference type)</span>
+<span class="hljs-keyword">let</span> original = { <span class="hljs-attr">a</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">b</span>: { <span class="hljs-attr">c</span>: <span class="hljs-number">2</span> } };
+<span class="hljs-keyword">let</span> shallow = { ...original };  <span class="hljs-comment">// or Object.assign({}, original)</span>
+
+shallow.<span class="hljs-property">a</span> = <span class="hljs-number">99</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(original.<span class="hljs-property">a</span>);  <span class="hljs-comment">// 1 (not changed)</span>
+
+shallow.<span class="hljs-property">b</span>.<span class="hljs-property">c</span> = <span class="hljs-number">99</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(original.<span class="hljs-property">b</span>.<span class="hljs-property">c</span>);  <span class="hljs-comment">// 99 (changed! nested object still referenced)</span>
+
+<span class="hljs-comment">// Deep copy (truly independent)</span>
+<span class="hljs-keyword">let</span> deep = <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(<span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">stringify</span>(original));
+<span class="hljs-comment">// Or use structuredClone() in modern JS</span>
+<span class="hljs-keyword">let</span> deep2 = <span class="hljs-title function_">structuredClone</span>(original);
+
+deep.<span class="hljs-property">b</span>.<span class="hljs-property">c</span> = <span class="hljs-number">77</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(original.<span class="hljs-property">b</span>.<span class="hljs-property">c</span>);  <span class="hljs-comment">// 99 (not changed - deep copy)</span>
+</code></pre><hr>
+<h2 id="type-conversion-and-coercion">Type Conversion and Coercion</h2>
+<h3 id="type-conversion-explicit">Type Conversion (Explicit)</h3>
+<p>Manually convert from one type to another.</p>
+<h4 id="to-string">To String</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-title class_">String</span>(<span class="hljs-number">123</span>);              <span class="hljs-comment">// &quot;123&quot;</span>
+<span class="hljs-title class_">String</span>(<span class="hljs-literal">true</span>);             <span class="hljs-comment">// &quot;true&quot;</span>
+<span class="hljs-title class_">String</span>(<span class="hljs-literal">null</span>);             <span class="hljs-comment">// &quot;null&quot;</span>
+<span class="hljs-title class_">String</span>(<span class="hljs-literal">undefined</span>);        <span class="hljs-comment">// &quot;undefined&quot;</span>
+<span class="hljs-title class_">String</span>([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]);        <span class="hljs-comment">// &quot;1,2,3&quot;</span>
+<span class="hljs-title class_">String</span>({});               <span class="hljs-comment">// &quot;[object Object]&quot;</span>
+
+<span class="hljs-comment">// Alternative methods</span>
+(<span class="hljs-number">123</span>).<span class="hljs-title function_">toString</span>();         <span class="hljs-comment">// &quot;123&quot;</span>
+<span class="hljs-literal">true</span>.<span class="hljs-title function_">toString</span>();          <span class="hljs-comment">// &quot;true&quot;</span>
+[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>].<span class="hljs-title function_">toString</span>();        <span class="hljs-comment">// &quot;1,2&quot;</span>
+</code></pre><h4 id="to-number">To Number</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-title class_">Number</span>(<span class="hljs-string">&quot;123&quot;</span>);            <span class="hljs-comment">// 123</span>
+<span class="hljs-title class_">Number</span>(<span class="hljs-string">&quot;123.45&quot;</span>);         <span class="hljs-comment">// 123.45</span>
+<span class="hljs-title class_">Number</span>(<span class="hljs-literal">true</span>);             <span class="hljs-comment">// 1</span>
+<span class="hljs-title class_">Number</span>(<span class="hljs-literal">false</span>);            <span class="hljs-comment">// 0</span>
+<span class="hljs-title class_">Number</span>(<span class="hljs-literal">null</span>);             <span class="hljs-comment">// 0</span>
+<span class="hljs-title class_">Number</span>(<span class="hljs-literal">undefined</span>);        <span class="hljs-comment">// NaN</span>
+<span class="hljs-title class_">Number</span>(<span class="hljs-string">&quot;&quot;</span>);               <span class="hljs-comment">// 0</span>
+<span class="hljs-title class_">Number</span>(<span class="hljs-string">&quot;hello&quot;</span>);          <span class="hljs-comment">// NaN</span>
+<span class="hljs-title class_">Number</span>(<span class="hljs-string">&quot;  123  &quot;</span>);        <span class="hljs-comment">// 123 (trims whitespace)</span>
+
+<span class="hljs-comment">// Parsing integers</span>
+<span class="hljs-built_in">parseInt</span>(<span class="hljs-string">&quot;123&quot;</span>);          <span class="hljs-comment">// 123</span>
+<span class="hljs-built_in">parseInt</span>(<span class="hljs-string">&quot;123.45&quot;</span>);       <span class="hljs-comment">// 123 (drops decimal)</span>
+<span class="hljs-built_in">parseInt</span>(<span class="hljs-string">&quot;123px&quot;</span>);        <span class="hljs-comment">// 123 (stops at non-digit)</span>
+<span class="hljs-built_in">parseInt</span>(<span class="hljs-string">&quot;px123&quot;</span>);        <span class="hljs-comment">// NaN</span>
+<span class="hljs-built_in">parseInt</span>(<span class="hljs-string">&quot;1010&quot;</span>, <span class="hljs-number">2</span>);      <span class="hljs-comment">// 10 (binary to decimal)</span>
+<span class="hljs-built_in">parseInt</span>(<span class="hljs-string">&quot;FF&quot;</span>, <span class="hljs-number">16</span>);       <span class="hljs-comment">// 255 (hex to decimal)</span>
+
+<span class="hljs-comment">// Parsing floats</span>
+<span class="hljs-built_in">parseFloat</span>(<span class="hljs-string">&quot;123.45&quot;</span>);     <span class="hljs-comment">// 123.45</span>
+<span class="hljs-built_in">parseFloat</span>(<span class="hljs-string">&quot;123.45.67&quot;</span>);  <span class="hljs-comment">// 123.45 (stops at second decimal)</span>
+<span class="hljs-built_in">parseFloat</span>(<span class="hljs-string">&quot;3.14 meters&quot;</span>);<span class="hljs-comment">// 3.14</span>
+
+<span class="hljs-comment">// Unary plus operator</span>
++<span class="hljs-string">&quot;123&quot;</span>;                   <span class="hljs-comment">// 123</span>
++<span class="hljs-literal">true</span>;                    <span class="hljs-comment">// 1</span>
++<span class="hljs-string">&quot;&quot;</span>;                      <span class="hljs-comment">// 0</span>
+</code></pre><h4 id="to-boolean">To Boolean</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-title class_">Boolean</span>(<span class="hljs-number">1</span>);               <span class="hljs-comment">// true</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-number">0</span>);               <span class="hljs-comment">// false</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-string">&quot;text&quot;</span>);          <span class="hljs-comment">// true</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-string">&quot;&quot;</span>);              <span class="hljs-comment">// false</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-literal">null</span>);            <span class="hljs-comment">// false</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-literal">undefined</span>);       <span class="hljs-comment">// false</span>
+<span class="hljs-title class_">Boolean</span>({});              <span class="hljs-comment">// true (all objects are truthy)</span>
+<span class="hljs-title class_">Boolean</span>([]);              <span class="hljs-comment">// true (even empty array!)</span>
+
+<span class="hljs-comment">// Double negation (common trick)</span>
+!!<span class="hljs-number">1</span>;                      <span class="hljs-comment">// true</span>
+!!<span class="hljs-string">&quot;&quot;</span>;                     <span class="hljs-comment">// false</span>
+!![];                     <span class="hljs-comment">// true</span>
+</code></pre><h3 id="type-coercion-implicit">Type Coercion (Implicit)</h3>
+<p>Automatic type conversion by JavaScript.</p>
+<h4 id="string-coercion">String Coercion</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// + with string converts to string</span>
+<span class="hljs-string">&quot;5&quot;</span> + <span class="hljs-number">2</span>;           <span class="hljs-comment">// &quot;52&quot;</span>
+<span class="hljs-string">&quot;5&quot;</span> + <span class="hljs-literal">true</span>;        <span class="hljs-comment">// &quot;5true&quot;</span>
+<span class="hljs-string">&quot;5&quot;</span> + <span class="hljs-literal">null</span>;        <span class="hljs-comment">// &quot;5null&quot;</span>
+<span class="hljs-string">&quot;5&quot;</span> + <span class="hljs-literal">undefined</span>;   <span class="hljs-comment">// &quot;5undefined&quot;</span>
+<span class="hljs-string">&quot;5&quot;</span> + [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>];      <span class="hljs-comment">// &quot;51,2&quot;</span>
+<span class="hljs-string">&quot;5&quot;</span> + {};          <span class="hljs-comment">// &quot;5[object Object]&quot;</span>
+
+<span class="hljs-comment">// Any operation with string becomes string</span>
+<span class="hljs-number">5</span> + <span class="hljs-string">&quot;2&quot;</span>;           <span class="hljs-comment">// &quot;52&quot;</span>
+<span class="hljs-number">5</span> + <span class="hljs-string">&quot;&quot;</span> + <span class="hljs-number">2</span>;        <span class="hljs-comment">// &quot;52&quot;</span>
+</code></pre><h4 id="numeric-coercion">Numeric Coercion</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Math operators (except +) convert to number</span>
+<span class="hljs-string">&quot;5&quot;</span> - <span class="hljs-number">2</span>;           <span class="hljs-comment">// 3</span>
+<span class="hljs-string">&quot;5&quot;</span> * <span class="hljs-string">&quot;2&quot;</span>;         <span class="hljs-comment">// 10</span>
+<span class="hljs-string">&quot;10&quot;</span> / <span class="hljs-string">&quot;2&quot;</span>;        <span class="hljs-comment">// 5</span>
+<span class="hljs-string">&quot;10&quot;</span> % <span class="hljs-string">&quot;3&quot;</span>;        <span class="hljs-comment">// 1</span>
+<span class="hljs-string">&quot;5&quot;</span> - <span class="hljs-literal">true</span>;        <span class="hljs-comment">// 4</span>
+<span class="hljs-string">&quot;5&quot;</span> * <span class="hljs-literal">null</span>;        <span class="hljs-comment">// 0</span>
+<span class="hljs-string">&quot;5&quot;</span> - <span class="hljs-literal">undefined</span>;   <span class="hljs-comment">// NaN</span>
+
+<span class="hljs-comment">// Unary + converts to number</span>
++<span class="hljs-string">&quot;5&quot;</span>;              <span class="hljs-comment">// 5</span>
++<span class="hljs-literal">true</span>;             <span class="hljs-comment">// 1</span>
++<span class="hljs-literal">null</span>;             <span class="hljs-comment">// 0</span>
++<span class="hljs-literal">undefined</span>;        <span class="hljs-comment">// NaN</span>
+</code></pre><h4 id="boolean-coercion">Boolean Coercion</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// In if statements, loops, logical operators</span>
+<span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;hello&quot;</span>) { <span class="hljs-comment">/* truthy - executes */</span> }
+<span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;&quot;</span>) { <span class="hljs-comment">/* falsy - doesn&#x27;t execute */</span> }
+
+<span class="hljs-comment">// Logical operators</span>
+<span class="hljs-string">&quot;hello&quot;</span> &amp;&amp; <span class="hljs-number">5</span>;      <span class="hljs-comment">// 5 (returns last truthy)</span>
+<span class="hljs-string">&quot;&quot;</span> || <span class="hljs-string">&quot;default&quot;</span>;   <span class="hljs-comment">// &quot;default&quot; (returns first truthy)</span>
+!!<span class="hljs-string">&quot;text&quot;</span>;          <span class="hljs-comment">// true</span>
+</code></pre><h3 id="falsy-values">Falsy Values</h3>
+<p>Only <strong>6 falsy values</strong> in JavaScript (everything else is truthy):</p>
+<pre><code class="hljs language-javascript"><span class="hljs-title class_">Boolean</span>(<span class="hljs-literal">false</span>);        <span class="hljs-comment">// false</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-number">0</span>);            <span class="hljs-comment">// false</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-string">&quot;&quot;</span>);           <span class="hljs-comment">// false</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-literal">null</span>);         <span class="hljs-comment">// false</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-literal">undefined</span>);    <span class="hljs-comment">// false</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-title class_">NaN</span>);          <span class="hljs-comment">// false</span>
+
+<span class="hljs-comment">// Everything else is truthy!</span>
+<span class="hljs-title class_">Boolean</span>([]);           <span class="hljs-comment">// true</span>
+<span class="hljs-title class_">Boolean</span>({});           <span class="hljs-comment">// true</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-string">&quot;0&quot;</span>);          <span class="hljs-comment">// true (string!)</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-string">&quot;false&quot;</span>);      <span class="hljs-comment">// true (string!)</span>
+<span class="hljs-title class_">Boolean</span>(-<span class="hljs-number">1</span>);           <span class="hljs-comment">// true</span>
+<span class="hljs-title class_">Boolean</span>(<span class="hljs-title class_">Infinity</span>);     <span class="hljs-comment">// true</span>
+</code></pre><h3 id="equality-and-coercion">Equality and Coercion</h3>
+<h4 id="loose-equality">Loose Equality (==)</h4>
+<p>Performs type coercion before comparison.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-number">5</span> == <span class="hljs-string">&quot;5&quot;</span>;              <span class="hljs-comment">// true (string coerced to number)</span>
+<span class="hljs-number">0</span> == <span class="hljs-literal">false</span>;            <span class="hljs-comment">// true</span>
+<span class="hljs-string">&quot;&quot;</span> == <span class="hljs-literal">false</span>;           <span class="hljs-comment">// true</span>
+<span class="hljs-literal">null</span> == <span class="hljs-literal">undefined</span>;     <span class="hljs-comment">// true</span>
+<span class="hljs-number">1</span> == <span class="hljs-literal">true</span>;             <span class="hljs-comment">// true</span>
+<span class="hljs-number">0</span> == <span class="hljs-string">&quot;&quot;</span>;               <span class="hljs-comment">// true</span>
+
+<span class="hljs-comment">// Weird cases</span>
+[] == <span class="hljs-literal">false</span>;           <span class="hljs-comment">// true (both coerced to 0)</span>
+[] == ![];             <span class="hljs-comment">// true (!)</span>
+</code></pre><h4 id="strict-equality">Strict Equality (===)</h4>
+<p>No type coercion. <strong>Always use this!</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-number">5</span> === <span class="hljs-string">&quot;5&quot;</span>;             <span class="hljs-comment">// false</span>
+<span class="hljs-number">0</span> === <span class="hljs-literal">false</span>;           <span class="hljs-comment">// false</span>
+<span class="hljs-string">&quot;&quot;</span> === <span class="hljs-literal">false</span>;          <span class="hljs-comment">// false</span>
+<span class="hljs-literal">null</span> === <span class="hljs-literal">undefined</span>;    <span class="hljs-comment">// false</span>
+<span class="hljs-number">1</span> === <span class="hljs-literal">true</span>;            <span class="hljs-comment">// false</span>
+
+<span class="hljs-comment">// Use === for predictable behavior</span>
+</code></pre><h3 id="type-coercion-gotchas">Type Coercion Gotchas</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Addition vs concatenation</span>
+<span class="hljs-number">1</span> + <span class="hljs-number">2</span> + <span class="hljs-string">&quot;3&quot;</span>;           <span class="hljs-comment">// &quot;33&quot; (left to right)</span>
+<span class="hljs-string">&quot;3&quot;</span> + <span class="hljs-number">1</span> + <span class="hljs-number">2</span>;           <span class="hljs-comment">// &quot;312&quot;</span>
+<span class="hljs-number">1</span> + <span class="hljs-number">2</span> + <span class="hljs-number">3</span> + <span class="hljs-string">&quot;4&quot;</span>;       <span class="hljs-comment">// &quot;64&quot;</span>
+
+<span class="hljs-comment">// Empty array</span>
+[] + [];               <span class="hljs-comment">// &quot;&quot; (empty string)</span>
+[] + {};               <span class="hljs-comment">// &quot;[object Object]&quot;</span>
+{} + [];               <span class="hljs-comment">// 0 (block + unary)</span>
+
+<span class="hljs-comment">// Tricky comparisons</span>
+<span class="hljs-literal">null</span> &gt;= <span class="hljs-number">0</span>;             <span class="hljs-comment">// true</span>
+<span class="hljs-literal">null</span> == <span class="hljs-number">0</span>;             <span class="hljs-comment">// false</span>
+<span class="hljs-literal">null</span> &lt;= <span class="hljs-number">0</span>;             <span class="hljs-comment">// true</span>
+
+<span class="hljs-comment">// NaN</span>
+<span class="hljs-title class_">NaN</span> == <span class="hljs-title class_">NaN</span>;            <span class="hljs-comment">// false (NaN is not equal to anything!)</span>
+<span class="hljs-title class_">NaN</span> === <span class="hljs-title class_">NaN</span>;           <span class="hljs-comment">// false</span>
+</code></pre><hr>
+<h2 id="typeof-operator">typeof Operator</h2>
+<p>Returns string indicating type of operand.</p>
+<h3 id="basic-usage">Basic Usage</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">typeof</span> <span class="hljs-number">42</span>;                    <span class="hljs-comment">// &quot;number&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-number">3.14</span>;                  <span class="hljs-comment">// &quot;number&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-title class_">NaN</span>;                   <span class="hljs-comment">// &quot;number&quot; (!)</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-title class_">Infinity</span>;              <span class="hljs-comment">// &quot;number&quot;</span>
+
+<span class="hljs-keyword">typeof</span> <span class="hljs-string">&quot;text&quot;</span>;                <span class="hljs-comment">// &quot;string&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-string">&quot;&quot;</span>;                    <span class="hljs-comment">// &quot;string&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-string">`template`</span>;            <span class="hljs-comment">// &quot;string&quot;</span>
+
+<span class="hljs-keyword">typeof</span> <span class="hljs-literal">true</span>;                  <span class="hljs-comment">// &quot;boolean&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-literal">false</span>;                 <span class="hljs-comment">// &quot;boolean&quot;</span>
+
+<span class="hljs-keyword">typeof</span> <span class="hljs-literal">undefined</span>;             <span class="hljs-comment">// &quot;undefined&quot;</span>
+<span class="hljs-keyword">typeof</span> declaredButNotSet;     <span class="hljs-comment">// &quot;undefined&quot;</span>
+
+<span class="hljs-keyword">typeof</span> <span class="hljs-literal">null</span>;                  <span class="hljs-comment">// &quot;object&quot; (historical bug!)</span>
+
+<span class="hljs-keyword">typeof</span> <span class="hljs-title class_">Symbol</span>();              <span class="hljs-comment">// &quot;symbol&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-title class_">Symbol</span>(<span class="hljs-string">&quot;id&quot;</span>);          <span class="hljs-comment">// &quot;symbol&quot;</span>
+
+<span class="hljs-keyword">typeof</span> <span class="hljs-number">10n</span>;                   <span class="hljs-comment">// &quot;bigint&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-title class_">BigInt</span>(<span class="hljs-number">10</span>);            <span class="hljs-comment">// &quot;bigint&quot;</span>
+</code></pre><h3 id="objects-and-functions">Objects and Functions</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">typeof</span> {};                    <span class="hljs-comment">// &quot;object&quot;</span>
+<span class="hljs-keyword">typeof</span> { <span class="hljs-attr">key</span>: <span class="hljs-string">&quot;value&quot;</span> };      <span class="hljs-comment">// &quot;object&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>();          <span class="hljs-comment">// &quot;object&quot;</span>
+
+<span class="hljs-keyword">typeof</span> [];                    <span class="hljs-comment">// &quot;object&quot; (arrays are objects!)</span>
+<span class="hljs-keyword">typeof</span> [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>];             <span class="hljs-comment">// &quot;object&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Array</span>();           <span class="hljs-comment">// &quot;object&quot;</span>
+
+<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {};         <span class="hljs-comment">// &quot;function&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">class</span> {};              <span class="hljs-comment">// &quot;function&quot; (classes are functions!)</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-title class_">Math</span>.<span class="hljs-property">sin</span>;              <span class="hljs-comment">// &quot;function&quot;</span>
+
+<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();            <span class="hljs-comment">// &quot;object&quot;</span>
+<span class="hljs-keyword">typeof</span> /regex/;               <span class="hljs-comment">// &quot;object&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>();             <span class="hljs-comment">// &quot;object&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>();             <span class="hljs-comment">// &quot;object&quot;</span>
+</code></pre><h3 id="special-cases">Special Cases</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// null is &quot;object&quot; (bug in JS since beginning)</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-literal">null</span>;                  <span class="hljs-comment">// &quot;object&quot; (not &quot;null&quot;!)</span>
+
+<span class="hljs-comment">// Arrays are &quot;object&quot;</span>
+<span class="hljs-keyword">typeof</span> [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>];             <span class="hljs-comment">// &quot;object&quot; (not &quot;array&quot;!)</span>
+<span class="hljs-comment">// Use Array.isArray() instead</span>
+<span class="hljs-title class_">Array</span>.<span class="hljs-title function_">isArray</span>([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]);     <span class="hljs-comment">// true</span>
+
+<span class="hljs-comment">// Functions are special</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {};         <span class="hljs-comment">// &quot;function&quot; (not &quot;object&quot;!)</span>
+
+<span class="hljs-comment">// Undeclared vs undefined</span>
+<span class="hljs-keyword">typeof</span> undeclaredVariable;    <span class="hljs-comment">// &quot;undefined&quot; (doesn&#x27;t error!)</span>
+<span class="hljs-comment">// undeclaredVariable;         // ReferenceError</span>
+
+<span class="hljs-comment">// typeof with parentheses (both valid)</span>
+<span class="hljs-title function_">typeof</span>(<span class="hljs-number">42</span>);                   <span class="hljs-comment">// &quot;number&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-number">42</span>;                    <span class="hljs-comment">// &quot;number&quot;</span>
+</code></pre><h3 id="limitations">Limitations</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Can&#x27;t distinguish between object types</span>
+<span class="hljs-keyword">typeof</span> {};                    <span class="hljs-comment">// &quot;object&quot;</span>
+<span class="hljs-keyword">typeof</span> [];                    <span class="hljs-comment">// &quot;object&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-literal">null</span>;                  <span class="hljs-comment">// &quot;object&quot;</span>
+<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();            <span class="hljs-comment">// &quot;object&quot;</span>
+
+<span class="hljs-comment">// Need other methods:</span>
+<span class="hljs-title class_">Array</span>.<span class="hljs-title function_">isArray</span>([]);            <span class="hljs-comment">// true</span>
+obj <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Date</span>;          <span class="hljs-comment">// true/false</span>
+obj === <span class="hljs-literal">null</span>;                 <span class="hljs-comment">// check for null</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">toString</span>.<span class="hljs-title function_">call</span>(obj); <span class="hljs-comment">// &quot;[object Type]&quot;</span>
+</code></pre><hr>
+<h2 id="type-checking-and-conversion-functions">Type Checking and Conversion Functions</h2>
+<h3 id="comprehensive-type-checking">Comprehensive Type Checking</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Number checking</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isNumber</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> value === <span class="hljs-string">&#x27;number&#x27;</span> &amp;&amp; !<span class="hljs-built_in">isNaN</span>(value);
+}
+
+<span class="hljs-title function_">isNumber</span>(<span class="hljs-number">42</span>);          <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isNumber</span>(<span class="hljs-title class_">NaN</span>);         <span class="hljs-comment">// false</span>
+<span class="hljs-title function_">isNumber</span>(<span class="hljs-string">&quot;42&quot;</span>);        <span class="hljs-comment">// false</span>
+<span class="hljs-title function_">isNumber</span>(<span class="hljs-title class_">Infinity</span>);    <span class="hljs-comment">// true</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isInteger</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Number</span>.<span class="hljs-title function_">isInteger</span>(value);
+}
+
+<span class="hljs-title function_">isInteger</span>(<span class="hljs-number">42</span>);         <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isInteger</span>(<span class="hljs-number">42.5</span>);       <span class="hljs-comment">// false</span>
+<span class="hljs-title function_">isInteger</span>(<span class="hljs-string">&quot;42&quot;</span>);       <span class="hljs-comment">// false</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isFiniteNumber</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Number</span>.<span class="hljs-built_in">isFinite</span>(value);
+}
+
+<span class="hljs-title function_">isFiniteNumber</span>(<span class="hljs-number">42</span>);       <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isFiniteNumber</span>(<span class="hljs-title class_">Infinity</span>); <span class="hljs-comment">// false</span>
+<span class="hljs-title function_">isFiniteNumber</span>(<span class="hljs-title class_">NaN</span>);      <span class="hljs-comment">// false</span>
+</code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// String checking</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isString</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> value === <span class="hljs-string">&#x27;string&#x27;</span>;
+}
+
+<span class="hljs-title function_">isString</span>(<span class="hljs-string">&quot;hello&quot;</span>);     <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isString</span>(<span class="hljs-string">&quot;&quot;</span>);          <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isString</span>(<span class="hljs-number">123</span>);         <span class="hljs-comment">// false</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isNonEmptyString</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> value === <span class="hljs-string">&#x27;string&#x27;</span> &amp;&amp; value.<span class="hljs-property">length</span> &gt; <span class="hljs-number">0</span>;
+}
+
+<span class="hljs-title function_">isNonEmptyString</span>(<span class="hljs-string">&quot;hello&quot;</span>); <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isNonEmptyString</span>(<span class="hljs-string">&quot;&quot;</span>);      <span class="hljs-comment">// false</span>
+</code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Boolean checking</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isBoolean</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> value === <span class="hljs-string">&#x27;boolean&#x27;</span>;
+}
+
+<span class="hljs-title function_">isBoolean</span>(<span class="hljs-literal">true</span>);       <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isBoolean</span>(<span class="hljs-number">1</span>);          <span class="hljs-comment">// false</span>
+<span class="hljs-title function_">isBoolean</span>(<span class="hljs-string">&quot;true&quot;</span>);     <span class="hljs-comment">// false</span>
+</code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Null and undefined checking</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isNull</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> value === <span class="hljs-literal">null</span>;
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isUndefined</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> value === <span class="hljs-literal">undefined</span>;
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isNullOrUndefined</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> value == <span class="hljs-literal">null</span>;  <span class="hljs-comment">// Catches both null and undefined</span>
+}
+
+<span class="hljs-title function_">isNullOrUndefined</span>(<span class="hljs-literal">null</span>);      <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isNullOrUndefined</span>(<span class="hljs-literal">undefined</span>); <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isNullOrUndefined</span>(<span class="hljs-number">0</span>);         <span class="hljs-comment">// false</span>
+</code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Array checking</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isArray</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Array</span>.<span class="hljs-title function_">isArray</span>(value);
+}
+
+<span class="hljs-title function_">isArray</span>([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]);    <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isArray</span>([]);           <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isArray</span>({});           <span class="hljs-comment">// false</span>
+<span class="hljs-title function_">isArray</span>(<span class="hljs-string">&quot;array&quot;</span>);      <span class="hljs-comment">// false</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isNonEmptyArray</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Array</span>.<span class="hljs-title function_">isArray</span>(value) &amp;&amp; value.<span class="hljs-property">length</span> &gt; <span class="hljs-number">0</span>;
+}
+</code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Object checking (plain objects only)</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isObject</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> value !== <span class="hljs-literal">null</span> &amp;&amp;
+         <span class="hljs-keyword">typeof</span> value === <span class="hljs-string">&#x27;object&#x27;</span> &amp;&amp;
+         !<span class="hljs-title class_">Array</span>.<span class="hljs-title function_">isArray</span>(value);
+}
+
+<span class="hljs-title function_">isObject</span>({});              <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isObject</span>({ <span class="hljs-attr">key</span>: <span class="hljs-string">&quot;value&quot;</span> }); <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isObject</span>([]);              <span class="hljs-comment">// false</span>
+<span class="hljs-title function_">isObject</span>(<span class="hljs-literal">null</span>);            <span class="hljs-comment">// false</span>
+<span class="hljs-title function_">isObject</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>());      <span class="hljs-comment">// true (might not want this)</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isPlainObject</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> value !== <span class="hljs-literal">null</span> &amp;&amp;
+         <span class="hljs-keyword">typeof</span> value === <span class="hljs-string">&#x27;object&#x27;</span> &amp;&amp;
+         <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(value) === <span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>;
+}
+
+<span class="hljs-title function_">isPlainObject</span>({});         <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isPlainObject</span>([]);         <span class="hljs-comment">// false</span>
+<span class="hljs-title function_">isPlainObject</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()); <span class="hljs-comment">// false</span>
+</code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Function checking</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">isFunction</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> value === <span class="hljs-string">&#x27;function&#x27;</span>;
+}
+
+<span class="hljs-title function_">isFunction</span>(<span class="hljs-function">() =&gt;</span> {});      <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isFunction</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {}); <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isFunction</span>(<span class="hljs-keyword">class</span> {});      <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">isFunction</span>({});            <span class="hljs-comment">// false</span>
+</code></pre><h3 id="safe-type-conversions">Safe Type Conversions</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Safe number conversion</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">toNumber</span>(<span class="hljs-params">value, defaultValue = <span class="hljs-number">0</span></span>) {
+  <span class="hljs-keyword">const</span> num = <span class="hljs-title class_">Number</span>(value);
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">isNaN</span>(num) ? defaultValue : num;
+}
+
+<span class="hljs-title function_">toNumber</span>(<span class="hljs-string">&quot;42&quot;</span>);            <span class="hljs-comment">// 42</span>
+<span class="hljs-title function_">toNumber</span>(<span class="hljs-string">&quot;hello&quot;</span>);         <span class="hljs-comment">// 0</span>
+<span class="hljs-title function_">toNumber</span>(<span class="hljs-string">&quot;hello&quot;</span>, -<span class="hljs-number">1</span>);     <span class="hljs-comment">// -1</span>
+<span class="hljs-title function_">toNumber</span>(<span class="hljs-literal">null</span>);            <span class="hljs-comment">// 0</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">toInteger</span>(<span class="hljs-params">value, defaultValue = <span class="hljs-number">0</span></span>) {
+  <span class="hljs-keyword">const</span> num = <span class="hljs-built_in">parseInt</span>(value, <span class="hljs-number">10</span>);
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">isNaN</span>(num) ? defaultValue : num;
+}
+
+<span class="hljs-title function_">toInteger</span>(<span class="hljs-string">&quot;42.7&quot;</span>);         <span class="hljs-comment">// 42</span>
+<span class="hljs-title function_">toInteger</span>(<span class="hljs-string">&quot;hello&quot;</span>);        <span class="hljs-comment">// 0</span>
+<span class="hljs-title function_">toInteger</span>(<span class="hljs-string">&quot;42px&quot;</span>);         <span class="hljs-comment">// 42</span>
+</code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Safe string conversion</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">toString</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">if</span> (value === <span class="hljs-literal">null</span> || value === <span class="hljs-literal">undefined</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;&#x27;</span>;
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-title class_">String</span>(value);
+}
+
+<span class="hljs-title function_">toString</span>(<span class="hljs-number">123</span>);             <span class="hljs-comment">// &quot;123&quot;</span>
+<span class="hljs-title function_">toString</span>(<span class="hljs-literal">null</span>);            <span class="hljs-comment">// &quot;&quot;</span>
+<span class="hljs-title function_">toString</span>(<span class="hljs-literal">undefined</span>);       <span class="hljs-comment">// &quot;&quot;</span>
+<span class="hljs-title function_">toString</span>([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>]);          <span class="hljs-comment">// &quot;1,2&quot;</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">toSafeString</span>(<span class="hljs-params">value, defaultValue = <span class="hljs-string">&#x27;&#x27;</span></span>) {
+  <span class="hljs-keyword">if</span> (value === <span class="hljs-literal">null</span> || value === <span class="hljs-literal">undefined</span>) {
+    <span class="hljs-keyword">return</span> defaultValue;
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-title class_">String</span>(value);
+}
+</code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Safe boolean conversion</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">toBoolean</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Boolean</span>(value);
+}
+
+<span class="hljs-title function_">toBoolean</span>(<span class="hljs-number">1</span>);              <span class="hljs-comment">// true</span>
+<span class="hljs-title function_">toBoolean</span>(<span class="hljs-number">0</span>);              <span class="hljs-comment">// false</span>
+<span class="hljs-title function_">toBoolean</span>(<span class="hljs-string">&quot;&quot;</span>);             <span class="hljs-comment">// false</span>
+<span class="hljs-title function_">toBoolean</span>(<span class="hljs-string">&quot;false&quot;</span>);        <span class="hljs-comment">// true (any non-empty string!)</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">toStrictBoolean</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">if</span> (value === <span class="hljs-string">&quot;true&quot;</span> || value === <span class="hljs-literal">true</span> || value === <span class="hljs-number">1</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+  }
+  <span class="hljs-keyword">if</span> (value === <span class="hljs-string">&quot;false&quot;</span> || value === <span class="hljs-literal">false</span> || value === <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;  <span class="hljs-comment">// Invalid boolean</span>
+}
+</code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// Safe parsing with error handling</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">safeParseInt</span>(<span class="hljs-params">value, defaultValue = <span class="hljs-number">0</span></span>) {
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value === <span class="hljs-string">&#x27;number&#x27;</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(value);
+  }
+
+  <span class="hljs-keyword">const</span> parsed = <span class="hljs-built_in">parseInt</span>(value, <span class="hljs-number">10</span>);
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">isNaN</span>(parsed) ? defaultValue : parsed;
+}
+
+<span class="hljs-title function_">safeParseInt</span>(<span class="hljs-string">&quot;42&quot;</span>);        <span class="hljs-comment">// 42</span>
+<span class="hljs-title function_">safeParseInt</span>(<span class="hljs-string">&quot;42.7&quot;</span>);      <span class="hljs-comment">// 42</span>
+<span class="hljs-title function_">safeParseInt</span>(<span class="hljs-string">&quot;hello&quot;</span>);     <span class="hljs-comment">// 0</span>
+<span class="hljs-title function_">safeParseInt</span>(<span class="hljs-number">42.7</span>);        <span class="hljs-comment">// 42</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">safeParseFloat</span>(<span class="hljs-params">value, defaultValue = <span class="hljs-number">0</span></span>) {
+  <span class="hljs-keyword">const</span> parsed = <span class="hljs-built_in">parseFloat</span>(value);
+  <span class="hljs-keyword">return</span> <span class="hljs-built_in">isNaN</span>(parsed) ? defaultValue : parsed;
+}
+
+<span class="hljs-title function_">safeParseFloat</span>(<span class="hljs-string">&quot;3.14&quot;</span>);    <span class="hljs-comment">// 3.14</span>
+<span class="hljs-title function_">safeParseFloat</span>(<span class="hljs-string">&quot;hello&quot;</span>);   <span class="hljs-comment">// 0</span>
+</code></pre><pre><code class="hljs language-javascript"><span class="hljs-comment">// JSON parsing with safety</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">safeJSONParse</span>(<span class="hljs-params">jsonString, defaultValue = <span class="hljs-literal">null</span></span>) {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(jsonString);
+  } <span class="hljs-keyword">catch</span> (error) {
+    <span class="hljs-keyword">return</span> defaultValue;
+  }
+}
+
+<span class="hljs-title function_">safeJSONParse</span>(<span class="hljs-string">&#x27;{&quot;key&quot;:&quot;value&quot;}&#x27;</span>); <span class="hljs-comment">// { key: &quot;value&quot; }</span>
+<span class="hljs-title function_">safeJSONParse</span>(<span class="hljs-string">&#x27;invalid json&#x27;</span>);     <span class="hljs-comment">// null</span>
+<span class="hljs-title function_">safeJSONParse</span>(<span class="hljs-string">&#x27;invalid&#x27;</span>, {});      <span class="hljs-comment">// {}</span>
+</code></pre><h3 id="type-guards-typescript-style-in-js">Type Guards (TypeScript-style in JS)</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Runtime type validation</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">assertString</span>(<span class="hljs-params">value, paramName = <span class="hljs-string">&#x27;value&#x27;</span></span>) {
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value !== <span class="hljs-string">&#x27;string&#x27;</span>) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TypeError</span>(<span class="hljs-string">`<span class="hljs-subst">${paramName}</span> must be a string`</span>);
+  }
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">assertNumber</span>(<span class="hljs-params">value, paramName = <span class="hljs-string">&#x27;value&#x27;</span></span>) {
+  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value !== <span class="hljs-string">&#x27;number&#x27;</span> || <span class="hljs-built_in">isNaN</span>(value)) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TypeError</span>(<span class="hljs-string">`<span class="hljs-subst">${paramName}</span> must be a number`</span>);
+  }
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">assertArray</span>(<span class="hljs-params">value, paramName = <span class="hljs-string">&#x27;value&#x27;</span></span>) {
+  <span class="hljs-keyword">if</span> (!<span class="hljs-title class_">Array</span>.<span class="hljs-title function_">isArray</span>(value)) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TypeError</span>(<span class="hljs-string">`<span class="hljs-subst">${paramName}</span> must be an array`</span>);
+  }
+}
+
+<span class="hljs-comment">// Usage in function</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">processUser</span>(<span class="hljs-params">name, age, hobbies</span>) {
+  <span class="hljs-title function_">assertString</span>(name, <span class="hljs-string">&#x27;name&#x27;</span>);
+  <span class="hljs-title function_">assertNumber</span>(age, <span class="hljs-string">&#x27;age&#x27;</span>);
+  <span class="hljs-title function_">assertArray</span>(hobbies, <span class="hljs-string">&#x27;hobbies&#x27;</span>);
+
+  <span class="hljs-comment">// Safe to use now</span>
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${name}</span> is <span class="hljs-subst">${age}</span> years old`</span>);
+}
+</code></pre><h3 id="advanced-type-checking">Advanced Type Checking</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Get precise type</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">getType</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">if</span> (value === <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;null&#x27;</span>;
+  <span class="hljs-keyword">if</span> (<span class="hljs-title class_">Array</span>.<span class="hljs-title function_">isArray</span>(value)) <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;array&#x27;</span>;
+
+  <span class="hljs-keyword">const</span> type = <span class="hljs-keyword">typeof</span> value;
+  <span class="hljs-keyword">if</span> (type === <span class="hljs-string">&#x27;object&#x27;</span>) {
+    <span class="hljs-comment">// Get constructor name for objects</span>
+    <span class="hljs-keyword">return</span> value.<span class="hljs-property">constructor</span>?.<span class="hljs-property">name</span>.<span class="hljs-title function_">toLowerCase</span>() || <span class="hljs-string">&#x27;object&#x27;</span>;
+  }
+
+  <span class="hljs-keyword">return</span> type;
+}
+
+<span class="hljs-title function_">getType</span>(<span class="hljs-number">42</span>);               <span class="hljs-comment">// &quot;number&quot;</span>
+<span class="hljs-title function_">getType</span>(<span class="hljs-string">&quot;text&quot;</span>);           <span class="hljs-comment">// &quot;string&quot;</span>
+<span class="hljs-title function_">getType</span>(<span class="hljs-literal">null</span>);             <span class="hljs-comment">// &quot;null&quot;</span>
+<span class="hljs-title function_">getType</span>([]);               <span class="hljs-comment">// &quot;array&quot;</span>
+<span class="hljs-title function_">getType</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>());       <span class="hljs-comment">// &quot;date&quot;</span>
+<span class="hljs-title function_">getType</span>(<span class="hljs-regexp">/regex/</span>);          <span class="hljs-comment">// &quot;regexp&quot;</span>
+
+<span class="hljs-comment">// Object type checking</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">getObjectType</span>(<span class="hljs-params">value</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">toString</span>.<span class="hljs-title function_">call</span>(value).<span class="hljs-title function_">slice</span>(<span class="hljs-number">8</span>, -<span class="hljs-number">1</span>);
+}
+
+<span class="hljs-title function_">getObjectType</span>({});         <span class="hljs-comment">// &quot;Object&quot;</span>
+<span class="hljs-title function_">getObjectType</span>([]);         <span class="hljs-comment">// &quot;Array&quot;</span>
+<span class="hljs-title function_">getObjectType</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()); <span class="hljs-comment">// &quot;Date&quot;</span>
+<span class="hljs-title function_">getObjectType</span>(<span class="hljs-regexp">/regex/</span>);    <span class="hljs-comment">// &quot;RegExp&quot;</span>
+<span class="hljs-title function_">getObjectType</span>(<span class="hljs-literal">null</span>);       <span class="hljs-comment">// &quot;Null&quot;</span>
+</code></pre><hr>
+<h2 id="summary">Summary</h2>
+<h3 id="key-points">Key Points</h3>
+<ol>
+<li><strong>JavaScript is weakly typed</strong> - variables can change type</li>
+<li><strong>7 primitive types</strong>: Number, String, Boolean, Undefined, Null, Symbol, BigInt</li>
+<li><strong>Primitives</strong> are immutable and copied by value</li>
+<li><strong>Reference types</strong> are mutable and copied by reference</li>
+<li><strong>Type coercion</strong> happens automatically (often unexpectedly)</li>
+<li><strong>typeof</strong> has quirks (null is &quot;object&quot;, arrays are &quot;object&quot;)</li>
+<li><strong>Always use ===</strong> for comparisons (strict equality)</li>
+<li><strong>Validate and convert types</strong> explicitly for safety</li>
+</ol>
+<h3 id="best-practices">Best Practices</h3>
+<ul>
+<li>Use strict equality (<code>===</code>)</li>
+<li>Explicitly convert types when needed</li>
+<li>Validate input types</li>
+<li>Avoid relying on type coercion</li>
+<li>Use <code>Array.isArray()</code> for arrays</li>
+<li>Check for <code>null</code> explicitly</li>
+<li>Use type checking functions</li>
+<li>Consider TypeScript for type safety</li>
+</ul>
+<h3 id="common-pitfalls-to-avoid">Common Pitfalls to Avoid</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Don&#x27;t rely on ==</span>
+<span class="hljs-string">&quot;5&quot;</span> == <span class="hljs-number">5</span>;              <span class="hljs-comment">// true (confusing)</span>
+
+<span class="hljs-comment">// Don&#x27;t forget typeof null</span>
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> x === <span class="hljs-string">&quot;object&quot;</span>) {
+  <span class="hljs-comment">// Could be object, array, or null!</span>
+}
+
+<span class="hljs-comment">// Don&#x27;t use typeof for arrays</span>
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> arr === <span class="hljs-string">&quot;array&quot;</span>) {  <span class="hljs-comment">// Wrong!</span>
+  <span class="hljs-comment">// Never executes</span>
+}
+
+<span class="hljs-comment">// Don&#x27;t trust falsy checks for all cases</span>
+<span class="hljs-keyword">if</span> (!value) {
+  <span class="hljs-comment">// Catches 0, &quot;&quot;, false, null, undefined - might not want all</span>
+}
+
+<span class="hljs-comment">// Use explicit checks</span>
+<span class="hljs-keyword">if</span> (value === <span class="hljs-literal">null</span> || value === <span class="hljs-literal">undefined</span>) { <span class="hljs-comment">/* ... */</span> }
+<span class="hljs-keyword">if</span> (<span class="hljs-title class_">Array</span>.<span class="hljs-title function_">isArray</span>(value)) { <span class="hljs-comment">/* ... */</span> }
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> value === <span class="hljs-string">&#x27;number&#x27;</span> &amp;&amp; !<span class="hljs-built_in">isNaN</span>(value)) { <span class="hljs-comment">/* ... */</span> }
+</code></pre><div class="page-navigation">
+            <a href="01-git-version-control.html" class="nav-btn nav-prev" data-nav="prev">
+                <span class="nav-label">Previous</span>
+                <span class="nav-title">Git & Version Control</span>
+            </a>
+        
+            <a href="03-prototypal-inheritance.html" class="nav-btn nav-next" data-nav="next">
+                <span class="nav-label">Next</span>
+                <span class="nav-title">Prototypal Inheritance</span>
+            </a>
+        </div>
+        <div class="progress-section">
+            <div id="progress-controls"></div>
+            <div class="notes-section">
+                <h3>Your Notes</h3>
+                <textarea id="page-notes" placeholder="Add your notes here... (saved automatically)"></textarea>
+            </div>
+        </div>
+    
+    </main>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" aria-label="Back to top">↑</button>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="modal">
+        <div class="modal-content search-content">
+            <div class="search-header">
+                <input type="text" id="search-input" placeholder="Search topics..." autofocus>
+                <button id="search-close" aria-label="Close search">✕</button>
+            </div>
+            <div id="search-results" class="search-results"></div>
+            <div class="search-footer">
+                <span>↑↓ Navigate</span>
+                <span>↵ Select</span>
+                <span>Esc Close</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shortcuts Modal -->
+    <div id="shortcuts-modal" class="modal">
+        <div class="modal-content shortcuts-modal-content">
+            <div class="modal-header">
+                <h2>Keyboard Shortcuts</h2>
+                <button id="shortcuts-close" aria-label="Close shortcuts">✕</button>
+            </div>
+            <div class="shortcuts-content"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/nav.js"></script>
+    <script src="/js/progress.js"></script>
+    <script src="/js/search.js"></script>
+    <script src="/js/shortcuts.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}}</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+</head>
+
+<body>
+    <!-- Header Toolbar -->
+    <div id="header-toolbar">
+        <button id="search-trigger" aria-label="Search" title="Search (Cmd+K)">
+            🔍
+        </button>
+        <button id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle Dark Mode (Cmd+D)">
+            <span id="dark-mode-icon">🌙</span>
+        </button>
+        <button id="shortcuts-help" onclick="window.Shortcuts.show()" aria-label="Keyboard shortcuts"
+            title="Shortcuts (?)">
+            ⌨️
+        </button>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button id="menu-toggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Progress Bar -->
+    <div id="progress-bar">
+        <div id="progress-fill"></div>
+    </div>
+
+    <!-- Overall Progress Indicator -->
+    <div id="overall-progress">
+        <div id="overall-progress-bar" style="width: 0%"></div>
+        <span id="progress-text">0/0 topics completed</span>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar">
+        <div id="sidebar-header">
+            <h2>{{SITE_TITLE}}</h2>
+        </div>
+        <ul id="nav-list">
+            {{NAV_LIST}}
+        </ul>
+        <div id="sidebar-footer">
+            <button id="reset-progress" class="sidebar-btn">Reset Progress</button>
+            <button id="export-progress" class="sidebar-btn">Export</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        {{CONTENT}}
+    </main>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" aria-label="Back to top">↑</button>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="modal">
+        <div class="modal-content search-content">
+            <div class="search-header">
+                <input type="text" id="search-input" placeholder="Search topics..." autofocus>
+                <button id="search-close" aria-label="Close search">✕</button>
+            </div>
+            <div id="search-results" class="search-results"></div>
+            <div class="search-footer">
+                <span>↑↓ Navigate</span>
+                <span>↵ Select</span>
+                <span>Esc Close</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shortcuts Modal -->
+    <div id="shortcuts-modal" class="modal">
+        <div class="modal-content shortcuts-modal-content">
+            <div class="modal-header">
+                <h2>Keyboard Shortcuts</h2>
+                <button id="shortcuts-close" aria-label="Close shortcuts">✕</button>
+            </div>
+            <div class="shortcuts-content"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/nav.js"></script>
+    <script src="/js/progress.js"></script>
+    <script src="/js/search.js"></script>
+    <script src="/js/shortcuts.js"></script>
+</body>
+
+</html>

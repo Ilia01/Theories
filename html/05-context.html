@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context (this)</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+</head>
+
+<body>
+    <!-- Header Toolbar -->
+    <div id="header-toolbar">
+        <button id="search-trigger" aria-label="Search" title="Search (Cmd+K)">
+            🔍
+        </button>
+        <button id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle Dark Mode (Cmd+D)">
+            <span id="dark-mode-icon">🌙</span>
+        </button>
+        <button id="shortcuts-help" onclick="window.Shortcuts.show()" aria-label="Keyboard shortcuts"
+            title="Shortcuts (?)">
+            ⌨️
+        </button>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button id="menu-toggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Progress Bar -->
+    <div id="progress-bar">
+        <div id="progress-fill"></div>
+    </div>
+
+    <!-- Overall Progress Indicator -->
+    <div id="overall-progress">
+        <div id="overall-progress-bar" style="width: 0%"></div>
+        <span id="progress-text">0/0 topics completed</span>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar">
+        <div id="sidebar-header">
+            <h2>JS/NodeJs Concepts</h2>
+        </div>
+        <ul id="nav-list">
+                        <li><a href="01-git-version-control.html"><span class="nav-number">1.</span>Git & Version Control</a></li>
+            <li><a href="02-javascript-data-types.html"><span class="nav-number">2.</span>JavaScript Data Types</a></li>
+            <li><a href="03-prototypal-inheritance.html"><span class="nav-number">3.</span>Prototypal Inheritance</a></li>
+            <li><a href="04-closures.html"><span class="nav-number">4.</span>Closures</a></li>
+            <li><a href="05-context.html" class="active"><span class="nav-number">5.</span>Context (this)</a></li>
+            <li><a href="06-classes.html"><span class="nav-number">6.</span>Classes</a></li>
+            <li><a href="07-event-loop-async.html"><span class="nav-number">7.</span>Event Loop & Async</a></li>
+            <li><a href="08-garbage-collection.html"><span class="nav-number">8.</span>Garbage Collection</a></li>
+        </ul>
+        <div id="sidebar-footer">
+            <button id="reset-progress" class="sidebar-btn">Reset Progress</button>
+            <button id="export-progress" class="sidebar-btn">Export</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        
+        <aside class="table-of-contents">
+            <h3>On This Page</h3>
+            <nav class="toc-nav">
+                <ul><li class=""><a href="#table-of-contents">Table of Contents</a></li>
+<li class=""><a href="#definition-of-context">Definition of Context</a></li>
+<li class="toc-sub"><a href="#what-is-context">What is Context?</a></li>
+<li class="toc-sub"><a href="#context-vs-scope">Context vs Scope</a></li>
+<li class=""><a href="#global-context">Global Context</a></li>
+<li class="toc-sub"><a href="#in-browsers">In Browsers</a></li>
+<li class="toc-sub"><a href="#in-nodejs">In Node.js</a></li>
+<li class="toc-sub"><a href="#global-object-references">Global Object References</a></li>
+<li class=""><a href="#runtime-determination">Runtime Determination</a></li>
+<li class="toc-sub"><a href="#the-four-rules-of-this-binding">The Four Rules of `this` Binding</a></li>
+<li class="toc-sub"><a href="#1-default-binding-function-call">1. Default Binding (Function Call)</a></li>
+<li class="toc-sub"><a href="#2-implicit-binding-method-call">2. Implicit Binding (Method Call)</a></li>
+<li class="toc-sub"><a href="#3-explicit-binding-call-apply-bind">3. Explicit Binding (call, apply, bind)</a></li>
+<li class="toc-sub"><a href="#4-new-binding-constructor-call">4. new Binding (Constructor Call)</a></li>
+<li class="toc-sub"><a href="#binding-precedence">Binding Precedence</a></li>
+<li class="toc-sub"><a href="#arrow-functions-lexical-this">Arrow Functions (Lexical this)</a></li>
+<li class=""><a href="#explicit-binding">Explicit Binding</a></li>
+<li class="toc-sub"><a href="#call">call()</a></li>
+<li class="toc-sub"><a href="#apply">apply()</a></li>
+<li class="toc-sub"><a href="#bind">bind()</a></li>
+<li class="toc-sub"><a href="#comparison-table">Comparison Table</a></li>
+<li class=""><a href="#context-loss">Context Loss</a></li>
+<li class="toc-sub"><a href="#problem-1-method-extraction">Problem 1: Method Extraction</a></li>
+<li class="toc-sub"><a href="#problem-2-callbacks">Problem 2: Callbacks</a></li>
+<li class="toc-sub"><a href="#problem-3-event-handlers">Problem 3: Event Handlers</a></li>
+<li class="toc-sub"><a href="#problem-4-array-methods">Problem 4: Array Methods</a></li>
+<li class=""><a href="#diagnosing-and-resolving-issues">Diagnosing and Resolving Issues</a></li>
+<li class="toc-sub"><a href="#diagnostic-steps">Diagnostic Steps</a></li>
+<li class="toc-sub"><a href="#debugging-context">Debugging Context</a></li>
+<li class="toc-sub"><a href="#common-patterns-to-preserve-context">Common Patterns to Preserve Context</a></li>
+<li class="toc-sub"><a href="#context-loss-decision-tree">Context Loss Decision Tree</a></li>
+<li class=""><a href="#context-in-async-functions">Context in Async Functions</a></li>
+<li class="toc-sub"><a href="#promises">Promises</a></li>
+<li class="toc-sub"><a href="#asyncawait">Async/Await</a></li>
+<li class="toc-sub"><a href="#settimeoutsetinterval">setTimeout/setInterval</a></li>
+<li class="toc-sub"><a href="#callbacks">Callbacks</a></li>
+<li class=""><a href="#context-in-nodejs">Context in Node.js</a></li>
+<li class="toc-sub"><a href="#module-level-context">Module-Level Context</a></li>
+<li class="toc-sub"><a href="#event-emitters">Event Emitters</a></li>
+<li class="toc-sub"><a href="#expresshttp-handlers">Express/HTTP Handlers</a></li>
+<li class="toc-sub"><a href="#streams">Streams</a></li>
+<li class="toc-sub"><a href="#class-methods-as-callbacks">Class Methods as Callbacks</a></li>
+<li class=""><a href="#summary">Summary</a></li>
+<li class="toc-sub"><a href="#key-takeaways">Key Takeaways</a></li>
+<li class="toc-sub"><a href="#best-practices">Best Practices</a></li>
+<li class="toc-sub"><a href="#quick-reference">Quick Reference</a></li>
+<li class="toc-sub"><a href="#context-loss-checklist">Context Loss Checklist</a></li></ul>
+            </nav>
+        </aside>
+    
+        <aside class="table-of-contents">
+            <h3>On This Page</h3>
+            <nav class="toc-nav">
+                <ul><li class=""><a href="#table-of-contents">Table of Contents</a></li>
+<li class=""><a href="#definition-of-context">Definition of Context</a></li>
+<li class="toc-sub"><a href="#what-is-context">What is Context?</a></li>
+<li class="toc-sub"><a href="#context-vs-scope">Context vs Scope</a></li>
+<li class=""><a href="#global-context">Global Context</a></li>
+<li class="toc-sub"><a href="#in-browsers">In Browsers</a></li>
+<li class="toc-sub"><a href="#in-nodejs">In Node.js</a></li>
+<li class="toc-sub"><a href="#global-object-references">Global Object References</a></li>
+<li class=""><a href="#runtime-determination">Runtime Determination</a></li>
+<li class="toc-sub"><a href="#the-four-rules-of-this-binding">The Four Rules of `this` Binding</a></li>
+<li class="toc-sub"><a href="#1-default-binding-function-call">1. Default Binding (Function Call)</a></li>
+<li class="toc-sub"><a href="#2-implicit-binding-method-call">2. Implicit Binding (Method Call)</a></li>
+<li class="toc-sub"><a href="#3-explicit-binding-call-apply-bind">3. Explicit Binding (call, apply, bind)</a></li>
+<li class="toc-sub"><a href="#4-new-binding-constructor-call">4. new Binding (Constructor Call)</a></li>
+<li class="toc-sub"><a href="#binding-precedence">Binding Precedence</a></li>
+<li class="toc-sub"><a href="#arrow-functions-lexical-this">Arrow Functions (Lexical this)</a></li>
+<li class=""><a href="#explicit-binding">Explicit Binding</a></li>
+<li class="toc-sub"><a href="#call">call()</a></li>
+<li class="toc-sub"><a href="#apply">apply()</a></li>
+<li class="toc-sub"><a href="#bind">bind()</a></li>
+<li class="toc-sub"><a href="#comparison-table">Comparison Table</a></li>
+<li class=""><a href="#context-loss">Context Loss</a></li>
+<li class="toc-sub"><a href="#problem-1-method-extraction">Problem 1: Method Extraction</a></li>
+<li class="toc-sub"><a href="#problem-2-callbacks">Problem 2: Callbacks</a></li>
+<li class="toc-sub"><a href="#problem-3-event-handlers">Problem 3: Event Handlers</a></li>
+<li class="toc-sub"><a href="#problem-4-array-methods">Problem 4: Array Methods</a></li>
+<li class=""><a href="#diagnosing-and-resolving-issues">Diagnosing and Resolving Issues</a></li>
+<li class="toc-sub"><a href="#diagnostic-steps">Diagnostic Steps</a></li>
+<li class="toc-sub"><a href="#debugging-context">Debugging Context</a></li>
+<li class="toc-sub"><a href="#common-patterns-to-preserve-context">Common Patterns to Preserve Context</a></li>
+<li class="toc-sub"><a href="#context-loss-decision-tree">Context Loss Decision Tree</a></li>
+<li class=""><a href="#context-in-async-functions">Context in Async Functions</a></li>
+<li class="toc-sub"><a href="#promises">Promises</a></li>
+<li class="toc-sub"><a href="#asyncawait">Async/Await</a></li>
+<li class="toc-sub"><a href="#settimeoutsetinterval">setTimeout/setInterval</a></li>
+<li class="toc-sub"><a href="#callbacks">Callbacks</a></li>
+<li class=""><a href="#context-in-nodejs">Context in Node.js</a></li>
+<li class="toc-sub"><a href="#module-level-context">Module-Level Context</a></li>
+<li class="toc-sub"><a href="#event-emitters">Event Emitters</a></li>
+<li class="toc-sub"><a href="#expresshttp-handlers">Express/HTTP Handlers</a></li>
+<li class="toc-sub"><a href="#streams">Streams</a></li>
+<li class="toc-sub"><a href="#class-methods-as-callbacks">Class Methods as Callbacks</a></li>
+<li class=""><a href="#summary">Summary</a></li>
+<li class="toc-sub"><a href="#key-takeaways">Key Takeaways</a></li>
+<li class="toc-sub"><a href="#best-practices">Best Practices</a></li>
+<li class="toc-sub"><a href="#quick-reference">Quick Reference</a></li>
+<li class="toc-sub"><a href="#context-loss-checklist">Context Loss Checklist</a></li></ul>
+            </nav>
+        </aside>
+    <h1 id="context-in-javascript">Context in JavaScript</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#definition-of-context">Definition of Context</a></li>
+<li><a href="#global-context">Global Context</a></li>
+<li><a href="#runtime-determination">Runtime Determination</a></li>
+<li><a href="#explicit-binding">Explicit Binding</a></li>
+<li><a href="#context-loss">Context Loss</a></li>
+<li><a href="#diagnosing-and-resolving-issues">Diagnosing and Resolving Issues</a></li>
+<li><a href="#context-in-async-functions">Context in Async Functions</a></li>
+<li><a href="#context-in-nodejs">Context in Node.js</a></li>
+</ul>
+<hr>
+<h2 id="definition-of-context">Definition of Context</h2>
+<h3 id="what-is-context">What is Context?</h3>
+<p><strong>Context</strong> = The value of the <code>this</code> keyword within a function</p>
+<p><strong>Key Points:</strong></p>
+<ul>
+<li>Determined by <strong>how</strong> a function is called (not where it&#39;s defined)</li>
+<li>Dynamic binding (runtime determination)</li>
+<li>Different from <strong>scope</strong> (which is lexical/static)</li>
+<li>One of the most confusing aspects of JavaScript</li>
+</ul>
+<h3 id="context-vs-scope">Context vs Scope</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> myVar = <span class="hljs-string">&#x27;global&#x27;</span>;
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">outer</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> myVar = <span class="hljs-string">&#x27;outer&#x27;</span>;
+
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">inner</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-comment">// Scope: lexical (where code is written)</span>
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(myVar);  <span class="hljs-comment">// &#x27;outer&#x27; (from scope chain)</span>
+
+    <span class="hljs-comment">// Context: dynamic (how function is called)</span>
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);   <span class="hljs-comment">// Depends on how inner() is called</span>
+  }
+
+  <span class="hljs-keyword">return</span> inner;
+}
+
+<span class="hljs-keyword">const</span> fn = <span class="hljs-title function_">outer</span>();
+<span class="hljs-title function_">fn</span>();  <span class="hljs-comment">// this will vary based on call site</span>
+</code></pre><hr>
+<h2 id="global-context">Global Context</h2>
+<h3 id="in-browsers">In Browsers</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);  <span class="hljs-comment">// Window object</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">globalFunc</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);  <span class="hljs-comment">// Window (non-strict mode)</span>
+}
+
+<span class="hljs-title function_">globalFunc</span>();
+
+<span class="hljs-comment">// In strict mode</span>
+<span class="hljs-meta">&#x27;use strict&#x27;</span>;
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">strictFunc</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);  <span class="hljs-comment">// undefined</span>
+}
+
+<span class="hljs-title function_">strictFunc</span>();
+</code></pre><h3 id="in-nodejs">In Node.js</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);  <span class="hljs-comment">// {} (empty object, not global!)</span>
+
+<span class="hljs-comment">// At module level, &#x27;this&#x27; refers to module.exports</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span> === <span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span>);  <span class="hljs-comment">// true</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">func</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);  <span class="hljs-comment">// global object (non-strict)</span>
+}
+
+<span class="hljs-title function_">func</span>();
+
+<span class="hljs-comment">// In strict mode</span>
+<span class="hljs-meta">&#x27;use strict&#x27;</span>;
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">strictFunc</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);  <span class="hljs-comment">// undefined</span>
+}
+
+<span class="hljs-title function_">strictFunc</span>();
+</code></pre><h3 id="global-object-references">Global Object References</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Browser</span>
+<span class="hljs-variable language_">window</span>.<span class="hljs-property">name</span> = <span class="hljs-string">&quot;Browser&quot;</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span>);  <span class="hljs-comment">// &quot;Browser&quot;</span>
+
+<span class="hljs-comment">// Node.js</span>
+<span class="hljs-variable language_">global</span>.<span class="hljs-property">name</span> = <span class="hljs-string">&quot;Node&quot;</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span>);  <span class="hljs-comment">// undefined (this !== global at module level)</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">showGlobal</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span>);  <span class="hljs-comment">// &quot;Node&quot; (this === global in function)</span>
+}
+<span class="hljs-title function_">showGlobal</span>();
+</code></pre><hr>
+<h2 id="runtime-determination">Runtime Determination</h2>
+<h3 id="the-four-rules-of-this-binding">The Four Rules of <code>this</code> Binding</h3>
+<p>Priority order: <strong>new &gt; explicit &gt; implicit &gt; default</strong></p>
+<h3 id="1-default-binding-function-call">1. Default Binding (Function Call)</h3>
+<p>Standalone function invocation.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">showThis</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);
+}
+
+<span class="hljs-title function_">showThis</span>();  <span class="hljs-comment">// global object (or undefined in strict mode)</span>
+
+<span class="hljs-comment">// In strict mode</span>
+<span class="hljs-meta">&#x27;use strict&#x27;</span>;
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">strictShow</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);
+}
+
+<span class="hljs-title function_">strictShow</span>();  <span class="hljs-comment">// undefined</span>
+</code></pre><h3 id="2-implicit-binding-method-call">2. Implicit Binding (Method Call)</h3>
+<p>Function called as an object method.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Alice&quot;</span>,
+  <span class="hljs-title function_">greet</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span>);
+  }
+};
+
+obj.<span class="hljs-title function_">greet</span>();  <span class="hljs-comment">// &quot;Alice&quot; (this = obj)</span>
+
+<span class="hljs-comment">// Multiple levels</span>
+<span class="hljs-keyword">const</span> outer = {
+  <span class="hljs-attr">inner</span>: {
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Bob&quot;</span>,
+    <span class="hljs-title function_">greet</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span>);
+    }
+  }
+};
+
+outer.<span class="hljs-property">inner</span>.<span class="hljs-title function_">greet</span>();  <span class="hljs-comment">// &quot;Bob&quot; (this = outer.inner)</span>
+<span class="hljs-comment">// Only immediate parent matters!</span>
+</code></pre><h3 id="3-explicit-binding-call-apply-bind">3. Explicit Binding (call, apply, bind)</h3>
+<p>Manually set <code>this</code> value.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">greet</span>(<span class="hljs-params">greeting, punctuation</span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${greeting}</span>, I&#x27;m <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span><span class="hljs-subst">${punctuation}</span>`</span>);
+}
+
+<span class="hljs-keyword">const</span> person1 = { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Alice&quot;</span> };
+<span class="hljs-keyword">const</span> person2 = { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Bob&quot;</span> };
+
+<span class="hljs-comment">// call: arguments passed individually</span>
+greet.<span class="hljs-title function_">call</span>(person1, <span class="hljs-string">&quot;Hello&quot;</span>, <span class="hljs-string">&quot;!&quot;</span>);  <span class="hljs-comment">// &quot;Hello, I&#x27;m Alice!&quot;</span>
+
+<span class="hljs-comment">// apply: arguments passed as array</span>
+greet.<span class="hljs-title function_">apply</span>(person2, [<span class="hljs-string">&quot;Hi&quot;</span>, <span class="hljs-string">&quot;.&quot;</span>]);  <span class="hljs-comment">// &quot;Hi, I&#x27;m Bob.&quot;</span>
+
+<span class="hljs-comment">// bind: returns new function with bound this</span>
+<span class="hljs-keyword">const</span> greetAlice = greet.<span class="hljs-title function_">bind</span>(person1);
+<span class="hljs-title function_">greetAlice</span>(<span class="hljs-string">&quot;Hey&quot;</span>, <span class="hljs-string">&quot;!!!&quot;</span>);  <span class="hljs-comment">// &quot;Hey, I&#x27;m Alice!!!&quot;</span>
+</code></pre><h3 id="4-new-binding-constructor-call">4. new Binding (Constructor Call)</h3>
+<p>Using <code>new</code> keyword creates new object as <code>this</code>.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Person</span>(<span class="hljs-params">name, age</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">age</span> = age;
+  <span class="hljs-comment">// new creates empty object and sets it as &#x27;this&#x27;</span>
+  <span class="hljs-comment">// returns this object automatically</span>
+}
+
+<span class="hljs-keyword">const</span> alice = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;Alice&quot;</span>, <span class="hljs-number">30</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(alice.<span class="hljs-property">name</span>);  <span class="hljs-comment">// &quot;Alice&quot;</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(alice.<span class="hljs-property">age</span>);   <span class="hljs-comment">// 30</span>
+
+<span class="hljs-comment">// What &#x27;new&#x27; does:</span>
+<span class="hljs-comment">// 1. Creates empty object</span>
+<span class="hljs-comment">// 2. Sets object&#x27;s prototype</span>
+<span class="hljs-comment">// 3. Binds &#x27;this&#x27; to the object</span>
+<span class="hljs-comment">// 4. Returns the object (unless function returns its own object)</span>
+</code></pre><h3 id="binding-precedence">Binding Precedence</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">identify</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span>;
+}
+
+<span class="hljs-keyword">const</span> obj1 = { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;obj1&quot;</span>, identify };
+<span class="hljs-keyword">const</span> obj2 = { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;obj2&quot;</span> };
+
+<span class="hljs-comment">// Implicit binding</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj1.<span class="hljs-title function_">identify</span>());  <span class="hljs-comment">// &quot;obj1&quot;</span>
+
+<span class="hljs-comment">// Explicit binding overrides implicit</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj1.<span class="hljs-property">identify</span>.<span class="hljs-title function_">call</span>(obj2));  <span class="hljs-comment">// &quot;obj2&quot;</span>
+
+<span class="hljs-comment">// new binding overrides explicit (via bind)</span>
+<span class="hljs-keyword">const</span> boundIdentify = identify.<span class="hljs-title function_">bind</span>(obj1);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">boundIdentify</span>());  <span class="hljs-comment">// &quot;obj1&quot;</span>
+
+<span class="hljs-keyword">const</span> newObj = <span class="hljs-keyword">new</span> <span class="hljs-title function_">boundIdentify</span>();  <span class="hljs-comment">// new overrides bind!</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(newObj.<span class="hljs-property">name</span>);  <span class="hljs-comment">// undefined (new object created)</span>
+</code></pre><h3 id="arrow-functions-lexical-this">Arrow Functions (Lexical this)</h3>
+<p>Arrow functions don&#39;t have their own <code>this</code> - they inherit from enclosing scope.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Object&quot;</span>,
+
+  <span class="hljs-attr">regularFunc</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span>);  <span class="hljs-comment">// &quot;Object&quot;</span>
+  },
+
+  <span class="hljs-attr">arrowFunc</span>: <span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span>);  <span class="hljs-comment">// undefined (inherits from outer scope)</span>
+  },
+
+  <span class="hljs-attr">method</span>: <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">const</span> <span class="hljs-title function_">arrow</span> = (<span class="hljs-params"></span>) =&gt; {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span>);  <span class="hljs-comment">// &quot;Object&quot; (inherits from method)</span>
+    };
+    <span class="hljs-title function_">arrow</span>();
+  }
+};
+
+obj.<span class="hljs-title function_">regularFunc</span>();  <span class="hljs-comment">// &quot;Object&quot;</span>
+obj.<span class="hljs-title function_">arrowFunc</span>();    <span class="hljs-comment">// undefined</span>
+obj.<span class="hljs-title function_">method</span>();       <span class="hljs-comment">// &quot;Object&quot;</span>
+
+<span class="hljs-comment">// Arrow functions ignore call/apply/bind</span>
+<span class="hljs-keyword">const</span> person = { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Alice&quot;</span> };
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">arrowGreet</span> = (<span class="hljs-params"></span>) =&gt; <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span>);
+arrowGreet.<span class="hljs-title function_">call</span>(person);  <span class="hljs-comment">// undefined (can&#x27;t change arrow function&#x27;s this)</span>
+</code></pre><hr>
+<h2 id="explicit-binding">Explicit Binding</h2>
+<h3 id="call">call()</h3>
+<p><code>func.call(thisArg, arg1, arg2, ...)</code></p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">introduce</span>(<span class="hljs-params">greeting, punctuation</span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${greeting}</span>, I&#x27;m <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span><span class="hljs-subst">${punctuation}</span>`</span>);
+}
+
+<span class="hljs-keyword">const</span> person = { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Alice&quot;</span> };
+
+introduce.<span class="hljs-title function_">call</span>(person, <span class="hljs-string">&quot;Hello&quot;</span>, <span class="hljs-string">&quot;!&quot;</span>);
+<span class="hljs-comment">// &quot;Hello, I&#x27;m Alice!&quot;</span>
+
+<span class="hljs-comment">// Borrowing methods</span>
+<span class="hljs-keyword">const</span> obj1 = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Object 1&quot;</span>,
+  <span class="hljs-title function_">greet</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Hello from <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span>`</span>);
+  }
+};
+
+<span class="hljs-keyword">const</span> obj2 = { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Object 2&quot;</span> };
+
+obj1.<span class="hljs-property">greet</span>.<span class="hljs-title function_">call</span>(obj2);  <span class="hljs-comment">// &quot;Hello from Object 2&quot;</span>
+</code></pre><h3 id="apply">apply()</h3>
+<p><code>func.apply(thisArg, [argsArray])</code></p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">introduce</span>(<span class="hljs-params">greeting, punctuation</span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${greeting}</span>, I&#x27;m <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span><span class="hljs-subst">${punctuation}</span>`</span>);
+}
+
+<span class="hljs-keyword">const</span> person = { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Bob&quot;</span> };
+
+introduce.<span class="hljs-title function_">apply</span>(person, [<span class="hljs-string">&quot;Hi&quot;</span>, <span class="hljs-string">&quot;.&quot;</span>]);
+<span class="hljs-comment">// &quot;Hi, I&#x27;m Bob.&quot;</span>
+
+<span class="hljs-comment">// Useful with arrays</span>
+<span class="hljs-keyword">const</span> numbers = [<span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">7</span>];
+
+<span class="hljs-comment">// Without apply</span>
+<span class="hljs-keyword">const</span> max1 = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">max</span>(<span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">7</span>);  <span class="hljs-comment">// 7</span>
+
+<span class="hljs-comment">// With apply (spread array)</span>
+<span class="hljs-keyword">const</span> max2 = <span class="hljs-title class_">Math</span>.<span class="hljs-property">max</span>.<span class="hljs-title function_">apply</span>(<span class="hljs-literal">null</span>, numbers);  <span class="hljs-comment">// 7</span>
+
+<span class="hljs-comment">// Modern alternative: spread operator</span>
+<span class="hljs-keyword">const</span> max3 = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">max</span>(...numbers);  <span class="hljs-comment">// 7</span>
+</code></pre><h3 id="bind">bind()</h3>
+<p><code>func.bind(thisArg, arg1, arg2, ...)</code></p>
+<p>Returns <strong>new function</strong> with bound <code>this</code> (doesn&#39;t invoke immediately).</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">greet</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Hi, I&#x27;m <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span>`</span>);
+}
+
+<span class="hljs-keyword">const</span> person = { <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Charlie&quot;</span> };
+
+<span class="hljs-keyword">const</span> boundGreet = greet.<span class="hljs-title function_">bind</span>(person);
+<span class="hljs-title function_">boundGreet</span>();  <span class="hljs-comment">// &quot;Hi, I&#x27;m Charlie&quot;</span>
+
+<span class="hljs-comment">// Partial application</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">multiply</span>(<span class="hljs-params">a, b</span>) {
+  <span class="hljs-keyword">return</span> a * b;
+}
+
+<span class="hljs-keyword">const</span> double = multiply.<span class="hljs-title function_">bind</span>(<span class="hljs-literal">null</span>, <span class="hljs-number">2</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">double</span>(<span class="hljs-number">5</span>));  <span class="hljs-comment">// 10 (2 * 5)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">double</span>(<span class="hljs-number">10</span>)); <span class="hljs-comment">// 20 (2 * 10)</span>
+
+<span class="hljs-comment">// Binding in callbacks</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Counter</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">count</span> = <span class="hljs-number">0</span>;
+  }
+
+  <span class="hljs-title function_">increment</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">count</span>++;
+  }
+
+  <span class="hljs-title function_">start</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-comment">// Without bind: loses context</span>
+    <span class="hljs-comment">// setInterval(this.increment, 1000);</span>
+
+    <span class="hljs-comment">// With bind: preserves context</span>
+    <span class="hljs-built_in">setInterval</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">increment</span>.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>), <span class="hljs-number">1000</span>);
+  }
+}
+</code></pre><h3 id="comparison-table">Comparison Table</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Invokes Immediately</th>
+<th>Arguments</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>call</code></td>
+<td>✅ Yes</td>
+<td>Individual</td>
+<td>Quick execution with known args</td>
+</tr>
+<tr>
+<td><code>apply</code></td>
+<td>✅ Yes</td>
+<td>Array</td>
+<td>Array of arguments</td>
+</tr>
+<tr>
+<td><code>bind</code></td>
+<td>❌ No (returns function)</td>
+<td>Individual</td>
+<td>Event handlers, callbacks</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="context-loss">Context Loss</h2>
+<h3 id="problem-1-method-extraction">Problem 1: Method Extraction</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> person = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Alice&quot;</span>,
+  <span class="hljs-title function_">greet</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Hi, I&#x27;m <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span>`</span>);
+  }
+};
+
+person.<span class="hljs-title function_">greet</span>();  <span class="hljs-comment">// &quot;Hi, I&#x27;m Alice&quot; ✅</span>
+
+<span class="hljs-comment">// Extract method</span>
+<span class="hljs-keyword">const</span> greet = person.<span class="hljs-property">greet</span>;
+<span class="hljs-title function_">greet</span>();  <span class="hljs-comment">// &quot;Hi, I&#x27;m undefined&quot; ❌</span>
+<span class="hljs-comment">// Context lost! &#x27;this&#x27; is now global/undefined</span>
+
+<span class="hljs-comment">// Solution 1: bind</span>
+<span class="hljs-keyword">const</span> boundGreet = person.<span class="hljs-property">greet</span>.<span class="hljs-title function_">bind</span>(person);
+<span class="hljs-title function_">boundGreet</span>();  <span class="hljs-comment">// &quot;Hi, I&#x27;m Alice&quot; ✅</span>
+
+<span class="hljs-comment">// Solution 2: arrow function wrapper</span>
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">wrappedGreet</span> = (<span class="hljs-params"></span>) =&gt; person.<span class="hljs-title function_">greet</span>();
+<span class="hljs-title function_">wrappedGreet</span>();  <span class="hljs-comment">// &quot;Hi, I&#x27;m Alice&quot; ✅</span>
+
+<span class="hljs-comment">// Solution 3: call/apply</span>
+greet.<span class="hljs-title function_">call</span>(person);  <span class="hljs-comment">// &quot;Hi, I&#x27;m Alice&quot; ✅</span>
+</code></pre><h3 id="problem-2-callbacks">Problem 2: Callbacks</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> counter = {
+  <span class="hljs-attr">count</span>: <span class="hljs-number">0</span>,
+  <span class="hljs-title function_">increment</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">count</span>++;
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">count</span>);
+  }
+};
+
+<span class="hljs-comment">// Lost context in setTimeout</span>
+<span class="hljs-built_in">setTimeout</span>(counter.<span class="hljs-property">increment</span>, <span class="hljs-number">1000</span>);  <span class="hljs-comment">// NaN ❌</span>
+
+<span class="hljs-comment">// Solution 1: bind</span>
+<span class="hljs-built_in">setTimeout</span>(counter.<span class="hljs-property">increment</span>.<span class="hljs-title function_">bind</span>(counter), <span class="hljs-number">1000</span>);  <span class="hljs-comment">// 1 ✅</span>
+
+<span class="hljs-comment">// Solution 2: arrow function</span>
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> counter.<span class="hljs-title function_">increment</span>(), <span class="hljs-number">1000</span>);  <span class="hljs-comment">// 1 ✅</span>
+
+<span class="hljs-comment">// Solution 3: wrapper function</span>
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  counter.<span class="hljs-title function_">increment</span>();
+}, <span class="hljs-number">1000</span>);  <span class="hljs-comment">// 1 ✅</span>
+</code></pre><h3 id="problem-3-event-handlers">Problem 3: Event Handlers</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Button</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">label</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">label</span> = label;
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">clickCount</span> = <span class="hljs-number">0</span>;
+  }
+
+  <span class="hljs-title function_">handleClick</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">clickCount</span>++;
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.label}</span> clicked <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.clickCount}</span> times`</span>);
+  }
+
+  <span class="hljs-comment">// ❌ Wrong: loses context</span>
+  <span class="hljs-title function_">attachWrong</span>(<span class="hljs-params">element</span>) {
+    element.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">handleClick</span>);
+    <span class="hljs-comment">// When clicked, &#x27;this&#x27; will be the element, not Button instance</span>
+  }
+
+  <span class="hljs-comment">// ✅ Solution 1: bind in method</span>
+  <span class="hljs-title function_">attachBind</span>(<span class="hljs-params">element</span>) {
+    element.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">handleClick</span>.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>));
+  }
+
+  <span class="hljs-comment">// ✅ Solution 2: arrow function</span>
+  <span class="hljs-title function_">attachArrow</span>(<span class="hljs-params">element</span>) {
+    element.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">handleClick</span>());
+  }
+
+  <span class="hljs-comment">// ✅ Solution 3: arrow function property</span>
+  handleClickArrow = <span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">clickCount</span>++;
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.label}</span> clicked <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.clickCount}</span> times`</span>);
+  }
+
+  <span class="hljs-title function_">attachArrowProperty</span>(<span class="hljs-params">element</span>) {
+    element.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">handleClickArrow</span>);
+  }
+}
+
+<span class="hljs-keyword">const</span> btn = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Button</span>(<span class="hljs-string">&quot;Submit&quot;</span>);
+<span class="hljs-keyword">const</span> element = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;submitBtn&#x27;</span>);
+btn.<span class="hljs-title function_">attachBind</span>(element);  <span class="hljs-comment">// Works correctly</span>
+</code></pre><h3 id="problem-4-array-methods">Problem 4: Array Methods</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Alice&quot;</span>,
+  <span class="hljs-attr">friends</span>: [<span class="hljs-string">&quot;Bob&quot;</span>, <span class="hljs-string">&quot;Charlie&quot;</span>, <span class="hljs-string">&quot;Dave&quot;</span>],
+
+  <span class="hljs-comment">// ❌ Wrong: loses context</span>
+  <span class="hljs-title function_">greetAllWrong</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">friends</span>.<span class="hljs-title function_">forEach</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">friend</span>) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> greets <span class="hljs-subst">${friend}</span>`</span>);
+      <span class="hljs-comment">// &#x27;this&#x27; is undefined in forEach callback</span>
+    });
+  },
+
+  <span class="hljs-comment">// ✅ Solution 1: thisArg parameter</span>
+  <span class="hljs-title function_">greetAllWithArg</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">friends</span>.<span class="hljs-title function_">forEach</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">friend</span>) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> greets <span class="hljs-subst">${friend}</span>`</span>);
+    }, <span class="hljs-variable language_">this</span>);  <span class="hljs-comment">// Pass &#x27;this&#x27; as second argument</span>
+  },
+
+  <span class="hljs-comment">// ✅ Solution 2: arrow function</span>
+  <span class="hljs-title function_">greetAllArrow</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">friends</span>.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">friend</span>) =&gt;</span> {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> greets <span class="hljs-subst">${friend}</span>`</span>);
+    });
+  },
+
+  <span class="hljs-comment">// ✅ Solution 3: save reference</span>
+  <span class="hljs-title function_">greetAllSaved</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">const</span> self = <span class="hljs-variable language_">this</span>;
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">friends</span>.<span class="hljs-title function_">forEach</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">friend</span>) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${self.name}</span> greets <span class="hljs-subst">${friend}</span>`</span>);
+    });
+  }
+};
+
+obj.<span class="hljs-title function_">greetAllArrow</span>();  <span class="hljs-comment">// Works correctly</span>
+</code></pre><hr>
+<h2 id="diagnosing-and-resolving-issues">Diagnosing and Resolving Issues</h2>
+<h3 id="diagnostic-steps">Diagnostic Steps</h3>
+<ol>
+<li><strong>Identify where function is called</strong></li>
+<li><strong>Determine which binding rule applies</strong></li>
+<li><strong>Check if function is arrow function</strong> (lexical this)</li>
+<li><strong>Verify context is what you expect</strong></li>
+<li><strong>Add <code>console.log(this)</code> to debug</strong></li>
+</ol>
+<h3 id="debugging-context">Debugging Context</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">debugContext</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;=== Context Debug ===&#x27;</span>);
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;this:&#x27;</span>, <span class="hljs-variable language_">this</span>);
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;typeof this:&#x27;</span>, <span class="hljs-keyword">typeof</span> <span class="hljs-variable language_">this</span>);
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;this.constructor:&#x27;</span>, <span class="hljs-variable language_">this</span>?.<span class="hljs-property">constructor</span>?.<span class="hljs-property">name</span>);
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;===================&#x27;</span>);
+}
+
+<span class="hljs-keyword">const</span> obj = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Test&quot;</span>,
+  <span class="hljs-attr">debug</span>: debugContext
+};
+
+<span class="hljs-comment">// Different ways to call:</span>
+<span class="hljs-title function_">debugContext</span>();         <span class="hljs-comment">// global/undefined</span>
+obj.<span class="hljs-title function_">debug</span>();           <span class="hljs-comment">// obj</span>
+debugContext.<span class="hljs-title function_">call</span>(obj); <span class="hljs-comment">// obj</span>
+<span class="hljs-keyword">new</span> <span class="hljs-title function_">debugContext</span>();     <span class="hljs-comment">// new instance</span>
+</code></pre><h3 id="common-patterns-to-preserve-context">Common Patterns to Preserve Context</h3>
+<h4 id="pattern-1-selfthat-this">Pattern 1: self/that/_this</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Timer</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">seconds</span> = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">const</span> self = <span class="hljs-variable language_">this</span>;  <span class="hljs-comment">// Save reference</span>
+
+  <span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    self.<span class="hljs-property">seconds</span>++;  <span class="hljs-comment">// Use saved reference</span>
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(self.<span class="hljs-property">seconds</span>);
+  }, <span class="hljs-number">1000</span>);
+}
+
+<span class="hljs-keyword">new</span> <span class="hljs-title class_">Timer</span>();
+</code></pre><h4 id="pattern-2-arrow-functions">Pattern 2: Arrow Functions</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Timer</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">seconds</span> = <span class="hljs-number">0</span>;
+
+  <span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">seconds</span>++;  <span class="hljs-comment">// Arrow function inherits &#x27;this&#x27;</span>
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">seconds</span>);
+  }, <span class="hljs-number">1000</span>);
+}
+
+<span class="hljs-keyword">new</span> <span class="hljs-title class_">Timer</span>();
+</code></pre><h4 id="pattern-3-bind">Pattern 3: bind</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Timer</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">seconds</span> = <span class="hljs-number">0</span>;
+
+  <span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">seconds</span>++;
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">seconds</span>);
+  }.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>), <span class="hljs-number">1000</span>);  <span class="hljs-comment">// Bind &#x27;this&#x27;</span>
+}
+
+<span class="hljs-keyword">new</span> <span class="hljs-title class_">Timer</span>();
+</code></pre><h4 id="pattern-4-class-arrow-properties">Pattern 4: Class Arrow Properties</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Timer</span> {
+  seconds = <span class="hljs-number">0</span>;
+
+  <span class="hljs-comment">// Arrow function as property</span>
+  increment = <span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">seconds</span>++;
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">seconds</span>);
+  }
+
+  <span class="hljs-title function_">start</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-built_in">setInterval</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">increment</span>, <span class="hljs-number">1000</span>);  <span class="hljs-comment">// No bind needed!</span>
+  }
+}
+
+<span class="hljs-keyword">new</span> <span class="hljs-title class_">Timer</span>().<span class="hljs-title function_">start</span>();
+</code></pre><h3 id="context-loss-decision-tree">Context Loss Decision Tree</h3>
+<pre><code>Lost context?
+├─ Is it an arrow function?
+│  └─ No: Check call site
+│     ├─ Function call? → Default binding
+│     ├─ Method call? → Implicit binding
+│     ├─ call/apply/bind? → Explicit binding
+│     └─ new? → New binding
+└─ Yes: Uses lexical this from enclosing scope
+</code></pre><hr>
+<h2 id="context-in-async-functions">Context in Async Functions</h2>
+<h3 id="promises">Promises</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = {
+  <span class="hljs-attr">value</span>: <span class="hljs-number">42</span>,
+
+  <span class="hljs-comment">// ❌ Context lost in .then()</span>
+  <span class="hljs-title function_">getValueWrong</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>()
+      .<span class="hljs-title function_">then</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span>);  <span class="hljs-comment">// undefined</span>
+      });
+  },
+
+  <span class="hljs-comment">// ✅ Arrow function preserves context</span>
+  <span class="hljs-title function_">getValueArrow</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>()
+      .<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span>);  <span class="hljs-comment">// 42</span>
+      });
+  },
+
+  <span class="hljs-comment">// ✅ bind</span>
+  <span class="hljs-title function_">getValueBind</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>()
+      .<span class="hljs-title function_">then</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span>);  <span class="hljs-comment">// 42</span>
+      }.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>));
+  }
+};
+
+obj.<span class="hljs-title function_">getValueArrow</span>();
+</code></pre><h3 id="asyncawait">Async/Await</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">DataFetcher</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">url</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">url</span> = url;
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span> = <span class="hljs-literal">null</span>;
+  }
+
+  <span class="hljs-keyword">async</span> <span class="hljs-title function_">fetchData</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-comment">// &#x27;this&#x27; is preserved in async functions</span>
+    <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">url</span>);
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span> = <span class="hljs-keyword">await</span> response.<span class="hljs-title function_">json</span>();
+    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span>;
+  }
+
+  <span class="hljs-comment">// Works with arrow functions too</span>
+  fetchDataArrow = <span class="hljs-title function_">async</span> () =&gt; {
+    <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">url</span>);
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span> = <span class="hljs-keyword">await</span> response.<span class="hljs-title function_">json</span>();
+    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span>;
+  }
+}
+
+<span class="hljs-keyword">const</span> fetcher = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DataFetcher</span>(<span class="hljs-string">&#x27;/api/data&#x27;</span>);
+fetcher.<span class="hljs-title function_">fetchData</span>();  <span class="hljs-comment">// &#x27;this&#x27; works correctly</span>
+</code></pre><h3 id="settimeoutsetinterval">setTimeout/setInterval</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Clock</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">time</span> = <span class="hljs-number">0</span>;
+  }
+
+  <span class="hljs-comment">// ❌ Loses context</span>
+  <span class="hljs-title function_">startWrong</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-built_in">setInterval</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">time</span>++;  <span class="hljs-comment">// &#x27;this&#x27; is global/undefined</span>
+    }, <span class="hljs-number">1000</span>);
+  }
+
+  <span class="hljs-comment">// ✅ Arrow function</span>
+  <span class="hljs-title function_">startArrow</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">time</span>++;  <span class="hljs-comment">// Works!</span>
+    }, <span class="hljs-number">1000</span>);
+  }
+
+  <span class="hljs-comment">// ✅ bind</span>
+  <span class="hljs-title function_">tick</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">time</span>++;
+  }
+
+  <span class="hljs-title function_">startBind</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-built_in">setInterval</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">tick</span>.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>), <span class="hljs-number">1000</span>);
+  }
+}
+</code></pre><h3 id="callbacks">Callbacks</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">FileProcessor</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">name</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">processed</span> = <span class="hljs-number">0</span>;
+  }
+
+  <span class="hljs-title function_">processFile</span>(<span class="hljs-params">file, callback</span>) {
+    <span class="hljs-comment">// Callback might lose context</span>
+    <span class="hljs-title function_">callback</span>(file);
+  }
+
+  <span class="hljs-comment">// ❌ Context loss</span>
+  <span class="hljs-title function_">processAllWrong</span>(<span class="hljs-params">files</span>) {
+    files.<span class="hljs-title function_">forEach</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">processFile</span>);
+    <span class="hljs-comment">// &#x27;this&#x27; lost in processFile</span>
+  }
+
+  <span class="hljs-comment">// ✅ Arrow function</span>
+  <span class="hljs-title function_">processAllArrow</span>(<span class="hljs-params">files</span>) {
+    files.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">file</span>) =&gt;</span> {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">processFile</span>(file, <span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">processed</span>++;
+      });
+    });
+  }
+
+  <span class="hljs-comment">// ✅ Bind</span>
+  <span class="hljs-title function_">processAllBind</span>(<span class="hljs-params">files</span>) {
+    files.<span class="hljs-title function_">forEach</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">file</span>) {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">processFile</span>(file, <span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">processed</span>++;
+      });
+    }.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>));
+  }
+}
+</code></pre><hr>
+<h2 id="context-in-nodejs">Context in Node.js</h2>
+<h3 id="module-level-context">Module-Level Context</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// In Node.js module</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);  <span class="hljs-comment">// {} (module.exports, not global!)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span> === <span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span>);  <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span> === <span class="hljs-built_in">exports</span>);  <span class="hljs-comment">// true</span>
+
+<span class="hljs-comment">// But in function:</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">func</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);  <span class="hljs-comment">// global object (non-strict)</span>
+}
+
+<span class="hljs-comment">// In strict mode:</span>
+<span class="hljs-meta">&#x27;use strict&#x27;</span>;
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">strictFunc</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);  <span class="hljs-comment">// undefined</span>
+}
+</code></pre><h3 id="event-emitters">Event Emitters</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> <span class="hljs-title class_">EventEmitter</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;events&#x27;</span>);
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyEmitter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">EventEmitter</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">super</span>();
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span> = <span class="hljs-number">42</span>;
+  }
+
+  <span class="hljs-comment">// ❌ Loses context</span>
+  <span class="hljs-title function_">setupWrong</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;event&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span>);  <span class="hljs-comment">// undefined</span>
+      <span class="hljs-comment">// &#x27;this&#x27; is EventEmitter instance, not MyEmitter</span>
+    });
+  }
+
+  <span class="hljs-comment">// ✅ Arrow function</span>
+  <span class="hljs-title function_">setupArrow</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;event&#x27;</span>, <span class="hljs-function">() =&gt;</span> {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span>);  <span class="hljs-comment">// 42</span>
+    });
+  }
+
+  <span class="hljs-comment">// ✅ bind</span>
+  <span class="hljs-title function_">handleEvent</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span>);
+  }
+
+  <span class="hljs-title function_">setupBind</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;event&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">handleEvent</span>.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>));
+  }
+}
+
+<span class="hljs-keyword">const</span> emitter = <span class="hljs-keyword">new</span> <span class="hljs-title class_">MyEmitter</span>();
+emitter.<span class="hljs-title function_">setupArrow</span>();
+emitter.<span class="hljs-title function_">emit</span>(<span class="hljs-string">&#x27;event&#x27;</span>);
+</code></pre><h3 id="expresshttp-handlers">Express/HTTP Handlers</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ApiHandler</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">baseUrl</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">baseUrl</span> = baseUrl;
+  }
+
+  <span class="hljs-comment">// ❌ Context lost when used as middleware</span>
+  <span class="hljs-title function_">handleRequestWrong</span>(<span class="hljs-params">req, res</span>) {
+    res.<span class="hljs-title function_">json</span>({
+      <span class="hljs-attr">url</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">baseUrl</span>,  <span class="hljs-comment">// undefined!</span>
+      <span class="hljs-attr">path</span>: req.<span class="hljs-property">path</span>
+    });
+  }
+
+  <span class="hljs-comment">// ✅ Solution 1: bind in constructor</span>
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">baseUrl</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">baseUrl</span> = baseUrl;
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">handleRequest</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">handleRequest</span>.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>);
+  }
+
+  <span class="hljs-title function_">handleRequest</span>(<span class="hljs-params">req, res</span>) {
+    res.<span class="hljs-title function_">json</span>({
+      <span class="hljs-attr">url</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">baseUrl</span>,  <span class="hljs-comment">// Works!</span>
+      <span class="hljs-attr">path</span>: req.<span class="hljs-property">path</span>
+    });
+  }
+
+  <span class="hljs-comment">// ✅ Solution 2: arrow function property</span>
+  handleRequestArrow = <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+    res.<span class="hljs-title function_">json</span>({
+      <span class="hljs-attr">url</span>: <span class="hljs-variable language_">this</span>.<span class="hljs-property">baseUrl</span>,
+      <span class="hljs-attr">path</span>: req.<span class="hljs-property">path</span>
+    });
+  }
+
+  <span class="hljs-comment">// ✅ Solution 3: wrapper function</span>
+  <span class="hljs-title function_">getHandler</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">handleRequest</span>(req, res);
+    };
+  }
+}
+
+<span class="hljs-keyword">const</span> handler = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ApiHandler</span>(<span class="hljs-string">&#x27;/api&#x27;</span>);
+
+<span class="hljs-comment">// Usage with Express</span>
+<span class="hljs-comment">// app.get(&#x27;/users&#x27;, handler.handleRequest);  // Works if bound in constructor</span>
+<span class="hljs-comment">// app.get(&#x27;/users&#x27;, handler.handleRequestArrow);  // Works</span>
+<span class="hljs-comment">// app.get(&#x27;/users&#x27;, handler.getHandler());  // Works</span>
+</code></pre><h3 id="streams">Streams</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> { <span class="hljs-title class_">Transform</span> } = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;stream&#x27;</span>);
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyTransform</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">Transform</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">super</span>();
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">count</span> = <span class="hljs-number">0</span>;
+  }
+
+  <span class="hljs-comment">// ❌ Context issues</span>
+  <span class="hljs-title function_">_transformWrong</span>(<span class="hljs-params">chunk, encoding, callback</span>) {
+    <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">count</span>++;  <span class="hljs-comment">// undefined!</span>
+      <span class="hljs-title function_">callback</span>(<span class="hljs-literal">null</span>, chunk);
+    }, <span class="hljs-number">100</span>);
+  }
+
+  <span class="hljs-comment">// ✅ Arrow function</span>
+  <span class="hljs-title function_">_transformArrow</span>(<span class="hljs-params">chunk, encoding, callback</span>) {
+    <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">count</span>++;  <span class="hljs-comment">// Works!</span>
+      <span class="hljs-title function_">callback</span>(<span class="hljs-literal">null</span>, chunk);
+    }, <span class="hljs-number">100</span>);
+  }
+
+  <span class="hljs-comment">// ✅ bind</span>
+  <span class="hljs-title function_">_transformBind</span>(<span class="hljs-params">chunk, encoding, callback</span>) {
+    <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">count</span>++;
+      <span class="hljs-title function_">callback</span>(<span class="hljs-literal">null</span>, chunk);
+    }.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>), <span class="hljs-number">100</span>);
+  }
+}
+</code></pre><h3 id="class-methods-as-callbacks">Class Methods as Callbacks</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">DatabaseConnection</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">config</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">config</span> = config;
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">connected</span> = <span class="hljs-literal">false</span>;
+
+    <span class="hljs-comment">// Bind methods that will be used as callbacks</span>
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">onConnect</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">onConnect</span>.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>);
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">onError</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">onError</span>.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>);
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">onDisconnect</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">onDisconnect</span>.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>);
+  }
+
+  <span class="hljs-title function_">connect</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-comment">// These methods used as callbacks need binding</span>
+    db.<span class="hljs-title function_">connect</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">config</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">onConnect</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">onError</span>);
+  }
+
+  <span class="hljs-title function_">onConnect</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">connected</span> = <span class="hljs-literal">true</span>;  <span class="hljs-comment">// Works because bound in constructor</span>
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Connected to&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">config</span>.<span class="hljs-property">host</span>);
+  }
+
+  <span class="hljs-title function_">onError</span>(<span class="hljs-params">error</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">connected</span> = <span class="hljs-literal">false</span>;
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Connection error:&#x27;</span>, error);
+  }
+
+  <span class="hljs-title function_">onDisconnect</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">connected</span> = <span class="hljs-literal">false</span>;
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Disconnected from&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">config</span>.<span class="hljs-property">host</span>);
+  }
+}
+</code></pre><hr>
+<h2 id="summary">Summary</h2>
+<h3 id="key-takeaways">Key Takeaways</h3>
+<ol>
+<li><strong>Context</strong> (<code>this</code>) determined by <strong>call site</strong>, not definition</li>
+<li><strong>Four binding rules</strong>: default, implicit, explicit, new</li>
+<li><strong>Precedence</strong>: new &gt; explicit &gt; implicit &gt; default</li>
+<li><strong>Arrow functions</strong> use lexical <code>this</code> (from enclosing scope)</li>
+<li><strong>Context loss</strong> common in callbacks, event handlers, array methods</li>
+<li><strong>Solutions</strong>: bind, arrow functions, save reference</li>
+</ol>
+<h3 id="best-practices">Best Practices</h3>
+<ul>
+<li>Use arrow functions for callbacks/event handlers</li>
+<li>Bind methods in constructor if used as callbacks</li>
+<li>Use arrow function properties in classes</li>
+<li>Avoid relying on implicit binding in async code</li>
+<li>Always debug with <code>console.log(this)</code> when unsure</li>
+<li>Prefer arrow functions over <code>self/that/_this</code> pattern</li>
+</ul>
+<h3 id="quick-reference">Quick Reference</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Check context</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>);
+
+<span class="hljs-comment">// Preserve context</span>
+.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>)                 <span class="hljs-comment">// bind method</span>
+() =&gt; {}                    <span class="hljs-comment">// arrow function</span>
+<span class="hljs-keyword">const</span> self = <span class="hljs-variable language_">this</span>;          <span class="hljs-comment">// save reference</span>
+fn.<span class="hljs-title function_">call</span>(obj)               <span class="hljs-comment">// explicit binding</span>
+fn.<span class="hljs-title function_">apply</span>(obj, args)        <span class="hljs-comment">// explicit binding with array</span>
+
+<span class="hljs-comment">// Common patterns</span>
+<span class="hljs-keyword">class</span> {
+  method = <span class="hljs-function">() =&gt;</span> {}        <span class="hljs-comment">// Arrow property</span>
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">method</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">method</span>.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>);  <span class="hljs-comment">// Bind in constructor</span>
+  }
+}
+</code></pre><h3 id="context-loss-checklist">Context Loss Checklist</h3>
+<p>When you see context issues:</p>
+<ul>
+<li><input disabled="" type="checkbox"> Is function an arrow function? (lexical this)</li>
+<li><input disabled="" type="checkbox"> How is function called? (determines binding)</li>
+<li><input disabled="" type="checkbox"> Is it a callback? (likely loses context)</li>
+<li><input disabled="" type="checkbox"> Is it an event handler? (likely loses context)</li>
+<li><input disabled="" type="checkbox"> Can I use arrow function? (easiest solution)</li>
+<li><input disabled="" type="checkbox"> Should I bind in constructor? (if class method)</li>
+<li><input disabled="" type="checkbox"> Do I need explicit binding? (call/apply/bind)</li>
+</ul>
+<div class="page-navigation">
+            <a href="04-closures.html" class="nav-btn nav-prev" data-nav="prev">
+                <span class="nav-label">Previous</span>
+                <span class="nav-title">Closures</span>
+            </a>
+        
+            <a href="06-classes.html" class="nav-btn nav-next" data-nav="next">
+                <span class="nav-label">Next</span>
+                <span class="nav-title">Classes</span>
+            </a>
+        </div>
+        <div class="progress-section">
+            <div id="progress-controls"></div>
+            <div class="notes-section">
+                <h3>Your Notes</h3>
+                <textarea id="page-notes" placeholder="Add your notes here... (saved automatically)"></textarea>
+            </div>
+        </div>
+    
+    </main>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" aria-label="Back to top">↑</button>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="modal">
+        <div class="modal-content search-content">
+            <div class="search-header">
+                <input type="text" id="search-input" placeholder="Search topics..." autofocus>
+                <button id="search-close" aria-label="Close search">✕</button>
+            </div>
+            <div id="search-results" class="search-results"></div>
+            <div class="search-footer">
+                <span>↑↓ Navigate</span>
+                <span>↵ Select</span>
+                <span>Esc Close</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shortcuts Modal -->
+    <div id="shortcuts-modal" class="modal">
+        <div class="modal-content shortcuts-modal-content">
+            <div class="modal-header">
+                <h2>Keyboard Shortcuts</h2>
+                <button id="shortcuts-close" aria-label="Close shortcuts">✕</button>
+            </div>
+            <div class="shortcuts-content"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/nav.js"></script>
+    <script src="/js/progress.js"></script>
+    <script src="/js/search.js"></script>
+    <script src="/js/shortcuts.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garbage Collection</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+</head>
+
+<body>
+    <!-- Header Toolbar -->
+    <div id="header-toolbar">
+        <button id="search-trigger" aria-label="Search" title="Search (Cmd+K)">
+            🔍
+        </button>
+        <button id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle Dark Mode (Cmd+D)">
+            <span id="dark-mode-icon">🌙</span>
+        </button>
+        <button id="shortcuts-help" onclick="window.Shortcuts.show()" aria-label="Keyboard shortcuts"
+            title="Shortcuts (?)">
+            ⌨️
+        </button>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button id="menu-toggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Progress Bar -->
+    <div id="progress-bar">
+        <div id="progress-fill"></div>
+    </div>
+
+    <!-- Overall Progress Indicator -->
+    <div id="overall-progress">
+        <div id="overall-progress-bar" style="width: 0%"></div>
+        <span id="progress-text">0/0 topics completed</span>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar">
+        <div id="sidebar-header">
+            <h2>JS/NodeJs Concepts</h2>
+        </div>
+        <ul id="nav-list">
+                        <li><a href="01-git-version-control.html"><span class="nav-number">1.</span>Git & Version Control</a></li>
+            <li><a href="02-javascript-data-types.html"><span class="nav-number">2.</span>JavaScript Data Types</a></li>
+            <li><a href="03-prototypal-inheritance.html"><span class="nav-number">3.</span>Prototypal Inheritance</a></li>
+            <li><a href="04-closures.html"><span class="nav-number">4.</span>Closures</a></li>
+            <li><a href="05-context.html"><span class="nav-number">5.</span>Context (this)</a></li>
+            <li><a href="06-classes.html"><span class="nav-number">6.</span>Classes</a></li>
+            <li><a href="07-event-loop-async.html"><span class="nav-number">7.</span>Event Loop & Async</a></li>
+            <li><a href="08-garbage-collection.html" class="active"><span class="nav-number">8.</span>Garbage Collection</a></li>
+        </ul>
+        <div id="sidebar-footer">
+            <button id="reset-progress" class="sidebar-btn">Reset Progress</button>
+            <button id="export-progress" class="sidebar-btn">Export</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        
+        <aside class="table-of-contents">
+            <h3>On This Page</h3>
+            <nav class="toc-nav">
+                <ul><li class=""><a href="#table-of-contents">Table of Contents</a></li>
+<li class=""><a href="#basic-understanding">Basic Understanding</a></li>
+<li class="toc-sub"><a href="#what-is-garbage-collection">What is Garbage Collection?</a></li>
+<li class="toc-sub"><a href="#basic-concept">Basic Concept</a></li>
+<li class=""><a href="#purpose-and-benefits">Purpose and Benefits</a></li>
+<li class="toc-sub"><a href="#purpose">Purpose</a></li>
+<li class="toc-sub"><a href="#benefits">Benefits</a></li>
+<li class=""><a href="#memory-management">Memory Management</a></li>
+<li class="toc-sub"><a href="#memory-lifecycle">Memory Lifecycle</a></li>
+<li class="toc-sub"><a href="#stack-vs-heap">Stack vs Heap</a></li>
+<li class="toc-sub"><a href="#memory-allocation-examples">Memory Allocation Examples</a></li>
+<li class=""><a href="#memory-leaks">Memory Leaks</a></li>
+<li class="toc-sub"><a href="#what-is-a-memory-leak">What is a Memory Leak?</a></li>
+<li class="toc-sub"><a href="#common-causes-and-examples">Common Causes and Examples</a></li>
+<li class=""><a href="#manual-intervention">Manual Intervention</a></li>
+<li class="toc-sub"><a href="#limited-manual-control">Limited Manual Control</a></li>
+<li class="toc-sub"><a href="#helping-gc">Helping GC</a></li>
+<li class="toc-sub"><a href="#weakmap-and-weakset">WeakMap and WeakSet</a></li>
+<li class="toc-sub"><a href="#manual-gc-in-nodejs-development-only">Manual GC in Node.js (Development Only)</a></li>
+<li class=""><a href="#gc-algorithms">GC Algorithms</a></li>
+<li class="toc-sub"><a href="#reference-counting-old-not-used">Reference Counting (Old, Not Used)</a></li>
+<li class="toc-sub"><a href="#mark-and-sweep-modern-approach">Mark-and-Sweep (Modern Approach)</a></li>
+<li class=""><a href="#v8-engine-and-nodejs">V8 Engine and Node.js</a></li>
+<li class="toc-sub"><a href="#v8s-garbage-collection-strategy">V8's Garbage Collection Strategy</a></li>
+<li class="toc-sub"><a href="#gc-algorithms-in-v8">GC Algorithms in V8</a></li>
+<li class="toc-sub"><a href="#incremental-marking">Incremental Marking</a></li>
+<li class=""><a href="#minimizing-gc-impact">Minimizing GC Impact</a></li>
+<li class="toc-sub"><a href="#strategies">Strategies</a></li>
+<li class=""><a href="#advanced-topics">Advanced Topics</a></li>
+<li class="toc-sub"><a href="#when-gc-is-beneficial">When GC is Beneficial</a></li>
+<li class="toc-sub"><a href="#memory-leak-prevention-patterns">Memory Leak Prevention Patterns</a></li>
+<li class="toc-sub"><a href="#limitations-and-challenges">Limitations and Challenges</a></li>
+<li class="toc-sub"><a href="#gc-in-nodejs-vs-browser">GC in Node.js vs Browser</a></li>
+<li class="toc-sub"><a href="#nodejs-gc-flags">Node.js GC Flags</a></li>
+<li class="toc-sub"><a href="#impact-on-performance">Impact on Performance</a></li>
+<li class="toc-sub"><a href="#gc-and-async-operations">GC and Async Operations</a></li>
+<li class="toc-sub"><a href="#monitoring-memory">Monitoring Memory</a></li>
+<li class="toc-sub"><a href="#advanced-techniques">Advanced Techniques</a></li>
+<li class=""><a href="#summary">Summary</a></li>
+<li class="toc-sub"><a href="#key-takeaways">Key Takeaways</a></li>
+<li class="toc-sub"><a href="#best-practices">Best Practices</a></li>
+<li class="toc-sub"><a href="#common-memory-leak-patterns">Common Memory Leak Patterns</a></li>
+<li class="toc-sub"><a href="#debugging-memory-leaks">Debugging Memory Leaks</a></li>
+<li class="toc-sub"><a href="#quick-reference">Quick Reference</a></li></ul>
+            </nav>
+        </aside>
+    
+        <aside class="table-of-contents">
+            <h3>On This Page</h3>
+            <nav class="toc-nav">
+                <ul><li class=""><a href="#table-of-contents">Table of Contents</a></li>
+<li class=""><a href="#basic-understanding">Basic Understanding</a></li>
+<li class="toc-sub"><a href="#what-is-garbage-collection">What is Garbage Collection?</a></li>
+<li class="toc-sub"><a href="#basic-concept">Basic Concept</a></li>
+<li class=""><a href="#purpose-and-benefits">Purpose and Benefits</a></li>
+<li class="toc-sub"><a href="#purpose">Purpose</a></li>
+<li class="toc-sub"><a href="#benefits">Benefits</a></li>
+<li class=""><a href="#memory-management">Memory Management</a></li>
+<li class="toc-sub"><a href="#memory-lifecycle">Memory Lifecycle</a></li>
+<li class="toc-sub"><a href="#stack-vs-heap">Stack vs Heap</a></li>
+<li class="toc-sub"><a href="#memory-allocation-examples">Memory Allocation Examples</a></li>
+<li class=""><a href="#memory-leaks">Memory Leaks</a></li>
+<li class="toc-sub"><a href="#what-is-a-memory-leak">What is a Memory Leak?</a></li>
+<li class="toc-sub"><a href="#common-causes-and-examples">Common Causes and Examples</a></li>
+<li class=""><a href="#manual-intervention">Manual Intervention</a></li>
+<li class="toc-sub"><a href="#limited-manual-control">Limited Manual Control</a></li>
+<li class="toc-sub"><a href="#helping-gc">Helping GC</a></li>
+<li class="toc-sub"><a href="#weakmap-and-weakset">WeakMap and WeakSet</a></li>
+<li class="toc-sub"><a href="#manual-gc-in-nodejs-development-only">Manual GC in Node.js (Development Only)</a></li>
+<li class=""><a href="#gc-algorithms">GC Algorithms</a></li>
+<li class="toc-sub"><a href="#reference-counting-old-not-used">Reference Counting (Old, Not Used)</a></li>
+<li class="toc-sub"><a href="#mark-and-sweep-modern-approach">Mark-and-Sweep (Modern Approach)</a></li>
+<li class=""><a href="#v8-engine-and-nodejs">V8 Engine and Node.js</a></li>
+<li class="toc-sub"><a href="#v8s-garbage-collection-strategy">V8's Garbage Collection Strategy</a></li>
+<li class="toc-sub"><a href="#gc-algorithms-in-v8">GC Algorithms in V8</a></li>
+<li class="toc-sub"><a href="#incremental-marking">Incremental Marking</a></li>
+<li class=""><a href="#minimizing-gc-impact">Minimizing GC Impact</a></li>
+<li class="toc-sub"><a href="#strategies">Strategies</a></li>
+<li class=""><a href="#advanced-topics">Advanced Topics</a></li>
+<li class="toc-sub"><a href="#when-gc-is-beneficial">When GC is Beneficial</a></li>
+<li class="toc-sub"><a href="#memory-leak-prevention-patterns">Memory Leak Prevention Patterns</a></li>
+<li class="toc-sub"><a href="#limitations-and-challenges">Limitations and Challenges</a></li>
+<li class="toc-sub"><a href="#gc-in-nodejs-vs-browser">GC in Node.js vs Browser</a></li>
+<li class="toc-sub"><a href="#nodejs-gc-flags">Node.js GC Flags</a></li>
+<li class="toc-sub"><a href="#impact-on-performance">Impact on Performance</a></li>
+<li class="toc-sub"><a href="#gc-and-async-operations">GC and Async Operations</a></li>
+<li class="toc-sub"><a href="#monitoring-memory">Monitoring Memory</a></li>
+<li class="toc-sub"><a href="#advanced-techniques">Advanced Techniques</a></li>
+<li class=""><a href="#summary">Summary</a></li>
+<li class="toc-sub"><a href="#key-takeaways">Key Takeaways</a></li>
+<li class="toc-sub"><a href="#best-practices">Best Practices</a></li>
+<li class="toc-sub"><a href="#common-memory-leak-patterns">Common Memory Leak Patterns</a></li>
+<li class="toc-sub"><a href="#debugging-memory-leaks">Debugging Memory Leaks</a></li>
+<li class="toc-sub"><a href="#quick-reference">Quick Reference</a></li></ul>
+            </nav>
+        </aside>
+    <h1 id="garbage-collection-in-javascript">Garbage Collection in JavaScript</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#basic-understanding">Basic Understanding</a></li>
+<li><a href="#purpose-and-benefits">Purpose and Benefits</a></li>
+<li><a href="#memory-management">Memory Management</a></li>
+<li><a href="#memory-leaks">Memory Leaks</a></li>
+<li><a href="#manual-intervention">Manual Intervention</a></li>
+<li><a href="#gc-algorithms">GC Algorithms</a></li>
+<li><a href="#v8-engine-and-nodejs">V8 Engine and Node.js</a></li>
+<li><a href="#minimizing-gc-impact">Minimizing GC Impact</a></li>
+<li><a href="#advanced-topics">Advanced Topics</a></li>
+</ul>
+<hr>
+<h2 id="basic-understanding">Basic Understanding</h2>
+<h3 id="what-is-garbage-collection">What is Garbage Collection?</h3>
+<p><strong>Garbage Collection (GC)</strong> is the automatic memory management process that identifies and frees memory that is no longer in use.</p>
+<p><strong>Key Points:</strong></p>
+<ul>
+<li>Runs automatically in background</li>
+<li>Identifies unreachable objects</li>
+<li>Frees their memory</li>
+<li>Prevents memory leaks</li>
+<li>No manual memory management needed</li>
+</ul>
+<h3 id="basic-concept">Basic Concept</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Memory allocated</span>
+<span class="hljs-keyword">let</span> obj = {
+  <span class="hljs-attr">data</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Array</span>(<span class="hljs-number">1000000</span>).<span class="hljs-title function_">fill</span>(<span class="hljs-string">&#x27;large data&#x27;</span>)
+};
+
+<span class="hljs-comment">// Object is reachable and in use</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">data</span>.<span class="hljs-property">length</span>);
+
+<span class="hljs-comment">// Make object unreachable</span>
+obj = <span class="hljs-literal">null</span>;
+
+<span class="hljs-comment">// Now obj is eligible for garbage collection</span>
+<span class="hljs-comment">// GC will free the memory automatically (eventually)</span>
+</code></pre><hr>
+<h2 id="purpose-and-benefits">Purpose and Benefits</h2>
+<h3 id="purpose">Purpose</h3>
+<ol>
+<li><strong>Automatic memory cleanup</strong>: Reclaim unused memory</li>
+<li><strong>Prevent memory leaks</strong>: Free memory that&#39;s no longer needed</li>
+<li><strong>Optimize memory usage</strong>: Keep memory footprint low</li>
+<li><strong>Application stability</strong>: Prevent out-of-memory crashes</li>
+</ol>
+<h3 id="benefits">Benefits</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Before GC (manual memory management - C/C++)</span>
+<span class="hljs-comment">// malloc() to allocate</span>
+<span class="hljs-comment">// free() to deallocate</span>
+<span class="hljs-comment">// Easy to forget free() → memory leaks</span>
+
+<span class="hljs-comment">// With GC (JavaScript)</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">createData</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Array</span>(<span class="hljs-number">1000</span>);  <span class="hljs-comment">// Memory allocated</span>
+  <span class="hljs-comment">// ... use data ...</span>
+  <span class="hljs-comment">// No need to manually free</span>
+  <span class="hljs-comment">// GC handles it automatically</span>
+}
+
+<span class="hljs-title function_">createData</span>();
+<span class="hljs-comment">// Memory freed automatically when function returns</span>
+<span class="hljs-comment">// and data is no longer referenced</span>
+</code></pre><p><strong>Key benefits:</strong></p>
+<ul>
+<li>Developers don&#39;t manually manage memory</li>
+<li>Reduces memory-related bugs (leaks, use-after-free, double-free)</li>
+<li>Improves developer productivity</li>
+<li>More stable applications</li>
+<li>Focus on business logic, not memory management</li>
+</ul>
+<hr>
+<h2 id="memory-management">Memory Management</h2>
+<h3 id="memory-lifecycle">Memory Lifecycle</h3>
+<p>Three phases in every memory lifecycle:</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// 1. ALLOCATION - Memory is allocated</span>
+<span class="hljs-keyword">let</span> user = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Alice&quot;</span>,
+  <span class="hljs-attr">email</span>: <span class="hljs-string">&quot;alice@example.com&quot;</span>,
+  <span class="hljs-attr">friends</span>: [<span class="hljs-string">&quot;Bob&quot;</span>, <span class="hljs-string">&quot;Charlie&quot;</span>]
+};
+
+<span class="hljs-comment">// 2. USE - Memory is read and written</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(user.<span class="hljs-property">name</span>);
+user.<span class="hljs-property">friends</span>.<span class="hljs-title function_">push</span>(<span class="hljs-string">&quot;Dave&quot;</span>);
+
+<span class="hljs-comment">// 3. RELEASE - Memory is freed by GC</span>
+user = <span class="hljs-literal">null</span>;  <span class="hljs-comment">// No more references</span>
+<span class="hljs-comment">// GC will eventually free this memory</span>
+</code></pre><h3 id="stack-vs-heap">Stack vs Heap</h3>
+<h4 id="stack-memory">Stack Memory</h4>
+<ul>
+<li>Stores primitive values and function calls</li>
+<li>Managed automatically (push/pop)</li>
+<li>Fixed size per value</li>
+<li>Fast allocation/deallocation</li>
+<li>Limited size</li>
+</ul>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">example</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">let</span> x = <span class="hljs-number">5</span>;           <span class="hljs-comment">// Stack</span>
+  <span class="hljs-keyword">let</span> y = <span class="hljs-string">&quot;string&quot;</span>;    <span class="hljs-comment">// Stack (primitive)</span>
+  <span class="hljs-keyword">let</span> z = <span class="hljs-literal">true</span>;        <span class="hljs-comment">// Stack</span>
+
+  <span class="hljs-comment">// When function returns, stack is cleared automatically</span>
+}
+</code></pre><h4 id="heap-memory">Heap Memory</h4>
+<ul>
+<li>Stores objects, arrays, functions</li>
+<li>Managed by garbage collector</li>
+<li>Dynamic size</li>
+<li>Slower than stack</li>
+<li>Larger capacity</li>
+</ul>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">example</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">let</span> obj = {          <span class="hljs-comment">// Reference on stack</span>
+    <span class="hljs-attr">data</span>: [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]    <span class="hljs-comment">// Object on heap</span>
+  };
+
+  <span class="hljs-keyword">let</span> arr = [<span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>]; <span class="hljs-comment">// Reference on stack, array on heap</span>
+
+  <span class="hljs-comment">// Stack cleared when function returns,</span>
+  <span class="hljs-comment">// but heap memory freed later by GC</span>
+}
+</code></pre><h3 id="memory-allocation-examples">Memory Allocation Examples</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Primitive allocation (stack)</span>
+<span class="hljs-keyword">let</span> num = <span class="hljs-number">42</span>;
+<span class="hljs-keyword">let</span> str = <span class="hljs-string">&quot;hello&quot;</span>;
+<span class="hljs-keyword">let</span> bool = <span class="hljs-literal">true</span>;
+
+<span class="hljs-comment">// Object allocation (heap)</span>
+<span class="hljs-keyword">let</span> obj = { <span class="hljs-attr">x</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">2</span> };
+<span class="hljs-keyword">let</span> arr = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>];
+<span class="hljs-keyword">let</span> fn = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) { <span class="hljs-keyword">return</span> <span class="hljs-number">42</span>; };
+
+<span class="hljs-comment">// Nested objects (heap)</span>
+<span class="hljs-keyword">let</span> complex = {
+  <span class="hljs-attr">user</span>: {
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Alice&quot;</span>,
+    <span class="hljs-attr">address</span>: {
+      <span class="hljs-attr">street</span>: <span class="hljs-string">&quot;123 Main St&quot;</span>,
+      <span class="hljs-attr">city</span>: <span class="hljs-string">&quot;New York&quot;</span>
+    }
+  },
+  <span class="hljs-attr">items</span>: [
+    { <span class="hljs-attr">id</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Item 1&quot;</span> },
+    { <span class="hljs-attr">id</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Item 2&quot;</span> }
+  ]
+};
+
+<span class="hljs-comment">// String allocation (heap for large strings)</span>
+<span class="hljs-keyword">let</span> largeString = <span class="hljs-string">&quot;x&quot;</span>.<span class="hljs-title function_">repeat</span>(<span class="hljs-number">1000000</span>);  <span class="hljs-comment">// 1 million characters</span>
+</code></pre><hr>
+<h2 id="memory-leaks">Memory Leaks</h2>
+<h3 id="what-is-a-memory-leak">What is a Memory Leak?</h3>
+<p>Memory that is <strong>no longer needed</strong> but <strong>not freed</strong> because references still exist.</p>
+<h3 id="common-causes-and-examples">Common Causes and Examples</h3>
+<h4 id="1-forgotten-timers">1. Forgotten Timers</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ Memory leak - interval never cleared</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">startPolling</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-keyword">const</span> data = <span class="hljs-title function_">fetchLargeData</span>();  <span class="hljs-comment">// Accumulates in memory</span>
+    <span class="hljs-comment">// data is never released</span>
+  }, <span class="hljs-number">1000</span>);
+}
+
+<span class="hljs-title function_">startPolling</span>();
+<span class="hljs-comment">// Interval runs forever, data keeps accumulating</span>
+
+<span class="hljs-comment">// ✅ Fixed - clear interval when done</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">startPolling</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> intervalId = <span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-keyword">const</span> data = <span class="hljs-title function_">fetchLargeData</span>();
+    <span class="hljs-title function_">processData</span>(data);
+  }, <span class="hljs-number">1000</span>);
+
+  <span class="hljs-comment">// Return cleanup function</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-function">() =&gt;</span> <span class="hljs-built_in">clearInterval</span>(intervalId);
+}
+
+<span class="hljs-keyword">const</span> cleanup = <span class="hljs-title function_">startPolling</span>();
+<span class="hljs-comment">// Later: cleanup();</span>
+</code></pre><h4 id="2-closures-holding-references">2. Closures Holding References</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ Memory leak - closure keeps large data</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">createLeak</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> largeData = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Array</span>(<span class="hljs-number">1000000</span>).<span class="hljs-title function_">fill</span>(<span class="hljs-string">&#x27;data&#x27;</span>);
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(largeData[<span class="hljs-number">0</span>]);  <span class="hljs-comment">// Entire array kept in memory</span>
+  };
+}
+
+<span class="hljs-keyword">const</span> leak = <span class="hljs-title function_">createLeak</span>();
+<span class="hljs-comment">// largeData can never be garbage collected</span>
+
+<span class="hljs-comment">// ✅ Fixed - reference only what you need</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">createFixed</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> largeData = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Array</span>(<span class="hljs-number">1000000</span>).<span class="hljs-title function_">fill</span>(<span class="hljs-string">&#x27;data&#x27;</span>);
+  <span class="hljs-keyword">const</span> firstElement = largeData[<span class="hljs-number">0</span>];  <span class="hljs-comment">// Extract needed value</span>
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(firstElement);  <span class="hljs-comment">// Only stores one element</span>
+  };
+}
+
+<span class="hljs-keyword">const</span> noLeak = <span class="hljs-title function_">createFixed</span>();
+<span class="hljs-comment">// largeData can be garbage collected</span>
+</code></pre><h4 id="3-global-variables">3. Global Variables</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ Accidental global (memory leak)</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">oops</span>(<span class="hljs-params"></span>) {
+  leakedVar = <span class="hljs-string">&quot;I&#x27;m global!&quot;</span>;  <span class="hljs-comment">// No var/let/const</span>
+  <span class="hljs-comment">// Can never be garbage collected</span>
+}
+
+<span class="hljs-comment">// ❌ Intentional global that grows</span>
+<span class="hljs-variable language_">window</span>.<span class="hljs-property">cache</span> = [];
+<span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">window</span>.<span class="hljs-property">cache</span>.<span class="hljs-title function_">push</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Array</span>(<span class="hljs-number">1000</span>));  <span class="hljs-comment">// Grows forever</span>
+}, <span class="hljs-number">100</span>);
+
+<span class="hljs-comment">// ✅ Fixed - use proper scoping</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">fixed</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">let</span> localVar = <span class="hljs-string">&quot;I&#x27;m local!&quot;</span>;
+  <span class="hljs-comment">// Will be GC&#x27;d when function scope ends</span>
+}
+
+<span class="hljs-comment">// ✅ Fixed - limit cache size</span>
+<span class="hljs-keyword">const</span> cache = [];
+<span class="hljs-keyword">const</span> <span class="hljs-variable constant_">MAX_CACHE_SIZE</span> = <span class="hljs-number">100</span>;
+
+<span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-keyword">if</span> (cache.<span class="hljs-property">length</span> &gt;= <span class="hljs-variable constant_">MAX_CACHE_SIZE</span>) {
+    cache.<span class="hljs-title function_">shift</span>();  <span class="hljs-comment">// Remove oldest</span>
+  }
+  cache.<span class="hljs-title function_">push</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Array</span>(<span class="hljs-number">1000</span>));
+}, <span class="hljs-number">100</span>);
+</code></pre><h4 id="4-detached-dom-nodes">4. Detached DOM Nodes</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ Memory leak - DOM node kept in memory</span>
+<span class="hljs-keyword">let</span> elements = [];
+
+<span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;button&#x27;</span>).<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-keyword">const</span> div = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;div&#x27;</span>);
+  <span class="hljs-variable language_">document</span>.<span class="hljs-property">body</span>.<span class="hljs-title function_">appendChild</span>(div);
+  elements.<span class="hljs-title function_">push</span>(div);  <span class="hljs-comment">// Keep reference</span>
+
+  <span class="hljs-comment">// Later remove from DOM</span>
+  <span class="hljs-variable language_">document</span>.<span class="hljs-property">body</span>.<span class="hljs-title function_">removeChild</span>(div);
+  <span class="hljs-comment">// But still in &#x27;elements&#x27; array - memory leak!</span>
+});
+
+<span class="hljs-comment">// ✅ Fixed - remove references</span>
+<span class="hljs-keyword">let</span> elements = [];
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">cleanup</span>(<span class="hljs-params"></span>) {
+  elements.<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">el</span> =&gt;</span> {
+    <span class="hljs-keyword">if</span> (el.<span class="hljs-property">parentNode</span>) {
+      el.<span class="hljs-property">parentNode</span>.<span class="hljs-title function_">removeChild</span>(el);
+    }
+  });
+  elements = [];  <span class="hljs-comment">// Clear references</span>
+}
+</code></pre><h4 id="5-event-listeners-not-removed">5. Event Listeners Not Removed</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ Memory leak - listener not removed</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Component</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">element</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">element</span> = element;
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Array</span>(<span class="hljs-number">1000000</span>);
+
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">element</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-function">() =&gt;</span> {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span>.<span class="hljs-property">length</span>);
+    });
+  }
+
+  <span class="hljs-title function_">destroy</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">element</span>.<span class="hljs-title function_">remove</span>();
+    <span class="hljs-comment">// Listener still exists - &#x27;this&#x27; and &#x27;data&#x27; can&#x27;t be GC&#x27;d</span>
+  }
+}
+
+<span class="hljs-comment">// ✅ Fixed - remove listener</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Component</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">element</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">element</span> = element;
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Array</span>(<span class="hljs-number">1000000</span>);
+
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">handler</span> = <span class="hljs-function">() =&gt;</span> {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span>.<span class="hljs-property">length</span>);
+    };
+
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">element</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">handler</span>);
+  }
+
+  <span class="hljs-title function_">destroy</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">element</span>.<span class="hljs-title function_">removeEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">handler</span>);
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">element</span>.<span class="hljs-title function_">remove</span>();
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span> = <span class="hljs-literal">null</span>;  <span class="hljs-comment">// Help GC</span>
+  }
+}
+</code></pre><h4 id="6-circular-references-modern-js-handles-this">6. Circular References (Modern JS Handles This)</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Modern JS GC handles circular references</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">createCycle</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> obj1 = {};
+  <span class="hljs-keyword">const</span> obj2 = {};
+
+  obj1.<span class="hljs-property">ref</span> = obj2;
+  obj2.<span class="hljs-property">ref</span> = obj1;
+
+  <span class="hljs-comment">// Both can still be GC&#x27;d if no external references</span>
+}
+
+<span class="hljs-title function_">createCycle</span>();
+<span class="hljs-comment">// obj1 and obj2 will be garbage collected</span>
+</code></pre><hr>
+<h2 id="manual-intervention">Manual Intervention</h2>
+<h3 id="limited-manual-control">Limited Manual Control</h3>
+<p>JavaScript provides <strong>no direct API</strong> to trigger garbage collection.</p>
+<p>You can help GC by:</p>
+<ul>
+<li>Setting references to <code>null</code></li>
+<li>Clearing timers/intervals</li>
+<li>Removing event listeners</li>
+<li>Using WeakMap/WeakSet</li>
+</ul>
+<h3 id="helping-gc">Helping GC</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// 1. Nullify large objects</span>
+<span class="hljs-keyword">let</span> largeObject = {
+  <span class="hljs-attr">data</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Array</span>(<span class="hljs-number">1000000</span>).<span class="hljs-title function_">fill</span>(<span class="hljs-string">&#x27;data&#x27;</span>)
+};
+
+<span class="hljs-comment">// ... use object ...</span>
+
+largeObject = <span class="hljs-literal">null</span>;  <span class="hljs-comment">// Help GC (if no other references)</span>
+
+<span class="hljs-comment">// 2. Clear timers</span>
+<span class="hljs-keyword">const</span> intervalId = <span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {}, <span class="hljs-number">1000</span>);
+<span class="hljs-built_in">clearInterval</span>(intervalId);  <span class="hljs-comment">// Allow GC to clean up</span>
+
+<span class="hljs-keyword">const</span> timeoutId = <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {}, <span class="hljs-number">5000</span>);
+<span class="hljs-built_in">clearTimeout</span>(timeoutId);
+
+<span class="hljs-comment">// 3. Remove event listeners</span>
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">handler</span> = (<span class="hljs-params"></span>) =&gt; <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;clicked&#x27;</span>);
+element.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, handler);
+<span class="hljs-comment">// Later:</span>
+element.<span class="hljs-title function_">removeEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, handler);
+
+<span class="hljs-comment">// 4. Clear data structures</span>
+<span class="hljs-keyword">const</span> arr = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-comment">/* ... many items */</span>];
+arr.<span class="hljs-property">length</span> = <span class="hljs-number">0</span>;  <span class="hljs-comment">// Clear array</span>
+
+<span class="hljs-keyword">const</span> map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>();
+map.<span class="hljs-title function_">clear</span>();  <span class="hljs-comment">// Clear map</span>
+
+<span class="hljs-keyword">const</span> set = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>();
+set.<span class="hljs-title function_">clear</span>();  <span class="hljs-comment">// Clear set</span>
+</code></pre><h3 id="weakmap-and-weakset">WeakMap and WeakSet</h3>
+<p>Allow garbage collection of keys/values.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Regular Map - prevents GC</span>
+<span class="hljs-keyword">const</span> map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>();
+<span class="hljs-keyword">let</span> obj = { <span class="hljs-attr">data</span>: <span class="hljs-string">&#x27;important&#x27;</span> };
+
+map.<span class="hljs-title function_">set</span>(obj, <span class="hljs-string">&#x27;value&#x27;</span>);
+obj = <span class="hljs-literal">null</span>;  <span class="hljs-comment">// Object CANNOT be GC&#x27;d (map still references it)</span>
+
+<span class="hljs-comment">// WeakMap - allows GC</span>
+<span class="hljs-keyword">const</span> weakMap = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeakMap</span>();
+<span class="hljs-keyword">let</span> obj2 = { <span class="hljs-attr">data</span>: <span class="hljs-string">&#x27;important&#x27;</span> };
+
+weakMap.<span class="hljs-title function_">set</span>(obj2, <span class="hljs-string">&#x27;value&#x27;</span>);
+obj2 = <span class="hljs-literal">null</span>;  <span class="hljs-comment">// Object CAN be GC&#x27;d (weak reference)</span>
+
+<span class="hljs-comment">// Use case: private data</span>
+<span class="hljs-keyword">const</span> privateData = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeakMap</span>();
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">User</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">name</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;
+    privateData.<span class="hljs-title function_">set</span>(<span class="hljs-variable language_">this</span>, { <span class="hljs-attr">password</span>: <span class="hljs-string">&#x27;secret&#x27;</span> });
+  }
+
+  <span class="hljs-title function_">getPrivate</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">return</span> privateData.<span class="hljs-title function_">get</span>(<span class="hljs-variable language_">this</span>);
+  }
+}
+
+<span class="hljs-keyword">let</span> user = <span class="hljs-keyword">new</span> <span class="hljs-title class_">User</span>(<span class="hljs-string">&#x27;Alice&#x27;</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(user.<span class="hljs-title function_">getPrivate</span>());  <span class="hljs-comment">// { password: &#x27;secret&#x27; }</span>
+user = <span class="hljs-literal">null</span>;  <span class="hljs-comment">// User and private data can be GC&#x27;d</span>
+</code></pre><h3 id="manual-gc-in-nodejs-development-only">Manual GC in Node.js (Development Only)</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Expose GC in Node.js (requires --expose-gc flag)</span>
+<span class="hljs-comment">// node --expose-gc app.js</span>
+
+<span class="hljs-keyword">if</span> (<span class="hljs-variable language_">global</span>.<span class="hljs-property">gc</span>) {
+  <span class="hljs-variable language_">global</span>.<span class="hljs-title function_">gc</span>();  <span class="hljs-comment">// Force garbage collection</span>
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;GC triggered&#x27;</span>);
+} <span class="hljs-keyword">else</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;GC not exposed. Run with --expose-gc&#x27;</span>);
+}
+
+<span class="hljs-comment">// ⚠️ Never use in production!</span>
+<span class="hljs-comment">// - Blocks application</span>
+<span class="hljs-comment">// - Engine knows better when to GC</span>
+<span class="hljs-comment">// - Only for debugging/testing</span>
+</code></pre><hr>
+<h2 id="gc-algorithms">GC Algorithms</h2>
+<h3 id="reference-counting-old-not-used">Reference Counting (Old, Not Used)</h3>
+<p>Count references to each object. Free when count reaches zero.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Conceptual (not how modern JS works)</span>
+<span class="hljs-keyword">let</span> obj = { <span class="hljs-attr">data</span>: <span class="hljs-string">&#x27;value&#x27;</span> };  <span class="hljs-comment">// ref count = 1</span>
+<span class="hljs-keyword">let</span> ref = obj;                 <span class="hljs-comment">// ref count = 2</span>
+ref = <span class="hljs-literal">null</span>;                    <span class="hljs-comment">// ref count = 1</span>
+obj = <span class="hljs-literal">null</span>;                    <span class="hljs-comment">// ref count = 0 → free memory</span>
+
+<span class="hljs-comment">// ❌ Problem: Circular references</span>
+<span class="hljs-keyword">const</span> obj1 = {};
+<span class="hljs-keyword">const</span> obj2 = {};
+obj1.<span class="hljs-property">ref</span> = obj2;  <span class="hljs-comment">// ref count: obj2 = 1</span>
+obj2.<span class="hljs-property">ref</span> = obj1;  <span class="hljs-comment">// ref count: obj1 = 1</span>
+
+<span class="hljs-comment">// Both have ref count &gt; 0, but both are unreachable!</span>
+<span class="hljs-comment">// Memory leak with reference counting</span>
+</code></pre><h3 id="mark-and-sweep-modern-approach">Mark-and-Sweep (Modern Approach)</h3>
+<p>Used by all modern JavaScript engines.</p>
+<h4 id="algorithm-steps">Algorithm Steps:</h4>
+<ol>
+<li><strong>Mark Phase</strong>: Start from roots, mark all reachable objects</li>
+<li><strong>Sweep Phase</strong>: Free all unmarked (unreachable) objects</li>
+</ol>
+<h4 id="roots">Roots:</h4>
+<ul>
+<li>Global object (<code>window</code>, <code>global</code>)</li>
+<li>Currently executing call stack</li>
+<li>Global variables</li>
+</ul>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Example execution</span>
+
+<span class="hljs-comment">// Root: global scope</span>
+<span class="hljs-keyword">let</span> globalObj = { <span class="hljs-attr">data</span>: <span class="hljs-string">&#x27;global&#x27;</span> };  <span class="hljs-comment">// ✅ Reachable from root</span>
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">example</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">let</span> localObj = { <span class="hljs-attr">data</span>: <span class="hljs-string">&#x27;local&#x27;</span> };   <span class="hljs-comment">// ✅ Reachable (on call stack)</span>
+
+  <span class="hljs-keyword">let</span> temp = { <span class="hljs-attr">data</span>: <span class="hljs-string">&#x27;temporary&#x27;</span> };   <span class="hljs-comment">// ✅ Reachable while function runs</span>
+
+  <span class="hljs-keyword">return</span> localObj;
+}
+
+<span class="hljs-keyword">let</span> result = <span class="hljs-title function_">example</span>();
+<span class="hljs-comment">// After function:</span>
+<span class="hljs-comment">// - &#x27;result&#x27; is reachable (returned) ✅</span>
+<span class="hljs-comment">// - &#x27;temp&#x27; is unreachable ❌ → will be GC&#x27;d</span>
+
+<span class="hljs-comment">// Circular references work fine</span>
+<span class="hljs-keyword">const</span> obj1 = {};
+<span class="hljs-keyword">const</span> obj2 = {};
+obj1.<span class="hljs-property">ref</span> = obj2;
+obj2.<span class="hljs-property">ref</span> = obj1;
+
+<span class="hljs-comment">// If no root can reach obj1 or obj2:</span>
+<span class="hljs-comment">// - Both marked as unreachable</span>
+<span class="hljs-comment">// - Both get garbage collected</span>
+<span class="hljs-comment">// ✅ No leak!</span>
+</code></pre><h4 id="mark-and-sweep-handles-circular-references">Mark-and-Sweep Handles Circular References</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">createCircular</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> obj1 = { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;obj1&#x27;</span> };
+  <span class="hljs-keyword">const</span> obj2 = { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;obj2&#x27;</span> };
+
+  obj1.<span class="hljs-property">ref</span> = obj2;
+  obj2.<span class="hljs-property">ref</span> = obj1;
+
+  <span class="hljs-comment">// Not returned, not assigned to global</span>
+  <span class="hljs-comment">// No root can reach them</span>
+}
+
+<span class="hljs-title function_">createCircular</span>();
+<span class="hljs-comment">// Both obj1 and obj2 will be garbage collected</span>
+<span class="hljs-comment">// despite circular reference</span>
+</code></pre><hr>
+<h2 id="v8-engine-and-nodejs">V8 Engine and Node.js</h2>
+<h3 id="v8s-garbage-collection-strategy">V8&#39;s Garbage Collection Strategy</h3>
+<p>V8 (Chrome and Node.js) uses <strong>generational garbage collection</strong>.</p>
+<h4 id="generations">Generations</h4>
+<ol>
+<li><p><strong>Young Generation (New Space)</strong></p>
+<ul>
+<li>New objects allocated here</li>
+<li>Small size (~1-8 MB)</li>
+<li>Fast, frequent GC</li>
+<li>Most objects die young</li>
+</ul>
+</li>
+<li><p><strong>Old Generation (Old Space)</strong></p>
+<ul>
+<li>Long-lived objects promoted here</li>
+<li>Larger size</li>
+<li>Slower, less frequent GC</li>
+<li>Objects that survived young GC</li>
+</ul>
+</li>
+</ol>
+<h3 id="gc-algorithms-in-v8">GC Algorithms in V8</h3>
+<h4 id="1-scavenge-young-generation">1. Scavenge (Young Generation)</h4>
+<p><strong>Cheney&#39;s Algorithm:</strong></p>
+<ul>
+<li>Divides young generation into two halves</li>
+<li>Allocate in one half</li>
+<li>When full, copy live objects to other half</li>
+<li>Clear original half</li>
+<li>Very fast (5-10ms)</li>
+</ul>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Fast allocation in young generation</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">createMany</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">1000</span>; i++) {
+    <span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">id</span>: i };  <span class="hljs-comment">// Allocated in young generation</span>
+    <span class="hljs-comment">// Most will be GC&#x27;d quickly by Scavenge</span>
+  }
+}
+</code></pre><h4 id="2-mark-sweep-compact-old-generation">2. Mark-Sweep-Compact (Old Generation)</h4>
+<p><strong>Three phases:</strong></p>
+<ul>
+<li><strong>Mark</strong>: Identify live objects</li>
+<li><strong>Sweep</strong>: Free dead objects</li>
+<li><strong>Compact</strong>: Move live objects together (reduces fragmentation)</li>
+</ul>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Long-lived objects in old generation</span>
+<span class="hljs-keyword">const</span> cache = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>();
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">cacheData</span>(<span class="hljs-params">key, value</span>) {
+  cache.<span class="hljs-title function_">set</span>(key, value);
+  <span class="hljs-comment">// These objects survive multiple GCs</span>
+  <span class="hljs-comment">// → promoted to old generation</span>
+}
+</code></pre><h3 id="incremental-marking">Incremental Marking</h3>
+<p>Break GC into small steps to reduce pause times.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Instead of:</span>
+<span class="hljs-comment">// [Running] → [PAUSE: 100ms GC] → [Running]</span>
+
+<span class="hljs-comment">// Incremental:</span>
+<span class="hljs-comment">// [Running] → [5ms GC] → [Running] → [5ms GC] → [Running] → ...</span>
+<span class="hljs-comment">// Smaller pauses, less noticeable</span>
+</code></pre><hr>
+<h2 id="minimizing-gc-impact">Minimizing GC Impact</h2>
+<h3 id="strategies">Strategies</h3>
+<h4 id="1-object-pooling">1. Object Pooling</h4>
+<p>Reuse objects instead of creating/destroying many.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ Without pooling - many allocations</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">processMany</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10000</span>; i++) {
+    <span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">x</span>: i, <span class="hljs-attr">y</span>: i * <span class="hljs-number">2</span> };  <span class="hljs-comment">// 10000 allocations</span>
+    <span class="hljs-title function_">process</span>(obj);
+    <span class="hljs-comment">// obj eligible for GC</span>
+  }
+}
+
+<span class="hljs-comment">// ✅ With pooling - reuse objects</span>
+<span class="hljs-keyword">const</span> objectPool = [];
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">getObject</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">return</span> objectPool.<span class="hljs-title function_">pop</span>() || { <span class="hljs-attr">x</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">0</span> };
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">releaseObject</span>(<span class="hljs-params">obj</span>) {
+  obj.<span class="hljs-property">x</span> = <span class="hljs-number">0</span>;
+  obj.<span class="hljs-property">y</span> = <span class="hljs-number">0</span>;
+  objectPool.<span class="hljs-title function_">push</span>(obj);
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">processManyPooled</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10000</span>; i++) {
+    <span class="hljs-keyword">const</span> obj = <span class="hljs-title function_">getObject</span>();  <span class="hljs-comment">// Reuse from pool</span>
+    obj.<span class="hljs-property">x</span> = i;
+    obj.<span class="hljs-property">y</span> = i * <span class="hljs-number">2</span>;
+    <span class="hljs-title function_">process</span>(obj);
+    <span class="hljs-title function_">releaseObject</span>(obj);  <span class="hljs-comment">// Return to pool</span>
+  }
+}
+</code></pre><h4 id="2-avoid-temporary-objects">2. Avoid Temporary Objects</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ Creates temporary strings</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">badConcat</span>(<span class="hljs-params">arr</span>) {
+  <span class="hljs-keyword">let</span> result = <span class="hljs-string">&quot;&quot;</span>;
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; arr.<span class="hljs-property">length</span>; i++) {
+    result += arr[i];  <span class="hljs-comment">// Creates new string each iteration</span>
+  }
+  <span class="hljs-keyword">return</span> result;
+}
+
+<span class="hljs-comment">// ✅ Efficient concatenation</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">goodConcat</span>(<span class="hljs-params">arr</span>) {
+  <span class="hljs-keyword">return</span> arr.<span class="hljs-title function_">join</span>(<span class="hljs-string">&quot;&quot;</span>);  <span class="hljs-comment">// Single allocation</span>
+}
+
+<span class="hljs-comment">// ❌ Temporary array</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">badFilter</span>(<span class="hljs-params">arr</span>) {
+  <span class="hljs-keyword">return</span> arr.<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x &gt; <span class="hljs-number">0</span>)
+            .<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x * <span class="hljs-number">2</span>)
+            .<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x &lt; <span class="hljs-number">100</span>);
+  <span class="hljs-comment">// Creates 3 intermediate arrays</span>
+}
+
+<span class="hljs-comment">// ✅ Single pass</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">goodFilter</span>(<span class="hljs-params">arr</span>) {
+  <span class="hljs-keyword">const</span> result = [];
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> x <span class="hljs-keyword">of</span> arr) {
+    <span class="hljs-keyword">if</span> (x &gt; <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">const</span> doubled = x * <span class="hljs-number">2</span>;
+      <span class="hljs-keyword">if</span> (doubled &lt; <span class="hljs-number">100</span>) {
+        result.<span class="hljs-title function_">push</span>(doubled);
+      }
+    }
+  }
+  <span class="hljs-keyword">return</span> result;
+  <span class="hljs-comment">// Only 1 array created</span>
+}
+</code></pre><h4 id="3-reuse-objects">3. Reuse Objects</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ New object each time</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">processRequest</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> config = {  <span class="hljs-comment">// New object each request</span>
+    <span class="hljs-attr">timeout</span>: <span class="hljs-number">5000</span>,
+    <span class="hljs-attr">retries</span>: <span class="hljs-number">3</span>
+  };
+  <span class="hljs-title function_">fetch</span>(url, config);
+}
+
+<span class="hljs-comment">// ✅ Reuse object</span>
+<span class="hljs-keyword">const</span> config = {
+  <span class="hljs-attr">timeout</span>: <span class="hljs-number">5000</span>,
+  <span class="hljs-attr">retries</span>: <span class="hljs-number">3</span>
+};
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">processRequest</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-title function_">fetch</span>(url, config);  <span class="hljs-comment">// Reuse same config</span>
+}
+</code></pre><h4 id="4-use-appropriate-data-structures">4. Use Appropriate Data Structures</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ Array for lookups (slow + GC overhead)</span>
+<span class="hljs-keyword">const</span> users = [];
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">findUser</span>(<span class="hljs-params">id</span>) {
+  <span class="hljs-keyword">return</span> users.<span class="hljs-title function_">find</span>(<span class="hljs-function"><span class="hljs-params">u</span> =&gt;</span> u.<span class="hljs-property">id</span> === id);  <span class="hljs-comment">// O(n)</span>
+}
+
+<span class="hljs-comment">// ✅ Map for lookups (fast + efficient)</span>
+<span class="hljs-keyword">const</span> users = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>();
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">findUser</span>(<span class="hljs-params">id</span>) {
+  <span class="hljs-keyword">return</span> users.<span class="hljs-title function_">get</span>(id);  <span class="hljs-comment">// O(1)</span>
+}
+
+<span class="hljs-comment">// ✅ WeakMap for cache with auto-cleanup</span>
+<span class="hljs-keyword">const</span> cache = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeakMap</span>();
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">getData</span>(<span class="hljs-params">key</span>) {
+  <span class="hljs-keyword">if</span> (!cache.<span class="hljs-title function_">has</span>(key)) {
+    cache.<span class="hljs-title function_">set</span>(key, <span class="hljs-title function_">expensiveOperation</span>(key));
+  }
+  <span class="hljs-keyword">return</span> cache.<span class="hljs-title function_">get</span>(key);
+}
+<span class="hljs-comment">// Keys can be GC&#x27;d when no longer referenced elsewhere</span>
+</code></pre><hr>
+<h2 id="advanced-topics">Advanced Topics</h2>
+<h3 id="when-gc-is-beneficial">When GC is Beneficial</h3>
+<ul>
+<li><strong>Long-running applications</strong>: Servers, SPAs</li>
+<li><strong>Memory-intensive operations</strong>: Data processing, image manipulation</li>
+<li><strong>Many temporary objects</strong>: Parsers, compilers</li>
+<li><strong>Event-driven code</strong>: Prevents accumulation of event handler closures</li>
+<li><strong>Cached data</strong>: Manage lifecycle of cached data</li>
+</ul>
+<h3 id="memory-leak-prevention-patterns">Memory Leak Prevention Patterns</h3>
+<h4 id="pattern-1-proper-cleanup">Pattern 1: Proper Cleanup</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">DataManager</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span> = [];
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">intervalId</span> = <span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span>.<span class="hljs-title function_">push</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>());
+    }, <span class="hljs-number">1000</span>);
+  }
+
+  <span class="hljs-title function_">destroy</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-built_in">clearInterval</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">intervalId</span>);  <span class="hljs-comment">// Clean up!</span>
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span> = <span class="hljs-literal">null</span>;
+  }
+}
+
+<span class="hljs-keyword">const</span> manager = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DataManager</span>();
+<span class="hljs-comment">// Later:</span>
+manager.<span class="hljs-title function_">destroy</span>();  <span class="hljs-comment">// Always call cleanup</span>
+</code></pre><h4 id="pattern-2-remove-event-listeners">Pattern 2: Remove Event Listeners</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">EventHandler</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">element</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">element</span> = element;
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">handler</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">handleClick</span>.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>);
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">element</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">handler</span>);
+  }
+
+  <span class="hljs-title function_">handleClick</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Clicked&#x27;</span>);
+  }
+
+  <span class="hljs-title function_">destroy</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">element</span>.<span class="hljs-title function_">removeEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-property">handler</span>);
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">element</span> = <span class="hljs-literal">null</span>;
+  }
+}
+</code></pre><h4 id="pattern-3-limit-cache-size">Pattern 3: Limit Cache Size</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">LimitedCache</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">maxSize = <span class="hljs-number">100</span></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">cache</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>();
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">maxSize</span> = maxSize;
+  }
+
+  <span class="hljs-title function_">set</span>(<span class="hljs-params">key, value</span>) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.<span class="hljs-property">cache</span>.<span class="hljs-property">size</span> &gt;= <span class="hljs-variable language_">this</span>.<span class="hljs-property">maxSize</span>) {
+      <span class="hljs-comment">// Remove oldest entry (first in Map)</span>
+      <span class="hljs-keyword">const</span> firstKey = <span class="hljs-variable language_">this</span>.<span class="hljs-property">cache</span>.<span class="hljs-title function_">keys</span>().<span class="hljs-title function_">next</span>().<span class="hljs-property">value</span>;
+      <span class="hljs-variable language_">this</span>.<span class="hljs-property">cache</span>.<span class="hljs-title function_">delete</span>(firstKey);
+    }
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">cache</span>.<span class="hljs-title function_">set</span>(key, value);
+  }
+
+  <span class="hljs-title function_">get</span>(<span class="hljs-params">key</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">cache</span>.<span class="hljs-title function_">get</span>(key);
+  }
+}
+</code></pre><h3 id="limitations-and-challenges">Limitations and Challenges</h3>
+<h4 id="limitations">Limitations:</h4>
+<ul>
+<li><strong>Non-deterministic</strong>: Can&#39;t control exactly when GC runs</li>
+<li><strong>Pause times</strong>: &quot;Stop-the-world&quot; GC pauses execution</li>
+<li><strong>No guarantees</strong>: Can&#39;t guarantee immediate cleanup</li>
+<li><strong>Memory overhead</strong>: GC itself uses memory</li>
+<li><strong>Complex tuning</strong>: Optimal settings vary by application</li>
+</ul>
+<h4 id="challenges">Challenges:</h4>
+<ul>
+<li><strong>Detecting leaks</strong>: Not always obvious</li>
+<li><strong>Balancing frequency vs pause time</strong>: More frequent GC = shorter app pauses, but more overhead</li>
+<li><strong>Platform differences</strong>: Browser vs Node.js behave differently</li>
+<li><strong>Large heaps</strong>: Bigger heaps = longer GC times</li>
+<li><strong>Framework overhead</strong>: Libraries may hold unexpected references</li>
+</ul>
+<h3 id="gc-in-nodejs-vs-browser">GC in Node.js vs Browser</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Node.js</th>
+<th>Browser</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Engine</strong></td>
+<td>V8 (same as Chrome)</td>
+<td>Various (V8, SpiderMonkey, JavaScriptCore)</td>
+</tr>
+<tr>
+<td><strong>Use case</strong></td>
+<td>Server, long-running</td>
+<td>Client, shorter sessions</td>
+</tr>
+<tr>
+<td><strong>Control</strong></td>
+<td>CLI flags, heap size tuning</td>
+<td>Limited control</td>
+</tr>
+<tr>
+<td><strong>Monitoring</strong></td>
+<td>CLI tools, <code>--trace-gc</code></td>
+<td>DevTools profiling</td>
+</tr>
+<tr>
+<td><strong>Memory leaks</strong></td>
+<td>More critical (24/7 servers)</td>
+<td>Less critical (tab closure cleans up)</td>
+</tr>
+<tr>
+<td><strong>Heap size</strong></td>
+<td>Configurable (<code>--max-old-space-size</code>)</td>
+<td>Browser-dependent</td>
+</tr>
+</tbody></table>
+<h3 id="nodejs-gc-flags">Node.js GC Flags</h3>
+<pre><code class="hljs language-bash"><span class="hljs-comment"># Increase heap size (default: ~1.5GB)</span>
+node --max-old-space-size=4096 app.js  <span class="hljs-comment"># 4GB</span>
+
+<span class="hljs-comment"># Expose gc() function for manual triggering</span>
+node --expose-gc app.js
+
+<span class="hljs-comment"># Log GC events</span>
+node --trace-gc app.js
+
+<span class="hljs-comment"># Detailed GC logging</span>
+node --trace-gc --trace-gc-verbose app.js
+
+<span class="hljs-comment"># Optimize for throughput</span>
+node --optimize-for-size --max-old-space-size=2048 app.js
+</code></pre><h3 id="impact-on-performance">Impact on Performance</h3>
+<p><strong>Negative impacts:</strong></p>
+<ul>
+<li>GC pauses block JavaScript execution</li>
+<li>Longer pauses with larger heaps</li>
+<li>CPU overhead during GC</li>
+<li>Unpredictable timing (can happen during critical operations)</li>
+</ul>
+<p><strong>Mitigation:</strong></p>
+<ul>
+<li>Incremental/concurrent GC (modern engines)</li>
+<li>Reduce object creation rate</li>
+<li>Keep heap size reasonable</li>
+<li>Profile and optimize hot paths</li>
+<li>Use object pooling for frequently created objects</li>
+</ul>
+<h3 id="gc-and-async-operations">GC and Async Operations</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// GC can run between async operations</span>
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">processData</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetchData</span>();  <span class="hljs-comment">// ← GC might run here</span>
+  <span class="hljs-keyword">const</span> processed = <span class="hljs-title function_">transform</span>(data);  <span class="hljs-comment">// ← And here</span>
+  <span class="hljs-keyword">await</span> <span class="hljs-title function_">save</span>(processed);  <span class="hljs-comment">// ← And here</span>
+  <span class="hljs-keyword">return</span> processed;
+}
+
+<span class="hljs-comment">// Ensure cleanup in async code</span>
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">withCleanup</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">let</span> resource = <span class="hljs-literal">null</span>;
+  <span class="hljs-keyword">try</span> {
+    resource = <span class="hljs-keyword">await</span> <span class="hljs-title function_">acquireResource</span>();
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_">useResource</span>(resource);
+  } <span class="hljs-keyword">finally</span> {
+    <span class="hljs-keyword">if</span> (resource) {
+      <span class="hljs-keyword">await</span> <span class="hljs-title function_">releaseResource</span>(resource);
+      resource = <span class="hljs-literal">null</span>;  <span class="hljs-comment">// Help GC</span>
+    }
+  }
+}
+</code></pre><h3 id="monitoring-memory">Monitoring Memory</h3>
+<h4 id="nodejs">Node.js</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Check memory usage</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(process.<span class="hljs-title function_">memoryUsage</span>());
+<span class="hljs-comment">/*
+{
+  rss: 4935680,        // Resident Set Size (total memory)
+  heapTotal: 1826816,  // Total heap size
+  heapUsed: 650472,    // Used heap
+  external: 49879,     // C++ objects
+  arrayBuffers: 9386   // ArrayBuffers and SharedArrayBuffers
+}
+*/</span>
+
+<span class="hljs-comment">// Monitor over time</span>
+<span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-keyword">const</span> used = process.<span class="hljs-title function_">memoryUsage</span>().<span class="hljs-property">heapUsed</span> / <span class="hljs-number">1024</span> / <span class="hljs-number">1024</span>;
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Memory: <span class="hljs-subst">${<span class="hljs-built_in">Math</span>.round(used * <span class="hljs-number">100</span>) / <span class="hljs-number">100</span>}</span> MB`</span>);
+}, <span class="hljs-number">1000</span>);
+</code></pre><h4 id="browser">Browser</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Chrome only</span>
+<span class="hljs-keyword">if</span> (performance.<span class="hljs-property">memory</span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>({
+    <span class="hljs-attr">totalJSHeapSize</span>: performance.<span class="hljs-property">memory</span>.<span class="hljs-property">totalJSHeapSize</span>,
+    <span class="hljs-attr">usedJSHeapSize</span>: performance.<span class="hljs-property">memory</span>.<span class="hljs-property">usedJSHeapSize</span>,
+    <span class="hljs-attr">jsHeapSizeLimit</span>: performance.<span class="hljs-property">memory</span>.<span class="hljs-property">jsHeapSizeLimit</span>
+  });
+}
+
+<span class="hljs-comment">// Memory pressure API (experimental)</span>
+<span class="hljs-keyword">if</span> (<span class="hljs-string">&#x27;memory&#x27;</span> <span class="hljs-keyword">in</span> performance) {
+  <span class="hljs-keyword">const</span> observer = <span class="hljs-keyword">new</span> <span class="hljs-title class_">PerformanceObserver</span>(<span class="hljs-function">(<span class="hljs-params">list</span>) =&gt;</span> {
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> entry <span class="hljs-keyword">of</span> list.<span class="hljs-title function_">getEntries</span>()) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Memory pressure:&#x27;</span>, entry);
+    }
+  });
+  observer.<span class="hljs-title function_">observe</span>({ <span class="hljs-attr">entryTypes</span>: [<span class="hljs-string">&#x27;memory&#x27;</span>] });
+}
+</code></pre><h3 id="advanced-techniques">Advanced Techniques</h3>
+<h4 id="weakref-es2021">WeakRef (ES2021)</h4>
+<p>Allow GC even if weak references exist.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Cache</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">cache</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>();
+  }
+
+  <span class="hljs-title function_">set</span>(<span class="hljs-params">key, value</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">cache</span>.<span class="hljs-title function_">set</span>(key, <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeakRef</span>(value));
+  }
+
+  <span class="hljs-title function_">get</span>(<span class="hljs-params">key</span>) {
+    <span class="hljs-keyword">const</span> ref = <span class="hljs-variable language_">this</span>.<span class="hljs-property">cache</span>.<span class="hljs-title function_">get</span>(key);
+    <span class="hljs-keyword">if</span> (ref) {
+      <span class="hljs-keyword">const</span> value = ref.<span class="hljs-title function_">deref</span>();  <span class="hljs-comment">// May be undefined if GC&#x27;d</span>
+      <span class="hljs-keyword">if</span> (value) {
+        <span class="hljs-keyword">return</span> value;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">cache</span>.<span class="hljs-title function_">delete</span>(key);  <span class="hljs-comment">// Clean up dead reference</span>
+      }
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+  }
+}
+
+<span class="hljs-keyword">let</span> obj = { <span class="hljs-attr">large</span>: <span class="hljs-string">&#x27;data&#x27;</span> };
+<span class="hljs-keyword">const</span> cache = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Cache</span>();
+cache.<span class="hljs-title function_">set</span>(<span class="hljs-string">&#x27;key&#x27;</span>, obj);
+
+obj = <span class="hljs-literal">null</span>;  <span class="hljs-comment">// Object can be GC&#x27;d even though in cache</span>
+</code></pre><h4 id="finalizationregistry-es2021">FinalizationRegistry (ES2021)</h4>
+<p>Run cleanup code when object is garbage collected.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> registry = <span class="hljs-keyword">new</span> <span class="hljs-title class_">FinalizationRegistry</span>(<span class="hljs-function">(<span class="hljs-params">heldValue</span>) =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Object <span class="hljs-subst">${heldValue}</span> was garbage collected`</span>);
+});
+
+{
+  <span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">data</span>: <span class="hljs-string">&#x27;important&#x27;</span> };
+  registry.<span class="hljs-title function_">register</span>(obj, <span class="hljs-string">&#x27;myObject&#x27;</span>);
+
+  <span class="hljs-comment">// When obj is GC&#x27;d, callback runs</span>
+}
+</code></pre><hr>
+<h2 id="summary">Summary</h2>
+<h3 id="key-takeaways">Key Takeaways</h3>
+<ol>
+<li><strong>GC is automatic</strong> - reclaims unused memory</li>
+<li><strong>Mark-and-sweep</strong> - modern algorithm handles circular references</li>
+<li><strong>Generational GC</strong> - optimizes for &quot;most objects die young&quot;</li>
+<li><strong>Memory leaks</strong> - caused by unintentional references</li>
+<li><strong>Limited manual control</strong> - help by nullifying refs, clearing timers</li>
+<li><strong>WeakMap/WeakSet</strong> - allow GC of keys/values</li>
+<li><strong>Monitor memory</strong> - use tools to detect leaks</li>
+</ol>
+<h3 id="best-practices">Best Practices</h3>
+<ul>
+<li>Set large objects to <code>null</code> when done</li>
+<li>Clear timers/intervals when component unmounts</li>
+<li>Remove event listeners when element removed</li>
+<li>Use WeakMap for caches that should allow GC</li>
+<li>Limit cache sizes</li>
+<li>Avoid global variables that grow indefinitely</li>
+<li>Profile memory usage regularly</li>
+<li>Test for memory leaks in long-running scenarios</li>
+</ul>
+<h3 id="common-memory-leak-patterns">Common Memory Leak Patterns</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ Forgotten timer</span>
+<span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {}, <span class="hljs-number">1000</span>);  <span class="hljs-comment">// Never cleared</span>
+
+<span class="hljs-comment">// ❌ Closure over large data</span>
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) { <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(largeArray); };
+
+<span class="hljs-comment">// ❌ Growing global</span>
+<span class="hljs-variable language_">window</span>.<span class="hljs-property">cache</span>.<span class="hljs-title function_">push</span>(data);  <span class="hljs-comment">// Grows forever</span>
+
+<span class="hljs-comment">// ❌ Event listener not removed</span>
+element.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, handler);
+element.<span class="hljs-title function_">remove</span>();  <span class="hljs-comment">// Listener still exists</span>
+
+<span class="hljs-comment">// ❌ Detached DOM node</span>
+<span class="hljs-keyword">const</span> div = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;div&#x27;</span>);
+<span class="hljs-variable language_">document</span>.<span class="hljs-property">body</span>.<span class="hljs-title function_">appendChild</span>(div);
+<span class="hljs-variable language_">document</span>.<span class="hljs-property">body</span>.<span class="hljs-title function_">removeChild</span>(div);
+<span class="hljs-comment">// But still referenced in variable</span>
+</code></pre><h3 id="debugging-memory-leaks">Debugging Memory Leaks</h3>
+<ol>
+<li><p><strong>Chrome DevTools</strong>:</p>
+<ul>
+<li>Take heap snapshots</li>
+<li>Compare snapshots over time</li>
+<li>Use Allocation Timeline</li>
+<li>Check Detached DOM nodes</li>
+</ul>
+</li>
+<li><p><strong>Node.js</strong>:</p>
+<ul>
+<li>Use <code>--trace-gc</code> flag</li>
+<li>Monitor <code>process.memoryUsage()</code></li>
+<li>Use heap snapshots</li>
+<li>Profile with clinic.js or other tools</li>
+</ul>
+</li>
+<li><p><strong>General approach</strong>:</p>
+<ul>
+<li>Identify growing memory over time</li>
+<li>Take snapshots before/after operations</li>
+<li>Find objects that should be GC&#39;d but aren&#39;t</li>
+<li>Trace references back to root</li>
+<li>Fix by removing unneeded references</li>
+</ul>
+</li>
+</ol>
+<h3 id="quick-reference">Quick Reference</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Help GC</span>
+obj = <span class="hljs-literal">null</span>;
+array.<span class="hljs-property">length</span> = <span class="hljs-number">0</span>;
+map.<span class="hljs-title function_">clear</span>();
+<span class="hljs-built_in">clearInterval</span>(id);
+element.<span class="hljs-title function_">removeEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, handler);
+
+<span class="hljs-comment">// Weak references (allow GC)</span>
+<span class="hljs-keyword">const</span> weakMap = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeakMap</span>();
+<span class="hljs-keyword">const</span> weakSet = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeakSet</span>();
+<span class="hljs-keyword">const</span> weakRef = <span class="hljs-keyword">new</span> <span class="hljs-title class_">WeakRef</span>(obj);
+
+<span class="hljs-comment">// Monitor memory (Node.js)</span>
+process.<span class="hljs-title function_">memoryUsage</span>();
+
+<span class="hljs-comment">// Trigger GC (Node.js, dev only)</span>
+<span class="hljs-comment">// node --expose-gc</span>
+<span class="hljs-variable language_">global</span>.<span class="hljs-title function_">gc</span>();
+</code></pre><div class="page-navigation">
+            <a href="07-event-loop-async.html" class="nav-btn nav-prev" data-nav="prev">
+                <span class="nav-label">Previous</span>
+                <span class="nav-title">Event Loop & Async</span>
+            </a>
+        </div>
+        <div class="progress-section">
+            <div id="progress-controls"></div>
+            <div class="notes-section">
+                <h3>Your Notes</h3>
+                <textarea id="page-notes" placeholder="Add your notes here... (saved automatically)"></textarea>
+            </div>
+        </div>
+    
+    </main>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" aria-label="Back to top">↑</button>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="modal">
+        <div class="modal-content search-content">
+            <div class="search-header">
+                <input type="text" id="search-input" placeholder="Search topics..." autofocus>
+                <button id="search-close" aria-label="Close search">✕</button>
+            </div>
+            <div id="search-results" class="search-results"></div>
+            <div class="search-footer">
+                <span>↑↓ Navigate</span>
+                <span>↵ Select</span>
+                <span>Esc Close</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shortcuts Modal -->
+    <div id="shortcuts-modal" class="modal">
+        <div class="modal-content shortcuts-modal-content">
+            <div class="modal-header">
+                <h2>Keyboard Shortcuts</h2>
+                <button id="shortcuts-close" aria-label="Close shortcuts">✕</button>
+            </div>
+            <div class="shortcuts-content"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/nav.js"></script>
+    <script src="/js/progress.js"></script>
+    <script src="/js/search.js"></script>
+    <script src="/js/shortcuts.js"></script>
+</body>
+
+</html>

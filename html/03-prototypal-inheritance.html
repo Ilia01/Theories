@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototypal Inheritance</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+</head>
+
+<body>
+    <!-- Header Toolbar -->
+    <div id="header-toolbar">
+        <button id="search-trigger" aria-label="Search" title="Search (Cmd+K)">
+            🔍
+        </button>
+        <button id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle Dark Mode (Cmd+D)">
+            <span id="dark-mode-icon">🌙</span>
+        </button>
+        <button id="shortcuts-help" onclick="window.Shortcuts.show()" aria-label="Keyboard shortcuts"
+            title="Shortcuts (?)">
+            ⌨️
+        </button>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button id="menu-toggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Progress Bar -->
+    <div id="progress-bar">
+        <div id="progress-fill"></div>
+    </div>
+
+    <!-- Overall Progress Indicator -->
+    <div id="overall-progress">
+        <div id="overall-progress-bar" style="width: 0%"></div>
+        <span id="progress-text">0/0 topics completed</span>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar">
+        <div id="sidebar-header">
+            <h2>JS/NodeJs Concepts</h2>
+        </div>
+        <ul id="nav-list">
+                        <li><a href="01-git-version-control.html"><span class="nav-number">1.</span>Git & Version Control</a></li>
+            <li><a href="02-javascript-data-types.html"><span class="nav-number">2.</span>JavaScript Data Types</a></li>
+            <li><a href="03-prototypal-inheritance.html" class="active"><span class="nav-number">3.</span>Prototypal Inheritance</a></li>
+            <li><a href="04-closures.html"><span class="nav-number">4.</span>Closures</a></li>
+            <li><a href="05-context.html"><span class="nav-number">5.</span>Context (this)</a></li>
+            <li><a href="06-classes.html"><span class="nav-number">6.</span>Classes</a></li>
+            <li><a href="07-event-loop-async.html"><span class="nav-number">7.</span>Event Loop & Async</a></li>
+            <li><a href="08-garbage-collection.html"><span class="nav-number">8.</span>Garbage Collection</a></li>
+        </ul>
+        <div id="sidebar-footer">
+            <button id="reset-progress" class="sidebar-btn">Reset Progress</button>
+            <button id="export-progress" class="sidebar-btn">Export</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        
+        <aside class="table-of-contents">
+            <h3>On This Page</h3>
+            <nav class="toc-nav">
+                <ul><li class=""><a href="#table-of-contents">Table of Contents</a></li>
+<li class=""><a href="#inheritance-conception">Inheritance Conception</a></li>
+<li class="toc-sub"><a href="#what-is-inheritance">What is Inheritance?</a></li>
+<li class="toc-sub"><a href="#benefits-of-inheritance">Benefits of Inheritance</a></li>
+<li class="toc-sub"><a href="#example">Example</a></li>
+<li class=""><a href="#prototypal-inheritance-basics">Prototypal Inheritance Basics</a></li>
+<li class="toc-sub"><a href="#core-concept">Core Concept</a></li>
+<li class="toc-sub"><a href="#simple-example">Simple Example</a></li>
+<li class="toc-sub"><a href="#how-property-lookup-works">How Property Lookup Works</a></li>
+<li class=""><a href="#prototype-chain">Prototype Chain</a></li>
+<li class="toc-sub"><a href="#understanding-the-chain">Understanding the Chain</a></li>
+<li class="toc-sub"><a href="#visualizing-the-chain">Visualizing the Chain</a></li>
+<li class="toc-sub"><a href="#chain-traversal">Chain Traversal</a></li>
+<li class=""><a href="#proto-vs-prototype">__proto__ vs prototype</a></li>
+<li class="toc-sub"><a href="#key-differences">Key Differences</a></li>
+<li class="toc-sub"><a href="#proto-deprecated">`__proto__` (Deprecated)</a></li>
+<li class="toc-sub"><a href="#prototype">`prototype`</a></li>
+<li class="toc-sub"><a href="#the-complete-picture">The Complete Picture</a></li>
+<li class="toc-sub"><a href="#why-the-confusion">Why the Confusion?</a></li>
+<li class=""><a href="#creating-objects-with-prototypes">Creating Objects with Prototypes</a></li>
+<li class="toc-sub"><a href="#method-1-objectcreate">Method 1: Object.create()</a></li>
+<li class="toc-sub"><a href="#method-2-constructor-functions">Method 2: Constructor Functions</a></li>
+<li class="toc-sub"><a href="#method-3-es6-classes">Method 3: ES6 Classes</a></li>
+<li class="toc-sub"><a href="#method-4-objectsetprototypeof">Method 4: Object.setPrototypeOf()</a></li>
+<li class="toc-sub"><a href="#comparison">Comparison</a></li>
+<li class=""><a href="#prototypal-vs-functional-inheritance">Prototypal vs Functional Inheritance</a></li>
+<li class="toc-sub"><a href="#prototypal-inheritance">Prototypal Inheritance</a></li>
+<li class="toc-sub"><a href="#functional-inheritance">Functional Inheritance</a></li>
+<li class="toc-sub"><a href="#comparison-table">Comparison Table</a></li>
+<li class="toc-sub"><a href="#hybrid-approach">Hybrid Approach</a></li>
+<li class=""><a href="#methods-to-setget-prototype">Methods to Set/Get Prototype</a></li>
+<li class="toc-sub"><a href="#getting-prototype">Getting Prototype</a></li>
+<li class="toc-sub"><a href="#setting-prototype">Setting Prototype</a></li>
+<li class="toc-sub"><a href="#checking-prototype-relationships">Checking Prototype Relationships</a></li>
+<li class="toc-sub"><a href="#creating-objects-with-null-prototype">Creating Objects with null Prototype</a></li>
+<li class="toc-sub"><a href="#summary-of-methods">Summary of Methods</a></li>
+<li class=""><a href="#secure-objects">Secure Objects</a></li>
+<li class="toc-sub"><a href="#prevent-extensions">Prevent Extensions</a></li>
+<li class="toc-sub"><a href="#seal">Seal</a></li>
+<li class="toc-sub"><a href="#freeze">Freeze</a></li>
+<li class="toc-sub"><a href="#important-shallow-operations">Important: Shallow Operations</a></li>
+<li class="toc-sub"><a href="#comparison-table">Comparison Table</a></li>
+<li class="toc-sub"><a href="#creating-truly-empty-objects">Creating Truly Empty Objects</a></li>
+<li class="toc-sub"><a href="#private-fields-with-closures">Private Fields with Closures</a></li>
+<li class="toc-sub"><a href="#es6-private-fields-classes">ES6 Private Fields (Classes)</a></li>
+<li class=""><a href="#objectprototype-methods">Object.prototype Methods</a></li>
+<li class="toc-sub"><a href="#hasownproperty">hasOwnProperty()</a></li>
+<li class="toc-sub"><a href="#isprototypeof">isPrototypeOf()</a></li>
+<li class="toc-sub"><a href="#propertyisenumerable">propertyIsEnumerable()</a></li>
+<li class="toc-sub"><a href="#tostring">toString()</a></li>
+<li class="toc-sub"><a href="#valueof">valueOf()</a></li>
+<li class="toc-sub"><a href="#tolocalestring">toLocaleString()</a></li>
+<li class=""><a href="#practical-applications">Practical Applications</a></li>
+<li class="toc-sub"><a href="#example-1-inheritance-hierarchy">Example 1: Inheritance Hierarchy</a></li>
+<li class="toc-sub"><a href="#example-2-mixins-via-prototypes">Example 2: Mixins via Prototypes</a></li>
+<li class="toc-sub"><a href="#example-3-plugin-system">Example 3: Plugin System</a></li>
+<li class="toc-sub"><a href="#example-4-method-chaining">Example 4: Method Chaining</a></li>
+<li class="toc-sub"><a href="#example-5-observable-pattern">Example 5: Observable Pattern</a></li>
+<li class=""><a href="#summary">Summary</a></li>
+<li class="toc-sub"><a href="#key-takeaways">Key Takeaways</a></li>
+<li class="toc-sub"><a href="#best-practices">Best Practices</a></li>
+<li class="toc-sub"><a href="#common-patterns">Common Patterns</a></li></ul>
+            </nav>
+        </aside>
+    
+        <aside class="table-of-contents">
+            <h3>On This Page</h3>
+            <nav class="toc-nav">
+                <ul><li class=""><a href="#table-of-contents">Table of Contents</a></li>
+<li class=""><a href="#inheritance-conception">Inheritance Conception</a></li>
+<li class="toc-sub"><a href="#what-is-inheritance">What is Inheritance?</a></li>
+<li class="toc-sub"><a href="#benefits-of-inheritance">Benefits of Inheritance</a></li>
+<li class="toc-sub"><a href="#example">Example</a></li>
+<li class=""><a href="#prototypal-inheritance-basics">Prototypal Inheritance Basics</a></li>
+<li class="toc-sub"><a href="#core-concept">Core Concept</a></li>
+<li class="toc-sub"><a href="#simple-example">Simple Example</a></li>
+<li class="toc-sub"><a href="#how-property-lookup-works">How Property Lookup Works</a></li>
+<li class=""><a href="#prototype-chain">Prototype Chain</a></li>
+<li class="toc-sub"><a href="#understanding-the-chain">Understanding the Chain</a></li>
+<li class="toc-sub"><a href="#visualizing-the-chain">Visualizing the Chain</a></li>
+<li class="toc-sub"><a href="#chain-traversal">Chain Traversal</a></li>
+<li class=""><a href="#proto-vs-prototype">__proto__ vs prototype</a></li>
+<li class="toc-sub"><a href="#key-differences">Key Differences</a></li>
+<li class="toc-sub"><a href="#proto-deprecated">`__proto__` (Deprecated)</a></li>
+<li class="toc-sub"><a href="#prototype">`prototype`</a></li>
+<li class="toc-sub"><a href="#the-complete-picture">The Complete Picture</a></li>
+<li class="toc-sub"><a href="#why-the-confusion">Why the Confusion?</a></li>
+<li class=""><a href="#creating-objects-with-prototypes">Creating Objects with Prototypes</a></li>
+<li class="toc-sub"><a href="#method-1-objectcreate">Method 1: Object.create()</a></li>
+<li class="toc-sub"><a href="#method-2-constructor-functions">Method 2: Constructor Functions</a></li>
+<li class="toc-sub"><a href="#method-3-es6-classes">Method 3: ES6 Classes</a></li>
+<li class="toc-sub"><a href="#method-4-objectsetprototypeof">Method 4: Object.setPrototypeOf()</a></li>
+<li class="toc-sub"><a href="#comparison">Comparison</a></li>
+<li class=""><a href="#prototypal-vs-functional-inheritance">Prototypal vs Functional Inheritance</a></li>
+<li class="toc-sub"><a href="#prototypal-inheritance">Prototypal Inheritance</a></li>
+<li class="toc-sub"><a href="#functional-inheritance">Functional Inheritance</a></li>
+<li class="toc-sub"><a href="#comparison-table">Comparison Table</a></li>
+<li class="toc-sub"><a href="#hybrid-approach">Hybrid Approach</a></li>
+<li class=""><a href="#methods-to-setget-prototype">Methods to Set/Get Prototype</a></li>
+<li class="toc-sub"><a href="#getting-prototype">Getting Prototype</a></li>
+<li class="toc-sub"><a href="#setting-prototype">Setting Prototype</a></li>
+<li class="toc-sub"><a href="#checking-prototype-relationships">Checking Prototype Relationships</a></li>
+<li class="toc-sub"><a href="#creating-objects-with-null-prototype">Creating Objects with null Prototype</a></li>
+<li class="toc-sub"><a href="#summary-of-methods">Summary of Methods</a></li>
+<li class=""><a href="#secure-objects">Secure Objects</a></li>
+<li class="toc-sub"><a href="#prevent-extensions">Prevent Extensions</a></li>
+<li class="toc-sub"><a href="#seal">Seal</a></li>
+<li class="toc-sub"><a href="#freeze">Freeze</a></li>
+<li class="toc-sub"><a href="#important-shallow-operations">Important: Shallow Operations</a></li>
+<li class="toc-sub"><a href="#comparison-table">Comparison Table</a></li>
+<li class="toc-sub"><a href="#creating-truly-empty-objects">Creating Truly Empty Objects</a></li>
+<li class="toc-sub"><a href="#private-fields-with-closures">Private Fields with Closures</a></li>
+<li class="toc-sub"><a href="#es6-private-fields-classes">ES6 Private Fields (Classes)</a></li>
+<li class=""><a href="#objectprototype-methods">Object.prototype Methods</a></li>
+<li class="toc-sub"><a href="#hasownproperty">hasOwnProperty()</a></li>
+<li class="toc-sub"><a href="#isprototypeof">isPrototypeOf()</a></li>
+<li class="toc-sub"><a href="#propertyisenumerable">propertyIsEnumerable()</a></li>
+<li class="toc-sub"><a href="#tostring">toString()</a></li>
+<li class="toc-sub"><a href="#valueof">valueOf()</a></li>
+<li class="toc-sub"><a href="#tolocalestring">toLocaleString()</a></li>
+<li class=""><a href="#practical-applications">Practical Applications</a></li>
+<li class="toc-sub"><a href="#example-1-inheritance-hierarchy">Example 1: Inheritance Hierarchy</a></li>
+<li class="toc-sub"><a href="#example-2-mixins-via-prototypes">Example 2: Mixins via Prototypes</a></li>
+<li class="toc-sub"><a href="#example-3-plugin-system">Example 3: Plugin System</a></li>
+<li class="toc-sub"><a href="#example-4-method-chaining">Example 4: Method Chaining</a></li>
+<li class="toc-sub"><a href="#example-5-observable-pattern">Example 5: Observable Pattern</a></li>
+<li class=""><a href="#summary">Summary</a></li>
+<li class="toc-sub"><a href="#key-takeaways">Key Takeaways</a></li>
+<li class="toc-sub"><a href="#best-practices">Best Practices</a></li>
+<li class="toc-sub"><a href="#common-patterns">Common Patterns</a></li></ul>
+            </nav>
+        </aside>
+    <h1 id="prototypal-inheritance">Prototypal Inheritance</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#inheritance-conception">Inheritance Conception</a></li>
+<li><a href="#prototypal-inheritance-basics">Prototypal Inheritance Basics</a></li>
+<li><a href="#prototype-chain">Prototype Chain</a></li>
+<li><a href="#__proto__-vs-prototype"><strong>proto</strong> vs prototype</a></li>
+<li><a href="#creating-objects-with-prototypes">Creating Objects with Prototypes</a></li>
+<li><a href="#prototypal-vs-functional-inheritance">Prototypal vs Functional Inheritance</a></li>
+<li><a href="#methods-to-setget-prototype">Methods to Set/Get Prototype</a></li>
+<li><a href="#secure-objects">Secure Objects</a></li>
+<li><a href="#objectprototype-methods">Object.prototype Methods</a></li>
+<li><a href="#practical-applications">Practical Applications</a></li>
+</ul>
+<hr>
+<h2 id="inheritance-conception">Inheritance Conception</h2>
+<h3 id="what-is-inheritance">What is Inheritance?</h3>
+<p><strong>Inheritance</strong> is a mechanism that allows one object/class to acquire properties and methods from another.</p>
+<h3 id="benefits-of-inheritance">Benefits of Inheritance</h3>
+<ol>
+<li><p><strong>Code Reusability</strong></p>
+<ul>
+<li>Write once, use in multiple places</li>
+<li>Reduce duplication</li>
+<li>Easier maintenance</li>
+</ul>
+</li>
+<li><p><strong>Establish Relationships</strong></p>
+<ul>
+<li>Create hierarchies (is-a relationships)</li>
+<li>Logical organization</li>
+<li>Natural modeling of real-world concepts</li>
+</ul>
+</li>
+<li><p><strong>Override/Extend Behavior</strong></p>
+<ul>
+<li>Customize inherited functionality</li>
+<li>Add new capabilities</li>
+<li>Keep base behavior intact</li>
+</ul>
+</li>
+<li><p><strong>Polymorphism</strong></p>
+<ul>
+<li>Same interface, different implementations</li>
+<li>Flexible and extensible code</li>
+<li>Substitutability</li>
+</ul>
+</li>
+</ol>
+<h3 id="example">Example</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Without inheritance - code duplication</span>
+<span class="hljs-keyword">const</span> dog = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Rex&quot;</span>,
+  <span class="hljs-attr">age</span>: <span class="hljs-number">3</span>,
+  <span class="hljs-title function_">eat</span>(<span class="hljs-params"></span>) { <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> is eating`</span>); },
+  <span class="hljs-title function_">sleep</span>(<span class="hljs-params"></span>) { <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> is sleeping`</span>); }
+};
+
+<span class="hljs-keyword">const</span> cat = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Whiskers&quot;</span>,
+  <span class="hljs-attr">age</span>: <span class="hljs-number">2</span>,
+  <span class="hljs-title function_">eat</span>(<span class="hljs-params"></span>) { <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> is eating`</span>); },
+  <span class="hljs-title function_">sleep</span>(<span class="hljs-params"></span>) { <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> is sleeping`</span>); }
+};
+
+<span class="hljs-comment">// With inheritance - reuse common behavior</span>
+<span class="hljs-keyword">const</span> animal = {
+  <span class="hljs-title function_">eat</span>(<span class="hljs-params"></span>) { <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> is eating`</span>); },
+  <span class="hljs-title function_">sleep</span>(<span class="hljs-params"></span>) { <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> is sleeping`</span>); }
+};
+
+<span class="hljs-keyword">const</span> dog2 = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(animal);
+dog2.<span class="hljs-property">name</span> = <span class="hljs-string">&quot;Rex&quot;</span>;
+dog2.<span class="hljs-property">bark</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) { <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Woof!&quot;</span>); };
+
+<span class="hljs-keyword">const</span> cat2 = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(animal);
+cat2.<span class="hljs-property">name</span> = <span class="hljs-string">&quot;Whiskers&quot;</span>;
+cat2.<span class="hljs-property">meow</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) { <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Meow!&quot;</span>); };
+</code></pre><hr>
+<h2 id="prototypal-inheritance-basics">Prototypal Inheritance Basics</h2>
+<h3 id="core-concept">Core Concept</h3>
+<ul>
+<li><strong>Every JavaScript object has an internal <code>[[Prototype]]</code> link</strong></li>
+<li>Objects inherit properties and methods from their prototype</li>
+<li>Prototype is also an object (which has its own prototype)</li>
+<li>Creates a <strong>prototype chain</strong> that ends at <code>Object.prototype</code> → <code>null</code></li>
+</ul>
+<h3 id="simple-example">Simple Example</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Create prototype object</span>
+<span class="hljs-keyword">const</span> animal = {
+  <span class="hljs-attr">eats</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-title function_">walk</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Animal walks&quot;</span>);
+  }
+};
+
+<span class="hljs-comment">// Create object that inherits from animal</span>
+<span class="hljs-keyword">const</span> rabbit = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(animal);
+rabbit.<span class="hljs-property">jumps</span> = <span class="hljs-literal">true</span>;
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-property">eats</span>);  <span class="hljs-comment">// true (inherited from animal)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-property">jumps</span>); <span class="hljs-comment">// true (own property)</span>
+rabbit.<span class="hljs-title function_">walk</span>();             <span class="hljs-comment">// &quot;Animal walks&quot; (inherited method)</span>
+
+<span class="hljs-comment">// Check property ownership</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-title function_">hasOwnProperty</span>(<span class="hljs-string">&#x27;jumps&#x27;</span>)); <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-title function_">hasOwnProperty</span>(<span class="hljs-string">&#x27;eats&#x27;</span>));  <span class="hljs-comment">// false (inherited)</span>
+</code></pre><h3 id="how-property-lookup-works">How Property Lookup Works</h3>
+<p>When you access <code>object.property</code>:</p>
+<ol>
+<li>Check if property exists on the object itself</li>
+<li>If not, check object&#39;s prototype</li>
+<li>If not, check prototype&#39;s prototype</li>
+<li>Continue up the chain until found or reach <code>null</code></li>
+</ol>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> animal = {
+  <span class="hljs-attr">eats</span>: <span class="hljs-literal">true</span>
+};
+
+<span class="hljs-keyword">const</span> rabbit = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(animal);
+rabbit.<span class="hljs-property">jumps</span> = <span class="hljs-literal">true</span>;
+
+<span class="hljs-comment">// Lookup for rabbit.jumps:</span>
+<span class="hljs-comment">// 1. Check rabbit → found! Return true</span>
+
+<span class="hljs-comment">// Lookup for rabbit.eats:</span>
+<span class="hljs-comment">// 1. Check rabbit → not found</span>
+<span class="hljs-comment">// 2. Check animal (rabbit&#x27;s prototype) → found! Return true</span>
+
+<span class="hljs-comment">// Lookup for rabbit.flies:</span>
+<span class="hljs-comment">// 1. Check rabbit → not found</span>
+<span class="hljs-comment">// 2. Check animal → not found</span>
+<span class="hljs-comment">// 3. Check Object.prototype → not found</span>
+<span class="hljs-comment">// 4. Reached null → return undefined</span>
+</code></pre><hr>
+<h2 id="prototype-chain">Prototype Chain</h2>
+<h3 id="understanding-the-chain">Understanding the Chain</h3>
+<p>Every object has a prototype chain:</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = {};
+
+<span class="hljs-comment">// Chain: obj → Object.prototype → null</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(obj) === <span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>); <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>)); <span class="hljs-comment">// null</span>
+</code></pre><pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> arr = [];
+
+<span class="hljs-comment">// Chain: arr → Array.prototype → Object.prototype → null</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(arr) === <span class="hljs-title class_">Array</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>); <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(<span class="hljs-title class_">Array</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>) === <span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>); <span class="hljs-comment">// true</span>
+</code></pre><pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">fn</span>(<span class="hljs-params"></span>) {}
+
+<span class="hljs-comment">// Chain: fn → Function.prototype → Object.prototype → null</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(fn) === <span class="hljs-title class_">Function</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>); <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(<span class="hljs-title class_">Function</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>) === <span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>); <span class="hljs-comment">// true</span>
+</code></pre><h3 id="visualizing-the-chain">Visualizing the Chain</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Animal</span>(<span class="hljs-params">name</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;
+}
+<span class="hljs-title class_">Animal</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">sleep</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> is sleeping`</span>);
+};
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">Dog</span>(<span class="hljs-params">name, breed</span>) {
+  <span class="hljs-title class_">Animal</span>.<span class="hljs-title function_">call</span>(<span class="hljs-variable language_">this</span>, name);
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">breed</span> = breed;
+}
+
+<span class="hljs-comment">// Set up inheritance</span>
+<span class="hljs-title class_">Dog</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span> = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(<span class="hljs-title class_">Animal</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>);
+<span class="hljs-title class_">Dog</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">constructor</span> = <span class="hljs-title class_">Dog</span>;
+
+<span class="hljs-title class_">Dog</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">bark</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Woof!&quot;</span>);
+};
+
+<span class="hljs-keyword">const</span> myDog = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Dog</span>(<span class="hljs-string">&quot;Rex&quot;</span>, <span class="hljs-string">&quot;Labrador&quot;</span>);
+
+<span class="hljs-comment">/*
+Prototype Chain:
+
+myDog
+  ├─ name: &quot;Rex&quot;
+  ├─ breed: &quot;Labrador&quot;
+  └─ [[Prototype]] → Dog.prototype
+       ├─ bark: function
+       ├─ constructor: Dog
+       └─ [[Prototype]] → Animal.prototype
+            ├─ sleep: function
+            ├─ constructor: Animal
+            └─ [[Prototype]] → Object.prototype
+                 ├─ toString: function
+                 ├─ hasOwnProperty: function
+                 └─ [[Prototype]] → null
+*/</span>
+
+<span class="hljs-comment">// Property lookup follows the chain:</span>
+myDog.<span class="hljs-title function_">bark</span>();          <span class="hljs-comment">// Found on Dog.prototype</span>
+myDog.<span class="hljs-title function_">sleep</span>();         <span class="hljs-comment">// Found on Animal.prototype</span>
+myDog.<span class="hljs-title function_">toString</span>();      <span class="hljs-comment">// Found on Object.prototype</span>
+myDog.<span class="hljs-property">nonExistent</span>;     <span class="hljs-comment">// Not found anywhere → undefined</span>
+</code></pre><h3 id="chain-traversal">Chain Traversal</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Manual chain traversal</span>
+<span class="hljs-keyword">let</span> current = myDog;
+<span class="hljs-keyword">while</span> (current !== <span class="hljs-literal">null</span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(current);
+  current = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(current);
+}
+<span class="hljs-comment">// Output:</span>
+<span class="hljs-comment">// myDog instance</span>
+<span class="hljs-comment">// Dog.prototype</span>
+<span class="hljs-comment">// Animal.prototype</span>
+<span class="hljs-comment">// Object.prototype</span>
+<span class="hljs-comment">// (null - end of chain)</span>
+</code></pre><hr>
+<h2 id="proto-vs-prototype"><strong>proto</strong> vs prototype</h2>
+<h3 id="key-differences">Key Differences</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th><code>__proto__</code></th>
+<th><code>prototype</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Property of</strong></td>
+<td>All objects</td>
+<td>Functions only</td>
+</tr>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Access object&#39;s prototype</td>
+<td>Template for new instances</td>
+</tr>
+<tr>
+<td><strong>When used</strong></td>
+<td>Property lookup</td>
+<td>Object creation with <code>new</code></td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td>Instance property</td>
+<td>Constructor property</td>
+</tr>
+<tr>
+<td><strong>Access</strong></td>
+<td><code>obj.__proto__</code></td>
+<td><code>Constructor.prototype</code></td>
+</tr>
+<tr>
+<td><strong>Status</strong></td>
+<td>Deprecated</td>
+<td>Standard</td>
+</tr>
+<tr>
+<td><strong>Modern alternative</strong></td>
+<td><code>Object.getPrototypeOf()</code></td>
+<td>No replacement needed</td>
+</tr>
+</tbody></table>
+<h3 id="proto-deprecated"><code>__proto__</code> (Deprecated)</h3>
+<p>Getter/setter for an object&#39;s internal <code>[[Prototype]]</code>.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> animal = {
+  <span class="hljs-attr">eats</span>: <span class="hljs-literal">true</span>
+};
+
+<span class="hljs-keyword">const</span> rabbit = {
+  <span class="hljs-attr">jumps</span>: <span class="hljs-literal">true</span>
+};
+
+<span class="hljs-comment">// Set prototype using __proto__ (deprecated)</span>
+rabbit.<span class="hljs-property">__proto__</span> = animal;
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-property">eats</span>);  <span class="hljs-comment">// true (inherited)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-property">jumps</span>); <span class="hljs-comment">// true (own property)</span>
+
+<span class="hljs-comment">// Get prototype</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-property">__proto__</span> === animal); <span class="hljs-comment">// true</span>
+
+<span class="hljs-comment">// Modern alternative (preferred):</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(rabbit) === animal; <span class="hljs-comment">// true</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">setPrototypeOf</span>(rabbit, animal);    <span class="hljs-comment">// Set prototype</span>
+</code></pre><h3 id="prototype"><code>prototype</code></h3>
+<p>Property of constructor functions that becomes the prototype of instances.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Dog</span>(<span class="hljs-params">name</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;  <span class="hljs-comment">// Instance property</span>
+}
+
+<span class="hljs-comment">// Add method to prototype (shared by all instances)</span>
+<span class="hljs-title class_">Dog</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">bark</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> says woof!`</span>);
+};
+
+<span class="hljs-keyword">const</span> dog1 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Dog</span>(<span class="hljs-string">&quot;Rex&quot;</span>);
+<span class="hljs-keyword">const</span> dog2 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Dog</span>(<span class="hljs-string">&quot;Max&quot;</span>);
+
+<span class="hljs-comment">// Both instances share the same bark method</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(dog1.<span class="hljs-property">bark</span> === dog2.<span class="hljs-property">bark</span>); <span class="hljs-comment">// true</span>
+
+<span class="hljs-comment">// Relationship:</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(dog1.<span class="hljs-property">__proto__</span> === <span class="hljs-title class_">Dog</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>);           <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(dog1) === <span class="hljs-title class_">Dog</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>); <span class="hljs-comment">// true (preferred)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Dog</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">constructor</span> === <span class="hljs-title class_">Dog</span>);          <span class="hljs-comment">// true</span>
+</code></pre><h3 id="the-complete-picture">The Complete Picture</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Person</span>(<span class="hljs-params">name</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;
+}
+
+<span class="hljs-title class_">Person</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">greet</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Hi, I&#x27;m <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span>`</span>);
+};
+
+<span class="hljs-keyword">const</span> alice = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;Alice&quot;</span>);
+
+<span class="hljs-comment">/*
+Relationships:
+
+alice (instance)
+  ├─ name: &quot;Alice&quot;
+  └─ __proto__ / [[Prototype]]
+       ↓
+Person.prototype (object)
+  ├─ greet: function
+  ├─ constructor: Person
+  └─ __proto__ / [[Prototype]]
+       ↓
+Object.prototype
+  └─ __proto__ / [[Prototype]]
+       ↓
+     null
+
+Person (function)
+  └─ prototype
+       ↓
+Person.prototype (same object as above)
+*/</span>
+
+<span class="hljs-comment">// Verify relationships:</span>
+alice.<span class="hljs-property">__proto__</span> === <span class="hljs-title class_">Person</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>;                    <span class="hljs-comment">// true</span>
+<span class="hljs-title class_">Person</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">constructor</span> === <span class="hljs-title class_">Person</span>;                 <span class="hljs-comment">// true</span>
+alice.<span class="hljs-property">__proto__</span>.<span class="hljs-property">__proto__</span> === <span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>;          <span class="hljs-comment">// true</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(alice) === <span class="hljs-title class_">Person</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>;       <span class="hljs-comment">// true (preferred)</span>
+</code></pre><h3 id="why-the-confusion">Why the Confusion?</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Dog</span>(<span class="hljs-params"></span>) {}
+
+<span class="hljs-keyword">const</span> dog = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Dog</span>();
+
+<span class="hljs-comment">// These all refer to the same thing:</span>
+dog.<span class="hljs-property">__proto__</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(dog)
+<span class="hljs-title class_">Dog</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>
+
+<span class="hljs-comment">// They all equal Dog.prototype</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(dog.<span class="hljs-property">__proto__</span> === <span class="hljs-title class_">Dog</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>);                  <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(dog) === <span class="hljs-title class_">Dog</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>);     <span class="hljs-comment">// true</span>
+
+<span class="hljs-comment">// But Dog.__proto__ is different!</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Dog</span>.<span class="hljs-property">__proto__</span> === <span class="hljs-title class_">Function</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>);             <span class="hljs-comment">// true</span>
+<span class="hljs-comment">// (Dog is a function, so its prototype is Function.prototype)</span>
+</code></pre><hr>
+<h2 id="creating-objects-with-prototypes">Creating Objects with Prototypes</h2>
+<h3 id="method-1-objectcreate">Method 1: Object.create()</h3>
+<p><strong>Most modern and flexible approach.</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Create prototype object</span>
+<span class="hljs-keyword">const</span> animal = {
+  <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;animal&#x27;</span>,
+  <span class="hljs-title function_">speak</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> makes a sound`</span>);
+  }
+};
+
+<span class="hljs-comment">// Create object with animal as prototype</span>
+<span class="hljs-keyword">const</span> dog = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(animal);
+dog.<span class="hljs-property">name</span> = <span class="hljs-string">&quot;Rex&quot;</span>;
+dog.<span class="hljs-property">breed</span> = <span class="hljs-string">&quot;Labrador&quot;</span>;
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(dog.<span class="hljs-property">type</span>);  <span class="hljs-comment">// &quot;animal&quot; (inherited)</span>
+dog.<span class="hljs-title function_">speak</span>();            <span class="hljs-comment">// &quot;Rex makes a sound&quot;</span>
+
+<span class="hljs-comment">// With property descriptors</span>
+<span class="hljs-keyword">const</span> cat = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(animal, {
+  <span class="hljs-attr">name</span>: {
+    <span class="hljs-attr">value</span>: <span class="hljs-string">&quot;Whiskers&quot;</span>,
+    <span class="hljs-attr">writable</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-attr">enumerable</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-attr">configurable</span>: <span class="hljs-literal">true</span>
+  },
+  <span class="hljs-attr">age</span>: {
+    <span class="hljs-attr">value</span>: <span class="hljs-number">3</span>,
+    <span class="hljs-attr">writable</span>: <span class="hljs-literal">true</span>
+  }
+});
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(cat.<span class="hljs-property">name</span>); <span class="hljs-comment">// &quot;Whiskers&quot;</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(cat.<span class="hljs-property">age</span>);  <span class="hljs-comment">// 3</span>
+</code></pre><h3 id="method-2-constructor-functions">Method 2: Constructor Functions</h3>
+<p><strong>Classic JavaScript approach.</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Person</span>(<span class="hljs-params">name, age</span>) {
+  <span class="hljs-comment">// Instance properties</span>
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">age</span> = age;
+}
+
+<span class="hljs-comment">// Shared methods on prototype</span>
+<span class="hljs-title class_">Person</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">greet</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Hi, I&#x27;m <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span>, <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.age}</span> years old`</span>);
+};
+
+<span class="hljs-title class_">Person</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">sayAge</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`I&#x27;m <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.age}</span> years old`</span>);
+};
+
+<span class="hljs-comment">// Create instances</span>
+<span class="hljs-keyword">const</span> john = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;John&quot;</span>, <span class="hljs-number">30</span>);
+<span class="hljs-keyword">const</span> jane = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>(<span class="hljs-string">&quot;Jane&quot;</span>, <span class="hljs-number">25</span>);
+
+john.<span class="hljs-title function_">greet</span>();  <span class="hljs-comment">// &quot;Hi, I&#x27;m John, 30 years old&quot;</span>
+jane.<span class="hljs-title function_">greet</span>();  <span class="hljs-comment">// &quot;Hi, I&#x27;m Jane, 25 years old&quot;</span>
+
+<span class="hljs-comment">// Methods are shared (memory efficient)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(john.<span class="hljs-property">greet</span> === jane.<span class="hljs-property">greet</span>); <span class="hljs-comment">// true</span>
+</code></pre><h3 id="method-3-es6-classes">Method 3: ES6 Classes</h3>
+<p><strong>Syntactic sugar over prototypes.</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Animal</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">name</span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;  <span class="hljs-comment">// Instance property</span>
+  }
+
+  <span class="hljs-comment">// Method (added to Animal.prototype)</span>
+  <span class="hljs-title function_">speak</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> makes a sound`</span>);
+  }
+
+  <span class="hljs-comment">// Static method (on class itself)</span>
+  <span class="hljs-keyword">static</span> <span class="hljs-title function_">info</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Animals are living organisms&quot;</span>);
+  }
+}
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Dog</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">Animal</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">name, breed</span>) {
+    <span class="hljs-variable language_">super</span>(name);  <span class="hljs-comment">// Call parent constructor</span>
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">breed</span> = breed;
+  }
+
+  <span class="hljs-title function_">speak</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> barks`</span>);
+  }
+
+  <span class="hljs-title function_">fetch</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> fetches the ball`</span>);
+  }
+}
+
+<span class="hljs-keyword">const</span> dog = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Dog</span>(<span class="hljs-string">&quot;Rex&quot;</span>, <span class="hljs-string">&quot;Labrador&quot;</span>);
+dog.<span class="hljs-title function_">speak</span>();      <span class="hljs-comment">// &quot;Rex barks&quot;</span>
+dog.<span class="hljs-title function_">fetch</span>();      <span class="hljs-comment">// &quot;Rex fetches the ball&quot;</span>
+<span class="hljs-title class_">Animal</span>.<span class="hljs-title function_">info</span>();    <span class="hljs-comment">// &quot;Animals are living organisms&quot;</span>
+</code></pre><h3 id="method-4-objectsetprototypeof">Method 4: Object.setPrototypeOf()</h3>
+<p><strong>Works but slow - avoid in production.</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> animal = {
+  <span class="hljs-attr">eats</span>: <span class="hljs-literal">true</span>
+};
+
+<span class="hljs-keyword">const</span> rabbit = {
+  <span class="hljs-attr">jumps</span>: <span class="hljs-literal">true</span>
+};
+
+<span class="hljs-comment">// Set prototype after creation (slow!)</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">setPrototypeOf</span>(rabbit, animal);
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-property">eats</span>);  <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-property">jumps</span>); <span class="hljs-comment">// true</span>
+
+<span class="hljs-comment">// Why it&#x27;s slow: changes object&#x27;s internal structure</span>
+<span class="hljs-comment">// Engine optimizations are invalidated</span>
+</code></pre><h3 id="comparison">Comparison</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// 1. Object.create - most flexible</span>
+<span class="hljs-keyword">const</span> proto1 = { <span class="hljs-title function_">method</span>(<span class="hljs-params"></span>) { <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;proto1&quot;</span>); } };
+<span class="hljs-keyword">const</span> obj1 = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(proto1);
+
+<span class="hljs-comment">// 2. Constructor - classic pattern</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">Constructor</span>(<span class="hljs-params"></span>) {}
+<span class="hljs-title class_">Constructor</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">method</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) { <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;constructor&quot;</span>); };
+<span class="hljs-keyword">const</span> obj2 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Constructor</span>();
+
+<span class="hljs-comment">// 3. ES6 Class - modern, clean syntax</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MyClass</span> {
+  <span class="hljs-title function_">method</span>(<span class="hljs-params"></span>) { <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;class&quot;</span>); }
+}
+<span class="hljs-keyword">const</span> obj3 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">MyClass</span>();
+
+<span class="hljs-comment">// All achieve the same result:</span>
+obj1.<span class="hljs-title function_">method</span>(); <span class="hljs-comment">// &quot;proto1&quot;</span>
+obj2.<span class="hljs-title function_">method</span>(); <span class="hljs-comment">// &quot;constructor&quot;</span>
+obj3.<span class="hljs-title function_">method</span>(); <span class="hljs-comment">// &quot;class&quot;</span>
+</code></pre><hr>
+<h2 id="prototypal-vs-functional-inheritance">Prototypal vs Functional Inheritance</h2>
+<h3 id="prototypal-inheritance">Prototypal Inheritance</h3>
+<p>Objects inherit from other objects via prototype chain.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Animal</span>(<span class="hljs-params">name</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;
+}
+
+<span class="hljs-title class_">Animal</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">speak</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> makes a sound`</span>);
+};
+
+<span class="hljs-title class_">Animal</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">sleep</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> is sleeping`</span>);
+};
+
+<span class="hljs-keyword">const</span> dog = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Animal</span>(<span class="hljs-string">&quot;Rex&quot;</span>);
+<span class="hljs-keyword">const</span> cat = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Animal</span>(<span class="hljs-string">&quot;Whiskers&quot;</span>);
+
+dog.<span class="hljs-title function_">speak</span>();  <span class="hljs-comment">// &quot;Rex makes a sound&quot;</span>
+cat.<span class="hljs-title function_">speak</span>();  <span class="hljs-comment">// &quot;Whiskers makes a sound&quot;</span>
+
+<span class="hljs-comment">// Methods are shared (memory efficient)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(dog.<span class="hljs-property">speak</span> === cat.<span class="hljs-property">speak</span>); <span class="hljs-comment">// true</span>
+</code></pre><p><strong>Characteristics:</strong></p>
+<ul>
+<li>Methods stored on prototype (shared)</li>
+<li>Memory efficient</li>
+<li>Uses <code>new</code> keyword</li>
+<li>Public properties (no true privacy)</li>
+<li>Prototype chain visible</li>
+</ul>
+<h3 id="functional-inheritance">Functional Inheritance</h3>
+<p>Factory functions that return objects with methods.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">createAnimal</span>(<span class="hljs-params">name</span>) {
+  <span class="hljs-comment">// Private variable (true privacy via closure)</span>
+  <span class="hljs-keyword">let</span> energy = <span class="hljs-number">100</span>;
+
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-attr">name</span>: name,
+
+    <span class="hljs-title function_">speak</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> makes a sound`</span>);
+    },
+
+    <span class="hljs-title function_">sleep</span>(<span class="hljs-params"></span>) {
+      energy += <span class="hljs-number">10</span>;
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> is sleeping. Energy: <span class="hljs-subst">${energy}</span>`</span>);
+    },
+
+    <span class="hljs-title function_">getEnergy</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">return</span> energy;  <span class="hljs-comment">// Controlled access to private variable</span>
+    }
+  };
+}
+
+<span class="hljs-keyword">const</span> dog = <span class="hljs-title function_">createAnimal</span>(<span class="hljs-string">&quot;Rex&quot;</span>);
+<span class="hljs-keyword">const</span> cat = <span class="hljs-title function_">createAnimal</span>(<span class="hljs-string">&quot;Whiskers&quot;</span>);
+
+dog.<span class="hljs-title function_">speak</span>();         <span class="hljs-comment">// &quot;Rex makes a sound&quot;</span>
+dog.<span class="hljs-title function_">sleep</span>();         <span class="hljs-comment">// &quot;Rex is sleeping. Energy: 110&quot;</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(dog.<span class="hljs-title function_">getEnergy</span>()); <span class="hljs-comment">// 110</span>
+
+<span class="hljs-comment">// Methods are NOT shared (each instance has its own copy)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(dog.<span class="hljs-property">speak</span> === cat.<span class="hljs-property">speak</span>); <span class="hljs-comment">// false</span>
+
+<span class="hljs-comment">// Private variables are truly private</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(dog.<span class="hljs-property">energy</span>); <span class="hljs-comment">// undefined (no direct access)</span>
+</code></pre><h3 id="comparison-table">Comparison Table</h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Prototypal</th>
+<th>Functional</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Memory</strong></td>
+<td>Efficient (shared methods)</td>
+<td>Less efficient (duplicate methods)</td>
+</tr>
+<tr>
+<td><strong>Privacy</strong></td>
+<td>No true privacy</td>
+<td>True privacy via closures</td>
+</tr>
+<tr>
+<td><strong>Syntax</strong></td>
+<td><code>new</code> keyword, <code>prototype</code></td>
+<td>Factory function, returns object</td>
+</tr>
+<tr>
+<td><strong>Inheritance</strong></td>
+<td>Via prototype chain</td>
+<td>Via composition</td>
+</tr>
+<tr>
+<td><strong>instanceof</strong></td>
+<td>Works</td>
+<td>Doesn&#39;t work</td>
+</tr>
+<tr>
+<td><strong>Performance</strong></td>
+<td>Faster</td>
+<td>Slightly slower</td>
+</tr>
+<tr>
+<td><strong>Flexibility</strong></td>
+<td>Less flexible</td>
+<td>More flexible</td>
+</tr>
+</tbody></table>
+<h3 id="hybrid-approach">Hybrid Approach</h3>
+<p>Combine both for best of both worlds:</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">createPerson</span>(<span class="hljs-params">name, age</span>) {
+  <span class="hljs-comment">// Private variables</span>
+  <span class="hljs-keyword">let</span> _id = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">random</span>();
+
+  <span class="hljs-comment">// Use constructor for shared methods</span>
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">Person</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">age</span> = age;
+  }
+
+  <span class="hljs-title class_">Person</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">greet</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Hi, I&#x27;m <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span>`</span>);
+  };
+
+  <span class="hljs-comment">// Create instance</span>
+  <span class="hljs-keyword">const</span> instance = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Person</span>();
+
+  <span class="hljs-comment">// Add methods that need access to private data</span>
+  instance.<span class="hljs-property">getId</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">return</span> _id;
+  };
+
+  <span class="hljs-keyword">return</span> instance;
+}
+
+<span class="hljs-keyword">const</span> person = <span class="hljs-title function_">createPerson</span>(<span class="hljs-string">&quot;John&quot;</span>, <span class="hljs-number">30</span>);
+person.<span class="hljs-title function_">greet</span>();  <span class="hljs-comment">// &quot;Hi, I&#x27;m John&quot;</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(person.<span class="hljs-title function_">getId</span>());  <span class="hljs-comment">// Random number</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(person.<span class="hljs-property">_id</span>);      <span class="hljs-comment">// undefined (private)</span>
+</code></pre><hr>
+<h2 id="methods-to-setget-prototype">Methods to Set/Get Prototype</h2>
+<h3 id="getting-prototype">Getting Prototype</h3>
+<h4 id="modern-preferred">Modern (Preferred)</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = {};
+
+<span class="hljs-comment">// Get prototype - preferred method</span>
+<span class="hljs-keyword">const</span> proto = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(obj);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(proto === <span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>); <span class="hljs-comment">// true</span>
+</code></pre><h4 id="legacy-deprecated">Legacy (Deprecated)</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = {};
+
+<span class="hljs-comment">// Using __proto__ - deprecated but still works</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">__proto__</span> === <span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>); <span class="hljs-comment">// true</span>
+</code></pre><h3 id="setting-prototype">Setting Prototype</h3>
+<h4 id="at-creation-preferred">At Creation (Preferred)</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> animal = {
+  <span class="hljs-attr">eats</span>: <span class="hljs-literal">true</span>
+};
+
+<span class="hljs-comment">// Object.create - best practice</span>
+<span class="hljs-keyword">const</span> rabbit = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(animal);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-property">eats</span>); <span class="hljs-comment">// true</span>
+
+<span class="hljs-comment">// With property descriptors</span>
+<span class="hljs-keyword">const</span> bird = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(animal, {
+  <span class="hljs-attr">flies</span>: {
+    <span class="hljs-attr">value</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-attr">writable</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-attr">enumerable</span>: <span class="hljs-literal">true</span>
+  }
+});
+</code></pre><h4 id="after-creation-avoid">After Creation (Avoid)</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> animal = {
+  <span class="hljs-attr">eats</span>: <span class="hljs-literal">true</span>
+};
+
+<span class="hljs-keyword">const</span> rabbit = {
+  <span class="hljs-attr">jumps</span>: <span class="hljs-literal">true</span>
+};
+
+<span class="hljs-comment">// Object.setPrototypeOf - works but slow!</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">setPrototypeOf</span>(rabbit, animal);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-property">eats</span>); <span class="hljs-comment">// true</span>
+
+<span class="hljs-comment">// __proto__ - deprecated</span>
+<span class="hljs-comment">// rabbit.__proto__ = animal;</span>
+</code></pre><h3 id="checking-prototype-relationships">Checking Prototype Relationships</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> animal = {
+  <span class="hljs-attr">eats</span>: <span class="hljs-literal">true</span>
+};
+
+<span class="hljs-keyword">const</span> rabbit = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(animal);
+
+<span class="hljs-comment">// Check if animal is in rabbit&#x27;s prototype chain</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(animal.<span class="hljs-title function_">isPrototypeOf</span>(rabbit)); <span class="hljs-comment">// true</span>
+
+<span class="hljs-comment">// instanceof (works with constructors)</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">Dog</span>(<span class="hljs-params"></span>) {}
+<span class="hljs-keyword">const</span> dog = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Dog</span>();
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(dog <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Dog</span>);    <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(dog <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Object</span>); <span class="hljs-comment">// true</span>
+
+<span class="hljs-comment">// Check constructor</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-property">constructor</span> === <span class="hljs-title class_">Object</span>); <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(dog.<span class="hljs-property">constructor</span> === <span class="hljs-title class_">Dog</span>);       <span class="hljs-comment">// true</span>
+</code></pre><h3 id="creating-objects-with-null-prototype">Creating Objects with null Prototype</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Object with no prototype (truly empty)</span>
+<span class="hljs-keyword">const</span> obj = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(<span class="hljs-literal">null</span>);
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">toString</span>); <span class="hljs-comment">// undefined</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(obj)); <span class="hljs-comment">// null</span>
+
+<span class="hljs-comment">// Useful for:</span>
+<span class="hljs-comment">// - Pure dictionaries</span>
+<span class="hljs-comment">// - No inherited properties</span>
+<span class="hljs-comment">// - No prototype pollution</span>
+
+<span class="hljs-comment">// Use case: clean map/dictionary</span>
+<span class="hljs-keyword">const</span> dictionary = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(<span class="hljs-literal">null</span>);
+dictionary.<span class="hljs-property">hasOwnProperty</span> = <span class="hljs-string">&quot;my value&quot;</span>;  <span class="hljs-comment">// Would conflict on normal object</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(dictionary.<span class="hljs-property">hasOwnProperty</span>);  <span class="hljs-comment">// &quot;my value&quot; (not the method)</span>
+</code></pre><h3 id="summary-of-methods">Summary of Methods</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// GET prototype</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">getPrototypeOf</span>(obj)        <span class="hljs-comment">// ✅ Preferred</span>
+obj.<span class="hljs-property">__proto__</span>                     <span class="hljs-comment">// ❌ Deprecated</span>
+
+<span class="hljs-comment">// SET prototype at creation</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(proto)              <span class="hljs-comment">// ✅ Preferred</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(proto, properties)  <span class="hljs-comment">// ✅ With descriptors</span>
+
+<span class="hljs-comment">// SET prototype after creation</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">setPrototypeOf</span>(obj, proto) <span class="hljs-comment">// ⚠️ Slow, avoid</span>
+obj.<span class="hljs-property">__proto__</span> = proto             <span class="hljs-comment">// ❌ Deprecated</span>
+
+<span class="hljs-comment">// CHECK relationships</span>
+proto.<span class="hljs-title function_">isPrototypeOf</span>(obj)          <span class="hljs-comment">// ✅ Check if in chain</span>
+obj <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Constructor</span>        <span class="hljs-comment">// ✅ For constructors</span>
+</code></pre><hr>
+<h2 id="secure-objects">Secure Objects</h2>
+<h3 id="prevent-extensions">Prevent Extensions</h3>
+<p>No new properties can be added.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">x</span>: <span class="hljs-number">1</span> };
+
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">preventExtensions</span>(obj);
+
+obj.<span class="hljs-property">x</span> = <span class="hljs-number">2</span>;      <span class="hljs-comment">// OK - modify existing</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">x</span>); <span class="hljs-comment">// 2</span>
+
+obj.<span class="hljs-property">y</span> = <span class="hljs-number">3</span>;      <span class="hljs-comment">// Silently fails (strict mode: throws)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">y</span>); <span class="hljs-comment">// undefined</span>
+
+<span class="hljs-keyword">delete</span> obj.<span class="hljs-property">x</span>;   <span class="hljs-comment">// OK - can delete</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">x</span>); <span class="hljs-comment">// undefined</span>
+
+<span class="hljs-comment">// Check if extensible</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">isExtensible</span>(obj)); <span class="hljs-comment">// false</span>
+</code></pre><h3 id="seal">Seal</h3>
+<p>No add/remove properties, but can modify existing values.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">x</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">2</span> };
+
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">seal</span>(obj);
+
+obj.<span class="hljs-property">x</span> = <span class="hljs-number">10</span>;     <span class="hljs-comment">// OK - modify existing</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">x</span>); <span class="hljs-comment">// 10</span>
+
+obj.<span class="hljs-property">z</span> = <span class="hljs-number">3</span>;      <span class="hljs-comment">// Fails - can&#x27;t add</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">z</span>); <span class="hljs-comment">// undefined</span>
+
+<span class="hljs-keyword">delete</span> obj.<span class="hljs-property">y</span>;   <span class="hljs-comment">// Fails - can&#x27;t delete</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">y</span>); <span class="hljs-comment">// 2 (still there)</span>
+
+<span class="hljs-comment">// Check if sealed</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">isSealed</span>(obj)); <span class="hljs-comment">// true</span>
+</code></pre><h3 id="freeze">Freeze</h3>
+<p>Completely immutable (shallow).</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">x</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">2</span> };
+
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">freeze</span>(obj);
+
+obj.<span class="hljs-property">x</span> = <span class="hljs-number">10</span>;     <span class="hljs-comment">// Fails - can&#x27;t modify</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">x</span>); <span class="hljs-comment">// 1 (unchanged)</span>
+
+obj.<span class="hljs-property">z</span> = <span class="hljs-number">3</span>;      <span class="hljs-comment">// Fails - can&#x27;t add</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">z</span>); <span class="hljs-comment">// undefined</span>
+
+<span class="hljs-keyword">delete</span> obj.<span class="hljs-property">y</span>;   <span class="hljs-comment">// Fails - can&#x27;t delete</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">y</span>); <span class="hljs-comment">// 2 (still there)</span>
+
+<span class="hljs-comment">// Check if frozen</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">isFrozen</span>(obj)); <span class="hljs-comment">// true</span>
+</code></pre><h3 id="important-shallow-operations">Important: Shallow Operations</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = {
+  <span class="hljs-attr">x</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">nested</span>: { <span class="hljs-attr">y</span>: <span class="hljs-number">2</span> }
+};
+
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">freeze</span>(obj);
+
+obj.<span class="hljs-property">x</span> = <span class="hljs-number">10</span>;           <span class="hljs-comment">// Fails</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">x</span>);   <span class="hljs-comment">// 1</span>
+
+obj.<span class="hljs-property">nested</span>.<span class="hljs-property">y</span> = <span class="hljs-number">20</span>;    <span class="hljs-comment">// Works! (nested object not frozen)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">nested</span>.<span class="hljs-property">y</span>); <span class="hljs-comment">// 20</span>
+
+<span class="hljs-comment">// Deep freeze (recursive)</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">deepFreeze</span>(<span class="hljs-params">obj</span>) {
+  <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">freeze</span>(obj);
+
+  <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(obj).<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">key</span> =&gt;</span> {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> obj[key] === <span class="hljs-string">&#x27;object&#x27;</span> &amp;&amp; obj[key] !== <span class="hljs-literal">null</span>) {
+      <span class="hljs-title function_">deepFreeze</span>(obj[key]);
+    }
+  });
+
+  <span class="hljs-keyword">return</span> obj;
+}
+
+<span class="hljs-keyword">const</span> obj2 = {
+  <span class="hljs-attr">x</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">nested</span>: { <span class="hljs-attr">y</span>: <span class="hljs-number">2</span> }
+};
+
+<span class="hljs-title function_">deepFreeze</span>(obj2);
+obj2.<span class="hljs-property">nested</span>.<span class="hljs-property">y</span> = <span class="hljs-number">20</span>;   <span class="hljs-comment">// Now fails</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj2.<span class="hljs-property">nested</span>.<span class="hljs-property">y</span>); <span class="hljs-comment">// 2 (unchanged)</span>
+</code></pre><h3 id="comparison-table">Comparison Table</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Extensible</th>
+<th>Sealed</th>
+<th>Frozen</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Add properties</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Delete properties</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Modify values</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Modify descriptors</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+</tbody></table>
+<h3 id="creating-truly-empty-objects">Creating Truly Empty Objects</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Regular object has inherited properties</span>
+<span class="hljs-keyword">const</span> obj1 = {};
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj1.<span class="hljs-property">toString</span>); <span class="hljs-comment">// [Function: toString] (inherited)</span>
+
+<span class="hljs-comment">// Object with null prototype - truly empty</span>
+<span class="hljs-keyword">const</span> obj2 = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(<span class="hljs-literal">null</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj2.<span class="hljs-property">toString</span>); <span class="hljs-comment">// undefined (no inheritance)</span>
+
+<span class="hljs-comment">// Benefits:</span>
+<span class="hljs-comment">// - No prototype pollution</span>
+<span class="hljs-comment">// - Clean dictionaries</span>
+<span class="hljs-comment">// - No naming conflicts</span>
+
+<span class="hljs-comment">// Use case: safe key-value store</span>
+<span class="hljs-keyword">const</span> map = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(<span class="hljs-literal">null</span>);
+map[<span class="hljs-string">&#x27;toString&#x27;</span>] = <span class="hljs-string">&quot;my value&quot;</span>;  <span class="hljs-comment">// Safe! Won&#x27;t conflict</span>
+map[<span class="hljs-string">&#x27;__proto__&#x27;</span>] = <span class="hljs-string">&quot;another value&quot;</span>;  <span class="hljs-comment">// Safe!</span>
+</code></pre><h3 id="private-fields-with-closures">Private Fields with Closures</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">createSecureObject</span>(<span class="hljs-params">secret</span>) {
+  <span class="hljs-comment">// Private variable - truly private</span>
+  <span class="hljs-keyword">let</span> _secret = secret;
+
+  <span class="hljs-comment">// Public interface</span>
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-title function_">getSecret</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">return</span> _secret;
+    },
+
+    <span class="hljs-title function_">setSecret</span>(<span class="hljs-params">newSecret</span>) {
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> newSecret === <span class="hljs-string">&#x27;string&#x27;</span>) {
+        _secret = newSecret;
+      }
+    }
+  };
+}
+
+<span class="hljs-keyword">const</span> obj = <span class="hljs-title function_">createSecureObject</span>(<span class="hljs-string">&quot;password123&quot;</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-title function_">getSecret</span>());  <span class="hljs-comment">// &quot;password123&quot;</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-property">_secret</span>);      <span class="hljs-comment">// undefined (no direct access)</span>
+obj.<span class="hljs-title function_">setSecret</span>(<span class="hljs-string">&quot;newpassword&quot;</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-title function_">getSecret</span>());  <span class="hljs-comment">// &quot;newpassword&quot;</span>
+</code></pre><h3 id="es6-private-fields-classes">ES6 Private Fields (Classes)</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SecureAccount</span> {
+  #balance = <span class="hljs-number">0</span>;  <span class="hljs-comment">// Private field</span>
+
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">initialBalance</span>) {
+    <span class="hljs-variable language_">this</span>.#balance = initialBalance;
+  }
+
+  <span class="hljs-title function_">deposit</span>(<span class="hljs-params">amount</span>) {
+    <span class="hljs-variable language_">this</span>.#balance += amount;
+  }
+
+  <span class="hljs-title function_">getBalance</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#balance;
+  }
+}
+
+<span class="hljs-keyword">const</span> account = <span class="hljs-keyword">new</span> <span class="hljs-title class_">SecureAccount</span>(<span class="hljs-number">100</span>);
+account.<span class="hljs-title function_">deposit</span>(<span class="hljs-number">50</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(account.<span class="hljs-title function_">getBalance</span>());  <span class="hljs-comment">// 150</span>
+<span class="hljs-comment">// console.log(account.#balance);   // SyntaxError: Private field</span>
+</code></pre><hr>
+<h2 id="objectprototype-methods">Object.prototype Methods</h2>
+<p>Common methods inherited by all objects:</p>
+<h3 id="hasownproperty">hasOwnProperty()</h3>
+<p>Check if property is own (not inherited).</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> animal = { <span class="hljs-attr">eats</span>: <span class="hljs-literal">true</span> };
+<span class="hljs-keyword">const</span> rabbit = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(animal);
+rabbit.<span class="hljs-property">jumps</span> = <span class="hljs-literal">true</span>;
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-title function_">hasOwnProperty</span>(<span class="hljs-string">&#x27;jumps&#x27;</span>)); <span class="hljs-comment">// true (own)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-title function_">hasOwnProperty</span>(<span class="hljs-string">&#x27;eats&#x27;</span>));  <span class="hljs-comment">// false (inherited)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rabbit.<span class="hljs-title function_">hasOwnProperty</span>(<span class="hljs-string">&#x27;flies&#x27;</span>)); <span class="hljs-comment">// false (doesn&#x27;t exist)</span>
+</code></pre><h3 id="isprototypeof">isPrototypeOf()</h3>
+<p>Check if object is in another&#39;s prototype chain.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> animal = { <span class="hljs-attr">eats</span>: <span class="hljs-literal">true</span> };
+<span class="hljs-keyword">const</span> rabbit = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(animal);
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(animal.<span class="hljs-title function_">isPrototypeOf</span>(rabbit));          <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-title function_">isPrototypeOf</span>(rabbit)); <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Array</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-title function_">isPrototypeOf</span>(rabbit));  <span class="hljs-comment">// false</span>
+</code></pre><h3 id="propertyisenumerable">propertyIsEnumerable()</h3>
+<p>Check if property is enumerable.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">x</span>: <span class="hljs-number">1</span> };
+
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">defineProperty</span>(obj, <span class="hljs-string">&#x27;y&#x27;</span>, {
+  <span class="hljs-attr">value</span>: <span class="hljs-number">2</span>,
+  <span class="hljs-attr">enumerable</span>: <span class="hljs-literal">false</span>
+});
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-title function_">propertyIsEnumerable</span>(<span class="hljs-string">&#x27;x&#x27;</span>));  <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-title function_">propertyIsEnumerable</span>(<span class="hljs-string">&#x27;y&#x27;</span>));  <span class="hljs-comment">// false</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-title function_">propertyIsEnumerable</span>(<span class="hljs-string">&#x27;toString&#x27;</span>)); <span class="hljs-comment">// false (inherited)</span>
+</code></pre><h3 id="tostring">toString()</h3>
+<p>String representation of object.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">x</span>: <span class="hljs-number">1</span> };
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-title function_">toString</span>()); <span class="hljs-comment">// &quot;[object Object]&quot;</span>
+
+<span class="hljs-comment">// Override for custom behavior</span>
+obj.<span class="hljs-property">toString</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-string">`Object with x=<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.x}</span>`</span>;
+};
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-title function_">toString</span>()); <span class="hljs-comment">// &quot;Object with x=1&quot;</span>
+
+<span class="hljs-comment">// Get precise type</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">toString</span>.<span class="hljs-title function_">call</span>([]);        <span class="hljs-comment">// &quot;[object Array]&quot;</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">toString</span>.<span class="hljs-title function_">call</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()); <span class="hljs-comment">// &quot;[object Date]&quot;</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">toString</span>.<span class="hljs-title function_">call</span>(<span class="hljs-regexp">/regex/</span>);   <span class="hljs-comment">// &quot;[object RegExp]&quot;</span>
+</code></pre><h3 id="valueof">valueOf()</h3>
+<p>Primitive value of object.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = { <span class="hljs-attr">x</span>: <span class="hljs-number">1</span> };
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj.<span class="hljs-title function_">valueOf</span>()); <span class="hljs-comment">// { x: 1 } (the object itself)</span>
+
+<span class="hljs-comment">// Custom behavior</span>
+obj.<span class="hljs-property">valueOf</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">x</span>;
+};
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(obj + <span class="hljs-number">10</span>); <span class="hljs-comment">// 11 (valueOf() called during coercion)</span>
+</code></pre><h3 id="tolocalestring">toLocaleString()</h3>
+<p>Localized string representation.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> date = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(date.<span class="hljs-title function_">toLocaleString</span>()); <span class="hljs-comment">// Localized date string</span>
+
+<span class="hljs-keyword">const</span> num = <span class="hljs-number">123456.789</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(num.<span class="hljs-title function_">toLocaleString</span>(<span class="hljs-string">&#x27;en-US&#x27;</span>));  <span class="hljs-comment">// &quot;123,456.789&quot;</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(num.<span class="hljs-title function_">toLocaleString</span>(<span class="hljs-string">&#x27;de-DE&#x27;</span>));  <span class="hljs-comment">// &quot;123.456,789&quot;</span>
+</code></pre><hr>
+<h2 id="practical-applications">Practical Applications</h2>
+<h3 id="example-1-inheritance-hierarchy">Example 1: Inheritance Hierarchy</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Base class</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">Shape</span>(<span class="hljs-params">color</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">color</span> = color;
+}
+
+<span class="hljs-title class_">Shape</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">draw</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Drawing <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.color}</span> shape`</span>);
+};
+
+<span class="hljs-title class_">Shape</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">getColor</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">color</span>;
+};
+
+<span class="hljs-comment">// Derived class - Circle</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">Circle</span>(<span class="hljs-params">color, radius</span>) {
+  <span class="hljs-title class_">Shape</span>.<span class="hljs-title function_">call</span>(<span class="hljs-variable language_">this</span>, color);  <span class="hljs-comment">// Call parent constructor</span>
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">radius</span> = radius;
+}
+
+<span class="hljs-comment">// Set up inheritance</span>
+<span class="hljs-title class_">Circle</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span> = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(<span class="hljs-title class_">Shape</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>);
+<span class="hljs-title class_">Circle</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">constructor</span> = <span class="hljs-title class_">Circle</span>;
+
+<span class="hljs-comment">// Add Circle-specific methods</span>
+<span class="hljs-title class_">Circle</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">area</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Math</span>.<span class="hljs-property">PI</span> * <span class="hljs-variable language_">this</span>.<span class="hljs-property">radius</span> ** <span class="hljs-number">2</span>;
+};
+
+<span class="hljs-title class_">Circle</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">draw</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Drawing <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.color}</span> circle with radius <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.radius}</span>`</span>);
+};
+
+<span class="hljs-comment">// Derived class - Rectangle</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">Rectangle</span>(<span class="hljs-params">color, width, height</span>) {
+  <span class="hljs-title class_">Shape</span>.<span class="hljs-title function_">call</span>(<span class="hljs-variable language_">this</span>, color);
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">width</span> = width;
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">height</span> = height;
+}
+
+<span class="hljs-title class_">Rectangle</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span> = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(<span class="hljs-title class_">Shape</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>);
+<span class="hljs-title class_">Rectangle</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">constructor</span> = <span class="hljs-title class_">Rectangle</span>;
+
+<span class="hljs-title class_">Rectangle</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">area</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">width</span> * <span class="hljs-variable language_">this</span>.<span class="hljs-property">height</span>;
+};
+
+<span class="hljs-title class_">Rectangle</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">draw</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Drawing <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.color}</span> rectangle <span class="hljs-subst">${<span class="hljs-variable language_">this</span>.width}</span>x<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.height}</span>`</span>);
+};
+
+<span class="hljs-comment">// Usage</span>
+<span class="hljs-keyword">const</span> circle = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Circle</span>(<span class="hljs-string">&#x27;red&#x27;</span>, <span class="hljs-number">5</span>);
+<span class="hljs-keyword">const</span> rect = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rectangle</span>(<span class="hljs-string">&#x27;blue&#x27;</span>, <span class="hljs-number">10</span>, <span class="hljs-number">20</span>);
+
+circle.<span class="hljs-title function_">draw</span>();  <span class="hljs-comment">// &quot;Drawing red circle with radius 5&quot;</span>
+rect.<span class="hljs-title function_">draw</span>();    <span class="hljs-comment">// &quot;Drawing blue rectangle 10x20&quot;</span>
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(circle.<span class="hljs-title function_">area</span>());  <span class="hljs-comment">// 78.54...</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(rect.<span class="hljs-title function_">area</span>());    <span class="hljs-comment">// 200</span>
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(circle <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Circle</span>);    <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(circle <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Shape</span>);     <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(circle <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Rectangle</span>); <span class="hljs-comment">// false</span>
+</code></pre><h3 id="example-2-mixins-via-prototypes">Example 2: Mixins via Prototypes</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Define mixins (behaviors)</span>
+<span class="hljs-keyword">const</span> canEat = {
+  <span class="hljs-title function_">eat</span>(<span class="hljs-params">food</span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> is eating <span class="hljs-subst">${food}</span>`</span>);
+  }
+};
+
+<span class="hljs-keyword">const</span> canSwim = {
+  <span class="hljs-title function_">swim</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> is swimming`</span>);
+  }
+};
+
+<span class="hljs-keyword">const</span> canFly = {
+  <span class="hljs-title function_">fly</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${<span class="hljs-variable language_">this</span>.name}</span> is flying`</span>);
+  }
+};
+
+<span class="hljs-comment">// Apply mixins to constructor</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">Duck</span>(<span class="hljs-params">name</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;
+}
+
+<span class="hljs-comment">// Mix in multiple behaviors</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">assign</span>(<span class="hljs-title class_">Duck</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>, canEat, canSwim, canFly);
+
+<span class="hljs-keyword">const</span> duck = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Duck</span>(<span class="hljs-string">&quot;Donald&quot;</span>);
+duck.<span class="hljs-title function_">eat</span>(<span class="hljs-string">&quot;bread&quot;</span>);  <span class="hljs-comment">// &quot;Donald is eating bread&quot;</span>
+duck.<span class="hljs-title function_">swim</span>();        <span class="hljs-comment">// &quot;Donald is swimming&quot;</span>
+duck.<span class="hljs-title function_">fly</span>();         <span class="hljs-comment">// &quot;Donald is flying&quot;</span>
+
+<span class="hljs-comment">// Apply different mixins to different constructors</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">Fish</span>(<span class="hljs-params">name</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">name</span> = name;
+}
+
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">assign</span>(<span class="hljs-title class_">Fish</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>, canEat, canSwim);
+
+<span class="hljs-keyword">const</span> fish = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fish</span>(<span class="hljs-string">&quot;Nemo&quot;</span>);
+fish.<span class="hljs-title function_">eat</span>(<span class="hljs-string">&quot;plankton&quot;</span>);  <span class="hljs-comment">// &quot;Nemo is eating plankton&quot;</span>
+fish.<span class="hljs-title function_">swim</span>();           <span class="hljs-comment">// &quot;Nemo is swimming&quot;</span>
+<span class="hljs-comment">// fish.fly();         // TypeError: fish.fly is not a function</span>
+</code></pre><h3 id="example-3-plugin-system">Example 3: Plugin System</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Base plugin system</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">App</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">plugins</span> = [];
+}
+
+<span class="hljs-title class_">App</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">use</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">plugin</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">plugins</span>.<span class="hljs-title function_">push</span>(plugin);
+  plugin.<span class="hljs-title function_">install</span>(<span class="hljs-variable language_">this</span>);
+};
+
+<span class="hljs-comment">// Plugin 1: Logger</span>
+<span class="hljs-keyword">const</span> <span class="hljs-title class_">LoggerPlugin</span> = {
+  <span class="hljs-title function_">install</span>(<span class="hljs-params">app</span>) {
+    app.<span class="hljs-property">log</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">message</span>) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`[LOG] <span class="hljs-subst">${message}</span>`</span>);
+    };
+  }
+};
+
+<span class="hljs-comment">// Plugin 2: Storage</span>
+<span class="hljs-keyword">const</span> <span class="hljs-title class_">StoragePlugin</span> = {
+  <span class="hljs-title function_">install</span>(<span class="hljs-params">app</span>) {
+    app.<span class="hljs-property">storage</span> = {
+      <span class="hljs-attr">data</span>: {},
+      <span class="hljs-title function_">set</span>(<span class="hljs-params">key, value</span>) {
+        <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span>[key] = value;
+      },
+      <span class="hljs-title function_">get</span>(<span class="hljs-params">key</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span>[key];
+      }
+    };
+  }
+};
+
+<span class="hljs-comment">// Use plugins</span>
+<span class="hljs-keyword">const</span> myApp = <span class="hljs-keyword">new</span> <span class="hljs-title class_">App</span>();
+myApp.<span class="hljs-title function_">use</span>(<span class="hljs-title class_">LoggerPlugin</span>);
+myApp.<span class="hljs-title function_">use</span>(<span class="hljs-title class_">StoragePlugin</span>);
+
+myApp.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Application started&quot;</span>);  <span class="hljs-comment">// &quot;[LOG] Application started&quot;</span>
+myApp.<span class="hljs-property">storage</span>.<span class="hljs-title function_">set</span>(<span class="hljs-string">&quot;user&quot;</span>, <span class="hljs-string">&quot;John&quot;</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(myApp.<span class="hljs-property">storage</span>.<span class="hljs-title function_">get</span>(<span class="hljs-string">&quot;user&quot;</span>));  <span class="hljs-comment">// &quot;John&quot;</span>
+</code></pre><h3 id="example-4-method-chaining">Example 4: Method Chaining</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Calculator</span>(<span class="hljs-params">value = <span class="hljs-number">0</span></span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span> = value;
+}
+
+<span class="hljs-title class_">Calculator</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">add</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span> += n;
+  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>;  <span class="hljs-comment">// Return this for chaining</span>
+};
+
+<span class="hljs-title class_">Calculator</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">subtract</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span> -= n;
+  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>;
+};
+
+<span class="hljs-title class_">Calculator</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">multiply</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span> *= n;
+  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>;
+};
+
+<span class="hljs-title class_">Calculator</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">divide</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span> /= n;
+  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>;
+};
+
+<span class="hljs-title class_">Calculator</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">result</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span>;
+};
+
+<span class="hljs-comment">// Method chaining</span>
+<span class="hljs-keyword">const</span> result = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Calculator</span>(<span class="hljs-number">10</span>)
+  .<span class="hljs-title function_">add</span>(<span class="hljs-number">5</span>)
+  .<span class="hljs-title function_">multiply</span>(<span class="hljs-number">2</span>)
+  .<span class="hljs-title function_">subtract</span>(<span class="hljs-number">10</span>)
+  .<span class="hljs-title function_">divide</span>(<span class="hljs-number">2</span>)
+  .<span class="hljs-title function_">result</span>();
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(result);  <span class="hljs-comment">// 10</span>
+</code></pre><h3 id="example-5-observable-pattern">Example 5: Observable Pattern</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">Observable</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">observers</span> = [];
+}
+
+<span class="hljs-title class_">Observable</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">subscribe</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">fn</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">observers</span>.<span class="hljs-title function_">push</span>(fn);
+};
+
+<span class="hljs-title class_">Observable</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">unsubscribe</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">fn</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">observers</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">observers</span>.<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">observer</span> =&gt;</span> observer !== fn);
+};
+
+<span class="hljs-title class_">Observable</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">notify</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">observers</span>.<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">observer</span> =&gt;</span> <span class="hljs-title function_">observer</span>(data));
+};
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">DataModel</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-title class_">Observable</span>.<span class="hljs-title function_">call</span>(<span class="hljs-variable language_">this</span>);  <span class="hljs-comment">// Inherit Observable</span>
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span> = <span class="hljs-literal">null</span>;
+}
+
+<span class="hljs-title class_">DataModel</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span> = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(<span class="hljs-title class_">Observable</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>);
+<span class="hljs-title class_">DataModel</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">constructor</span> = <span class="hljs-title class_">DataModel</span>;
+
+<span class="hljs-title class_">DataModel</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">setData</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) {
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span> = data;
+  <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">notify</span>(data);  <span class="hljs-comment">// Notify all observers</span>
+};
+
+<span class="hljs-comment">// Usage</span>
+<span class="hljs-keyword">const</span> model = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DataModel</span>();
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">observer1</span> = (<span class="hljs-params">data</span>) =&gt; <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Observer 1 received: <span class="hljs-subst">${data}</span>`</span>);
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">observer2</span> = (<span class="hljs-params">data</span>) =&gt; <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Observer 2 received: <span class="hljs-subst">${data}</span>`</span>);
+
+model.<span class="hljs-title function_">subscribe</span>(observer1);
+model.<span class="hljs-title function_">subscribe</span>(observer2);
+
+model.<span class="hljs-title function_">setData</span>(<span class="hljs-string">&quot;Hello&quot;</span>);
+<span class="hljs-comment">// Output:</span>
+<span class="hljs-comment">// Observer 1 received: Hello</span>
+<span class="hljs-comment">// Observer 2 received: Hello</span>
+
+model.<span class="hljs-title function_">unsubscribe</span>(observer1);
+model.<span class="hljs-title function_">setData</span>(<span class="hljs-string">&quot;World&quot;</span>);
+<span class="hljs-comment">// Output:</span>
+<span class="hljs-comment">// Observer 2 received: World</span>
+</code></pre><hr>
+<h2 id="summary">Summary</h2>
+<h3 id="key-takeaways">Key Takeaways</h3>
+<ol>
+<li><strong>Prototypal inheritance</strong> - objects inherit from other objects</li>
+<li><strong>Prototype chain</strong> - property lookup follows chain to null</li>
+<li><strong><code>__proto__</code> vs <code>prototype</code></strong> - instance vs constructor property</li>
+<li><strong>Multiple ways to create</strong> - Object.create, constructors, classes</li>
+<li><strong>Prototypal vs functional</strong> - trade-offs between memory and privacy</li>
+<li><strong>Secure objects</strong> - prevent extensions, seal, freeze</li>
+<li><strong>Practical patterns</strong> - mixins, plugins, method chaining</li>
+</ol>
+<h3 id="best-practices">Best Practices</h3>
+<ul>
+<li>Use <code>Object.create()</code> for setting up inheritance</li>
+<li>Prefer <code>Object.getPrototypeOf()</code> over <code>__proto__</code></li>
+<li>Don&#39;t use <code>Object.setPrototypeOf()</code> in production (slow)</li>
+<li>Share methods on prototype (memory efficient)</li>
+<li>Use ES6 classes for cleaner syntax</li>
+<li>Check own properties with <code>hasOwnProperty()</code></li>
+<li>Create null-prototype objects for dictionaries</li>
+</ul>
+<h3 id="common-patterns">Common Patterns</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Inheritance setup</span>
+<span class="hljs-title class_">Child</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span> = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">create</span>(<span class="hljs-title class_">Parent</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>);
+<span class="hljs-title class_">Child</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>.<span class="hljs-property">constructor</span> = <span class="hljs-title class_">Child</span>;
+
+<span class="hljs-comment">// Mixins</span>
+<span class="hljs-title class_">Object</span>.<span class="hljs-title function_">assign</span>(<span class="hljs-title class_">Constructor</span>.<span class="hljs-property"><span class="hljs-keyword">prototype</span></span>, mixin1, mixin2);
+
+<span class="hljs-comment">// Method chaining</span>
+<span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>;
+
+<span class="hljs-comment">// Check type</span>
+obj <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Constructor</span>
+proto.<span class="hljs-title function_">isPrototypeOf</span>(obj)
+</code></pre><div class="page-navigation">
+            <a href="02-javascript-data-types.html" class="nav-btn nav-prev" data-nav="prev">
+                <span class="nav-label">Previous</span>
+                <span class="nav-title">JavaScript Data Types</span>
+            </a>
+        
+            <a href="04-closures.html" class="nav-btn nav-next" data-nav="next">
+                <span class="nav-label">Next</span>
+                <span class="nav-title">Closures</span>
+            </a>
+        </div>
+        <div class="progress-section">
+            <div id="progress-controls"></div>
+            <div class="notes-section">
+                <h3>Your Notes</h3>
+                <textarea id="page-notes" placeholder="Add your notes here... (saved automatically)"></textarea>
+            </div>
+        </div>
+    
+    </main>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" aria-label="Back to top">↑</button>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="modal">
+        <div class="modal-content search-content">
+            <div class="search-header">
+                <input type="text" id="search-input" placeholder="Search topics..." autofocus>
+                <button id="search-close" aria-label="Close search">✕</button>
+            </div>
+            <div id="search-results" class="search-results"></div>
+            <div class="search-footer">
+                <span>↑↓ Navigate</span>
+                <span>↵ Select</span>
+                <span>Esc Close</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shortcuts Modal -->
+    <div id="shortcuts-modal" class="modal">
+        <div class="modal-content shortcuts-modal-content">
+            <div class="modal-header">
+                <h2>Keyboard Shortcuts</h2>
+                <button id="shortcuts-close" aria-label="Close shortcuts">✕</button>
+            </div>
+            <div class="shortcuts-content"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/nav.js"></script>
+    <script src="/js/progress.js"></script>
+    <script src="/js/search.js"></script>
+    <script src="/js/shortcuts.js"></script>
+</body>
+
+</html>

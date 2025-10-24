@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Loop & Async</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+</head>
+
+<body>
+    <!-- Header Toolbar -->
+    <div id="header-toolbar">
+        <button id="search-trigger" aria-label="Search" title="Search (Cmd+K)">
+            🔍
+        </button>
+        <button id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle Dark Mode (Cmd+D)">
+            <span id="dark-mode-icon">🌙</span>
+        </button>
+        <button id="shortcuts-help" onclick="window.Shortcuts.show()" aria-label="Keyboard shortcuts"
+            title="Shortcuts (?)">
+            ⌨️
+        </button>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button id="menu-toggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Progress Bar -->
+    <div id="progress-bar">
+        <div id="progress-fill"></div>
+    </div>
+
+    <!-- Overall Progress Indicator -->
+    <div id="overall-progress">
+        <div id="overall-progress-bar" style="width: 0%"></div>
+        <span id="progress-text">0/0 topics completed</span>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar">
+        <div id="sidebar-header">
+            <h2>JS/NodeJs Concepts</h2>
+        </div>
+        <ul id="nav-list">
+                        <li><a href="01-git-version-control.html"><span class="nav-number">1.</span>Git & Version Control</a></li>
+            <li><a href="02-javascript-data-types.html"><span class="nav-number">2.</span>JavaScript Data Types</a></li>
+            <li><a href="03-prototypal-inheritance.html"><span class="nav-number">3.</span>Prototypal Inheritance</a></li>
+            <li><a href="04-closures.html"><span class="nav-number">4.</span>Closures</a></li>
+            <li><a href="05-context.html"><span class="nav-number">5.</span>Context (this)</a></li>
+            <li><a href="06-classes.html"><span class="nav-number">6.</span>Classes</a></li>
+            <li><a href="07-event-loop-async.html" class="active"><span class="nav-number">7.</span>Event Loop & Async</a></li>
+            <li><a href="08-garbage-collection.html"><span class="nav-number">8.</span>Garbage Collection</a></li>
+        </ul>
+        <div id="sidebar-footer">
+            <button id="reset-progress" class="sidebar-btn">Reset Progress</button>
+            <button id="export-progress" class="sidebar-btn">Export</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        
+        <aside class="table-of-contents">
+            <h3>On This Page</h3>
+            <nav class="toc-nav">
+                <ul><li class=""><a href="#table-of-contents">Table of Contents</a></li>
+<li class=""><a href="#async-and-sync-programming">Async and Sync Programming</a></li>
+<li class="toc-sub"><a href="#synchronous-programming">Synchronous Programming</a></li>
+<li class="toc-sub"><a href="#asynchronous-programming">Asynchronous Programming</a></li>
+<li class="toc-sub"><a href="#comparison">Comparison</a></li>
+<li class=""><a href="#blocking-code">Blocking Code</a></li>
+<li class="toc-sub"><a href="#what-is-blocking-code">What is Blocking Code?</a></li>
+<li class="toc-sub"><a href="#impact-on-nodejs-performance">Impact on Node.js Performance</a></li>
+<li class="toc-sub"><a href="#examples-of-blocking-operations">Examples of Blocking Operations</a></li>
+<li class="toc-sub"><a href="#consequences">Consequences</a></li>
+<li class="toc-sub"><a href="#solutions">Solutions</a></li>
+<li class=""><a href="#event-loop">Event Loop</a></li>
+<li class="toc-sub"><a href="#what-is-the-event-loop">What is the Event Loop?</a></li>
+<li class="toc-sub"><a href="#how-it-works">How It Works</a></li>
+<li class="toc-sub"><a href="#phases-of-event-loop">Phases of Event Loop</a></li>
+<li class="toc-sub"><a href="#simple-example">Simple Example</a></li>
+<li class="toc-sub"><a href="#call-stack-task-queue-microtask-queue">Call Stack, Task Queue, Microtask Queue</a></li>
+<li class=""><a href="#settimeout-and-setinterval">setTimeout and setInterval</a></li>
+<li class="toc-sub"><a href="#settimeout">setTimeout</a></li>
+<li class="toc-sub"><a href="#setinterval">setInterval</a></li>
+<li class="toc-sub"><a href="#clearing-timers">Clearing Timers</a></li>
+<li class="toc-sub"><a href="#practical-uses-for-user-experience">Practical Uses for User Experience</a></li>
+<li class=""><a href="#zero-delay-settimeout">Zero Delay setTimeout</a></li>
+<li class="toc-sub"><a href="#the-misconception">The Misconception</a></li>
+<li class="toc-sub"><a href="#why-it-doesnt-execute-immediately">Why It Doesn't Execute Immediately</a></li>
+<li class="toc-sub"><a href="#impact-on-event-loop-execution">Impact on Event Loop Execution</a></li>
+<li class="toc-sub"><a href="#use-cases">Use Cases</a></li>
+<li class=""><a href="#macro-tasks-and-micro-tasks">Macro Tasks and Micro Tasks</a></li>
+<li class="toc-sub"><a href="#definitions">Definitions</a></li>
+<li class="toc-sub"><a href="#execution-order">Execution Order</a></li>
+<li class="toc-sub"><a href="#basic-example">Basic Example</a></li>
+<li class="toc-sub"><a href="#complex-example">Complex Example</a></li>
+<li class="toc-sub"><a href="#differences-in-nodejs">Differences in Node.js</a></li>
+<li class="toc-sub"><a href="#priority-order-in-nodejs">Priority Order in Node.js</a></li>
+<li class="toc-sub"><a href="#practical-implications">Practical Implications</a></li>
+<li class=""><a href="#summary">Summary</a></li>
+<li class="toc-sub"><a href="#key-takeaways">Key Takeaways</a></li>
+<li class="toc-sub"><a href="#best-practices">Best Practices</a></li>
+<li class="toc-sub"><a href="#quick-reference">Quick Reference</a></li>
+<li class="toc-sub"><a href="#common-patterns">Common Patterns</a></li></ul>
+            </nav>
+        </aside>
+    
+        <aside class="table-of-contents">
+            <h3>On This Page</h3>
+            <nav class="toc-nav">
+                <ul><li class=""><a href="#table-of-contents">Table of Contents</a></li>
+<li class=""><a href="#async-and-sync-programming">Async and Sync Programming</a></li>
+<li class="toc-sub"><a href="#synchronous-programming">Synchronous Programming</a></li>
+<li class="toc-sub"><a href="#asynchronous-programming">Asynchronous Programming</a></li>
+<li class="toc-sub"><a href="#comparison">Comparison</a></li>
+<li class=""><a href="#blocking-code">Blocking Code</a></li>
+<li class="toc-sub"><a href="#what-is-blocking-code">What is Blocking Code?</a></li>
+<li class="toc-sub"><a href="#impact-on-nodejs-performance">Impact on Node.js Performance</a></li>
+<li class="toc-sub"><a href="#examples-of-blocking-operations">Examples of Blocking Operations</a></li>
+<li class="toc-sub"><a href="#consequences">Consequences</a></li>
+<li class="toc-sub"><a href="#solutions">Solutions</a></li>
+<li class=""><a href="#event-loop">Event Loop</a></li>
+<li class="toc-sub"><a href="#what-is-the-event-loop">What is the Event Loop?</a></li>
+<li class="toc-sub"><a href="#how-it-works">How It Works</a></li>
+<li class="toc-sub"><a href="#phases-of-event-loop">Phases of Event Loop</a></li>
+<li class="toc-sub"><a href="#simple-example">Simple Example</a></li>
+<li class="toc-sub"><a href="#call-stack-task-queue-microtask-queue">Call Stack, Task Queue, Microtask Queue</a></li>
+<li class=""><a href="#settimeout-and-setinterval">setTimeout and setInterval</a></li>
+<li class="toc-sub"><a href="#settimeout">setTimeout</a></li>
+<li class="toc-sub"><a href="#setinterval">setInterval</a></li>
+<li class="toc-sub"><a href="#clearing-timers">Clearing Timers</a></li>
+<li class="toc-sub"><a href="#practical-uses-for-user-experience">Practical Uses for User Experience</a></li>
+<li class=""><a href="#zero-delay-settimeout">Zero Delay setTimeout</a></li>
+<li class="toc-sub"><a href="#the-misconception">The Misconception</a></li>
+<li class="toc-sub"><a href="#why-it-doesnt-execute-immediately">Why It Doesn't Execute Immediately</a></li>
+<li class="toc-sub"><a href="#impact-on-event-loop-execution">Impact on Event Loop Execution</a></li>
+<li class="toc-sub"><a href="#use-cases">Use Cases</a></li>
+<li class=""><a href="#macro-tasks-and-micro-tasks">Macro Tasks and Micro Tasks</a></li>
+<li class="toc-sub"><a href="#definitions">Definitions</a></li>
+<li class="toc-sub"><a href="#execution-order">Execution Order</a></li>
+<li class="toc-sub"><a href="#basic-example">Basic Example</a></li>
+<li class="toc-sub"><a href="#complex-example">Complex Example</a></li>
+<li class="toc-sub"><a href="#differences-in-nodejs">Differences in Node.js</a></li>
+<li class="toc-sub"><a href="#priority-order-in-nodejs">Priority Order in Node.js</a></li>
+<li class="toc-sub"><a href="#practical-implications">Practical Implications</a></li>
+<li class=""><a href="#summary">Summary</a></li>
+<li class="toc-sub"><a href="#key-takeaways">Key Takeaways</a></li>
+<li class="toc-sub"><a href="#best-practices">Best Practices</a></li>
+<li class="toc-sub"><a href="#quick-reference">Quick Reference</a></li>
+<li class="toc-sub"><a href="#common-patterns">Common Patterns</a></li></ul>
+            </nav>
+        </aside>
+    <h1 id="event-loop-and-asynchronous-programming">Event Loop and Asynchronous Programming</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#async-and-sync-programming">Async and Sync Programming</a></li>
+<li><a href="#blocking-code">Blocking Code</a></li>
+<li><a href="#event-loop">Event Loop</a></li>
+<li><a href="#settimeout-and-setinterval">setTimeout and setInterval</a></li>
+<li><a href="#zero-delay-settimeout">Zero Delay setTimeout</a></li>
+<li><a href="#macro-tasks-and-micro-tasks">Macro Tasks and Micro Tasks</a></li>
+</ul>
+<hr>
+<h2 id="async-and-sync-programming">Async and Sync Programming</h2>
+<h3 id="synchronous-programming">Synchronous Programming</h3>
+<p>Code executes line by line, each operation must complete before next starts.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Synchronous code</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;First&quot;</span>);
+
+<span class="hljs-keyword">const</span> result = <span class="hljs-number">2</span> + <span class="hljs-number">2</span>;
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(result);
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Last&quot;</span>);
+
+<span class="hljs-comment">// Output (predictable order):</span>
+<span class="hljs-comment">// First</span>
+<span class="hljs-comment">// 4</span>
+<span class="hljs-comment">// Last</span>
+</code></pre><p><strong>Characteristics:</strong></p>
+<ul>
+<li>Sequential execution</li>
+<li>Blocking (each line waits for previous to complete)</li>
+<li>Predictable order</li>
+<li>Simple to understand and debug</li>
+<li>Can freeze UI if operation takes time</li>
+</ul>
+<h3 id="asynchronous-programming">Asynchronous Programming</h3>
+<p>Operations can start before previous ones complete.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Asynchronous code</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;First&quot;</span>);
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Async&quot;</span>);
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Last&quot;</span>);
+
+<span class="hljs-comment">// Output (async executes later):</span>
+<span class="hljs-comment">// First</span>
+<span class="hljs-comment">// Last</span>
+<span class="hljs-comment">// Async</span>
+</code></pre><p><strong>Characteristics:</strong></p>
+<ul>
+<li>Non-blocking execution</li>
+<li>Operations can overlap</li>
+<li>Order not guaranteed without explicit management</li>
+<li>Better performance for I/O operations</li>
+<li>More complex to understand</li>
+</ul>
+<h3 id="comparison">Comparison</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Synchronous - blocks for 3 seconds</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">syncOperation</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> start = <span class="hljs-title class_">Date</span>.<span class="hljs-title function_">now</span>();
+  <span class="hljs-keyword">while</span> (<span class="hljs-title class_">Date</span>.<span class="hljs-title function_">now</span>() - start &lt; <span class="hljs-number">3000</span>) {
+    <span class="hljs-comment">// Block for 3 seconds</span>
+  }
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Sync done&quot;</span>);
+}
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Before sync&quot;</span>);
+<span class="hljs-title function_">syncOperation</span>();  <span class="hljs-comment">// Blocks here!</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;After sync&quot;</span>);
+
+<span class="hljs-comment">// Output:</span>
+<span class="hljs-comment">// Before sync</span>
+<span class="hljs-comment">// (3 second pause)</span>
+<span class="hljs-comment">// Sync done</span>
+<span class="hljs-comment">// After sync</span>
+
+<span class="hljs-comment">// Asynchronous - doesn&#x27;t block</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">asyncOperation</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Async done&quot;</span>);
+  }, <span class="hljs-number">3000</span>);
+}
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Before async&quot;</span>);
+<span class="hljs-title function_">asyncOperation</span>();  <span class="hljs-comment">// Returns immediately!</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;After async&quot;</span>);
+
+<span class="hljs-comment">// Output:</span>
+<span class="hljs-comment">// Before async</span>
+<span class="hljs-comment">// After async</span>
+<span class="hljs-comment">// (3 second pause)</span>
+<span class="hljs-comment">// Async done</span>
+</code></pre><hr>
+<h2 id="blocking-code">Blocking Code</h2>
+<h3 id="what-is-blocking-code">What is Blocking Code?</h3>
+<p>Code that prevents the JavaScript engine from executing other code while waiting for an operation to complete.</p>
+<h3 id="impact-on-nodejs-performance">Impact on Node.js Performance</h3>
+<p>Node.js is <strong>single-threaded</strong>. Blocking code blocks the entire application!</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ BAD: Synchronous file read (blocking)</span>
+<span class="hljs-keyword">const</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;fs&#x27;</span>);
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Start reading...&quot;</span>);
+<span class="hljs-keyword">const</span> data = fs.<span class="hljs-title function_">readFileSync</span>(<span class="hljs-string">&#x27;large-file.txt&#x27;</span>);  <span class="hljs-comment">// BLOCKS!</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;File read complete&quot;</span>);
+<span class="hljs-comment">// All other requests are blocked during file read</span>
+
+<span class="hljs-comment">// ✅ GOOD: Asynchronous file read (non-blocking)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Start reading...&quot;</span>);
+fs.<span class="hljs-title function_">readFile</span>(<span class="hljs-string">&#x27;large-file.txt&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">err, data</span>) =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;File read complete&quot;</span>);
+});
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Can do other things!&quot;</span>);
+<span class="hljs-comment">// Other requests can be handled while file is being read</span>
+</code></pre><h3 id="examples-of-blocking-operations">Examples of Blocking Operations</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// 1. Synchronous I/O</span>
+<span class="hljs-keyword">const</span> data = fs.<span class="hljs-title function_">readFileSync</span>(<span class="hljs-string">&#x27;file.txt&#x27;</span>);  <span class="hljs-comment">// Blocks</span>
+<span class="hljs-keyword">const</span> json = <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(fs.<span class="hljs-title function_">readFileSync</span>(<span class="hljs-string">&#x27;data.json&#x27;</span>));  <span class="hljs-comment">// Blocks</span>
+
+<span class="hljs-comment">// 2. CPU-intensive operations</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">fibonacci</span>(<span class="hljs-params">n</span>) {
+  <span class="hljs-keyword">if</span> (n &lt;= <span class="hljs-number">1</span>) <span class="hljs-keyword">return</span> n;
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_">fibonacci</span>(n - <span class="hljs-number">1</span>) + <span class="hljs-title function_">fibonacci</span>(n - <span class="hljs-number">2</span>);
+}
+<span class="hljs-keyword">const</span> result = <span class="hljs-title function_">fibonacci</span>(<span class="hljs-number">45</span>);  <span class="hljs-comment">// Blocks for seconds!</span>
+
+<span class="hljs-comment">// 3. Infinite or long loops</span>
+<span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {  <span class="hljs-comment">// Blocks forever!</span>
+  <span class="hljs-comment">// Do something</span>
+}
+
+<span class="hljs-keyword">let</span> sum = <span class="hljs-number">0</span>;
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">1000000000</span>; i++) {  <span class="hljs-comment">// Blocks</span>
+  sum += i;
+}
+
+<span class="hljs-comment">// 4. Synchronous network requests</span>
+<span class="hljs-keyword">const</span> request = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;sync-request&#x27;</span>);
+<span class="hljs-keyword">const</span> res = <span class="hljs-title function_">request</span>(<span class="hljs-string">&#x27;GET&#x27;</span>, <span class="hljs-string">&#x27;https://api.example.com&#x27;</span>);  <span class="hljs-comment">// Blocks</span>
+</code></pre><h3 id="consequences">Consequences</h3>
+<ol>
+<li><strong>Server becomes unresponsive</strong></li>
+</ol>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Server example</span>
+app.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;/slow&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+  <span class="hljs-comment">// Blocks for 5 seconds</span>
+  <span class="hljs-keyword">const</span> start = <span class="hljs-title class_">Date</span>.<span class="hljs-title function_">now</span>();
+  <span class="hljs-keyword">while</span> (<span class="hljs-title class_">Date</span>.<span class="hljs-title function_">now</span>() - start &lt; <span class="hljs-number">5000</span>) {}
+  res.<span class="hljs-title function_">send</span>(<span class="hljs-string">&#x27;Done&#x27;</span>);
+  <span class="hljs-comment">// All other requests wait during this time!</span>
+});
+</code></pre><ol start="2">
+<li><strong>Poor scalability</strong></li>
+</ol>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Can&#x27;t handle concurrent users</span>
+<span class="hljs-comment">// Each request blocks others</span>
+</code></pre><ol start="3">
+<li><strong>Degraded user experience</strong></li>
+</ol>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Browser freezes</span>
+button.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-comment">// Long synchronous operation</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">1000000000</span>; i++) {
+    <span class="hljs-comment">// User can&#x27;t interact with page</span>
+  }
+});
+</code></pre><h3 id="solutions">Solutions</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// 1. Use async APIs</span>
+fs.<span class="hljs-title function_">readFile</span>(<span class="hljs-string">&#x27;file.txt&#x27;</span>, callback);  <span class="hljs-comment">// Non-blocking</span>
+<span class="hljs-keyword">await</span> fs.<span class="hljs-property">promises</span>.<span class="hljs-title function_">readFile</span>(<span class="hljs-string">&#x27;file.txt&#x27;</span>);  <span class="hljs-comment">// Non-blocking</span>
+
+<span class="hljs-comment">// 2. Break up long operations</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">processLargeArray</span>(<span class="hljs-params">array</span>) {
+  <span class="hljs-keyword">let</span> index = <span class="hljs-number">0</span>;
+
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">processChunk</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">const</span> chunkSize = <span class="hljs-number">1000</span>;
+    <span class="hljs-keyword">const</span> end = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">min</span>(index + chunkSize, array.<span class="hljs-property">length</span>);
+
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = index; i &lt; end; i++) {
+      <span class="hljs-comment">// Process array[i]</span>
+    }
+
+    index = end;
+
+    <span class="hljs-keyword">if</span> (index &lt; array.<span class="hljs-property">length</span>) {
+      <span class="hljs-built_in">setTimeout</span>(processChunk, <span class="hljs-number">0</span>);  <span class="hljs-comment">// Yield to event loop</span>
+    }
+  }
+
+  <span class="hljs-title function_">processChunk</span>();
+}
+
+<span class="hljs-comment">// 3. Use Worker Threads (Node.js)</span>
+<span class="hljs-keyword">const</span> { <span class="hljs-title class_">Worker</span> } = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;worker_threads&#x27;</span>);
+
+<span class="hljs-keyword">const</span> worker = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Worker</span>(<span class="hljs-string">&#x27;./heavy-computation.js&#x27;</span>);
+worker.<span class="hljs-title function_">on</span>(<span class="hljs-string">&#x27;message&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">result</span>) =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Result:&#x27;</span>, result);
+});
+
+<span class="hljs-comment">// 4. Use Web Workers (Browser)</span>
+<span class="hljs-keyword">const</span> worker = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Worker</span>(<span class="hljs-string">&#x27;worker.js&#x27;</span>);
+worker.<span class="hljs-title function_">postMessage</span>({ <span class="hljs-attr">data</span>: largeData });
+worker.<span class="hljs-property">onmessage</span> = <span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Result:&#x27;</span>, e.<span class="hljs-property">data</span>);
+};
+</code></pre><hr>
+<h2 id="event-loop">Event Loop</h2>
+<h3 id="what-is-the-event-loop">What is the Event Loop?</h3>
+<p>The mechanism that allows Node.js to perform non-blocking I/O operations despite JavaScript being single-threaded.</p>
+<h3 id="how-it-works">How It Works</h3>
+<pre><code>┌───────────────────────────┐
+┌─&gt;│        timers            │  setTimeout, setInterval
+│  └─────────────┬────────────┘
+│  ┌─────────────┴────────────┐
+│  │   pending callbacks      │  I/O callbacks
+│  └─────────────┬────────────┘
+│  ┌─────────────┴────────────┐
+│  │    idle, prepare         │  Internal use
+│  └─────────────┬────────────┘
+│  ┌─────────────┴────────────┐  ┌───────────────┐
+│  │        poll              │&lt;─┤  incoming:    │
+│  │                          │  │  connections, │
+│  └─────────────┬────────────┘  │  data, etc.   │
+│  ┌─────────────┴────────────┐  └───────────────┘
+│  │        check             │  setImmediate
+│  └─────────────┬────────────┘
+│  ┌─────────────┴────────────┐
+└──┤   close callbacks        │  socket.on(&#x27;close&#x27;, ...)
+   └──────────────────────────┘
+</code></pre><h3 id="phases-of-event-loop">Phases of Event Loop</h3>
+<ol>
+<li><strong>Timers</strong>: Execute <code>setTimeout</code> and <code>setInterval</code> callbacks</li>
+<li><strong>Pending callbacks</strong>: I/O callbacks deferred from previous cycle</li>
+<li><strong>Idle, prepare</strong>: Internal Node.js use</li>
+<li><strong>Poll</strong>: Retrieve new I/O events, execute I/O callbacks</li>
+<li><strong>Check</strong>: Execute <code>setImmediate</code> callbacks</li>
+<li><strong>Close callbacks</strong>: Execute close event callbacks</li>
+</ol>
+<h3 id="simple-example">Simple Example</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;1: Sync&#x27;</span>);
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;2: setTimeout&#x27;</span>);
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;3: Promise&#x27;</span>);
+});
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;4: Sync&#x27;</span>);
+
+<span class="hljs-comment">// Output:</span>
+<span class="hljs-comment">// 1: Sync</span>
+<span class="hljs-comment">// 4: Sync</span>
+<span class="hljs-comment">// 3: Promise (microtask)</span>
+<span class="hljs-comment">// 2: setTimeout (macrotask)</span>
+</code></pre><h3 id="call-stack-task-queue-microtask-queue">Call Stack, Task Queue, Microtask Queue</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Call Stack: Currently executing code</span>
+<span class="hljs-comment">// Microtask Queue: Promises, queueMicrotask</span>
+<span class="hljs-comment">// Task Queue (Macrotask): setTimeout, setInterval, I/O</span>
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Start&#x27;</span>);  <span class="hljs-comment">// 1. Call stack</span>
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Timeout&#x27;</span>);  <span class="hljs-comment">// 5. Task queue → Call stack</span>
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>()
+  .<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Promise 1&#x27;</span>);  <span class="hljs-comment">// 3. Microtask queue → Call stack</span>
+  })
+  .<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Promise 2&#x27;</span>);  <span class="hljs-comment">// 4. Microtask queue → Call stack</span>
+  });
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;End&#x27;</span>);  <span class="hljs-comment">// 2. Call stack</span>
+
+<span class="hljs-comment">// Execution order:</span>
+<span class="hljs-comment">// 1. Execute all synchronous code (Call stack)</span>
+<span class="hljs-comment">// 2. Execute ALL microtasks (empty microtask queue)</span>
+<span class="hljs-comment">// 3. Execute ONE macrotask (from task queue)</span>
+<span class="hljs-comment">// 4. Execute ALL microtasks again</span>
+<span class="hljs-comment">// 5. Repeat steps 3-4</span>
+</code></pre><hr>
+<h2 id="settimeout-and-setinterval">setTimeout and setInterval</h2>
+<h3 id="settimeout">setTimeout</h3>
+<p>Execute callback once after specified delay.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Basic usage</span>
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Executed after 1 second&quot;</span>);
+}, <span class="hljs-number">1000</span>);
+
+<span class="hljs-comment">// With arguments</span>
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">(<span class="hljs-params">name, age</span>) =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`<span class="hljs-subst">${name}</span> is <span class="hljs-subst">${age}</span> years old`</span>);
+}, <span class="hljs-number">1000</span>, <span class="hljs-string">&quot;Alice&quot;</span>, <span class="hljs-number">30</span>);
+
+<span class="hljs-comment">// Store timeout ID</span>
+<span class="hljs-keyword">const</span> timeoutId = <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;This might not run&quot;</span>);
+}, <span class="hljs-number">5000</span>);
+
+<span class="hljs-comment">// Can cancel before it runs</span>
+<span class="hljs-built_in">clearTimeout</span>(timeoutId);
+</code></pre><h3 id="setinterval">setInterval</h3>
+<p>Execute callback repeatedly at specified interval.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Basic usage</span>
+<span class="hljs-keyword">const</span> intervalId = <span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Executed every 2 seconds&quot;</span>);
+}, <span class="hljs-number">2000</span>);
+
+<span class="hljs-comment">// Stop after some time</span>
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-built_in">clearInterval</span>(intervalId);
+}, <span class="hljs-number">10000</span>);  <span class="hljs-comment">// Stop after 10 seconds</span>
+
+<span class="hljs-comment">// With arguments</span>
+<span class="hljs-built_in">setInterval</span>(<span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(message);
+}, <span class="hljs-number">1000</span>, <span class="hljs-string">&quot;Tick&quot;</span>);
+</code></pre><h3 id="clearing-timers">Clearing Timers</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// setTimeout</span>
+<span class="hljs-keyword">const</span> timeoutId = <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Won&#x27;t execute&quot;</span>);
+}, <span class="hljs-number">1000</span>);
+<span class="hljs-built_in">clearTimeout</span>(timeoutId);
+
+<span class="hljs-comment">// setInterval</span>
+<span class="hljs-keyword">const</span> intervalId = <span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Repeating...&quot;</span>);
+}, <span class="hljs-number">1000</span>);
+
+<span class="hljs-comment">// Clear after 5 seconds</span>
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-built_in">clearInterval</span>(intervalId);
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Interval stopped&quot;</span>);
+}, <span class="hljs-number">5000</span>);
+</code></pre><h3 id="practical-uses-for-user-experience">Practical Uses for User Experience</h3>
+<h4 id="1-debouncing">1. Debouncing</h4>
+<p>Delay execution until user stops typing.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">debounce</span>(<span class="hljs-params">fn, delay</span>) {
+  <span class="hljs-keyword">let</span> timeoutId;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params">...args</span>) {
+    <span class="hljs-built_in">clearTimeout</span>(timeoutId);
+    timeoutId = <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">fn</span>(...args), delay);
+  };
+}
+
+<span class="hljs-comment">// Search as user types</span>
+<span class="hljs-keyword">const</span> searchInput = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;search&#x27;</span>);
+<span class="hljs-keyword">const</span> debouncedSearch = <span class="hljs-title function_">debounce</span>(<span class="hljs-function">(<span class="hljs-params">query</span>) =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Searching for: <span class="hljs-subst">${query}</span>`</span>);
+  <span class="hljs-comment">// API call here</span>
+}, <span class="hljs-number">300</span>);
+
+searchInput.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;input&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> {
+  <span class="hljs-title function_">debouncedSearch</span>(e.<span class="hljs-property">target</span>.<span class="hljs-property">value</span>);
+});
+</code></pre><h4 id="2-throttling">2. Throttling</h4>
+<p>Limit function execution frequency.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">throttle</span>(<span class="hljs-params">fn, limit</span>) {
+  <span class="hljs-keyword">let</span> inThrottle;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params">...args</span>) {
+    <span class="hljs-keyword">if</span> (!inThrottle) {
+      <span class="hljs-title function_">fn</span>(...args);
+      inThrottle = <span class="hljs-literal">true</span>;
+      <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> inThrottle = <span class="hljs-literal">false</span>, limit);
+    }
+  };
+}
+
+<span class="hljs-comment">// Scroll event</span>
+<span class="hljs-keyword">const</span> throttledScroll = <span class="hljs-title function_">throttle</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Scroll position:&#x27;</span>, <span class="hljs-variable language_">window</span>.<span class="hljs-property">scrollY</span>);
+}, <span class="hljs-number">1000</span>);
+
+<span class="hljs-variable language_">window</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;scroll&#x27;</span>, throttledScroll);
+</code></pre><h4 id="3-auto-save">3. Auto-save</h4>
+<p>Periodically save user&#39;s work.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">let</span> autoSaveInterval;
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">startAutoSave</span>(<span class="hljs-params"></span>) {
+  autoSaveInterval = <span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-keyword">const</span> content = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">getElementById</span>(<span class="hljs-string">&#x27;editor&#x27;</span>).<span class="hljs-property">value</span>;
+    <span class="hljs-variable language_">localStorage</span>.<span class="hljs-title function_">setItem</span>(<span class="hljs-string">&#x27;draft&#x27;</span>, content);
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Auto-saved!&#x27;</span>);
+  }, <span class="hljs-number">30000</span>);  <span class="hljs-comment">// Every 30 seconds</span>
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">stopAutoSave</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-built_in">clearInterval</span>(autoSaveInterval);
+}
+</code></pre><h4 id="4-delayed-tooltips">4. Delayed Tooltips</h4>
+<p>Show tooltip after hover delay.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">let</span> tooltipTimeout;
+
+element.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;mouseenter&#x27;</span>, <span class="hljs-function">() =&gt;</span> {
+  tooltipTimeout = <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-title function_">showTooltip</span>();
+  }, <span class="hljs-number">500</span>);  <span class="hljs-comment">// 500ms delay</span>
+});
+
+element.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;mouseleave&#x27;</span>, <span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-built_in">clearTimeout</span>(tooltipTimeout);
+  <span class="hljs-title function_">hideTooltip</span>();
+});
+</code></pre><h4 id="5-animations">5. Animations</h4>
+<p>Smooth transitions.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">animateProgress</span>(<span class="hljs-params">element, targetWidth</span>) {
+  <span class="hljs-keyword">let</span> width = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">const</span> interval = <span class="hljs-built_in">setInterval</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-keyword">if</span> (width &gt;= targetWidth) {
+      <span class="hljs-built_in">clearInterval</span>(interval);
+    } <span class="hljs-keyword">else</span> {
+      width += <span class="hljs-number">5</span>;
+      element.<span class="hljs-property">style</span>.<span class="hljs-property">width</span> = width + <span class="hljs-string">&#x27;%&#x27;</span>;
+    }
+  }, <span class="hljs-number">50</span>);
+}
+</code></pre><hr>
+<h2 id="zero-delay-settimeout">Zero Delay setTimeout</h2>
+<h3 id="the-misconception">The Misconception</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;1&#x27;</span>);
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;2&#x27;</span>);
+}, <span class="hljs-number">0</span>);  <span class="hljs-comment">// Zero delay - executes immediately, right? WRONG!</span>
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;3&#x27;</span>);
+
+<span class="hljs-comment">// Output:</span>
+<span class="hljs-comment">// 1</span>
+<span class="hljs-comment">// 3</span>
+<span class="hljs-comment">// 2 (NOT immediate!)</span>
+</code></pre><h3 id="why-it-doesnt-execute-immediately">Why It Doesn&#39;t Execute Immediately</h3>
+<p>Even with 0ms delay, callback is placed in task queue:</p>
+<ol>
+<li>Synchronous code executes first (call stack)</li>
+<li>Microtasks execute (promise callbacks)</li>
+<li>Then macro tasks (setTimeout) execute</li>
+</ol>
+<pre><code class="hljs language-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Sync 1&#x27;</span>);
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;setTimeout 0ms&#x27;</span>);
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;setTimeout 100ms&#x27;</span>);
+}, <span class="hljs-number">100</span>);
+
+<span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Promise&#x27;</span>);
+});
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Sync 2&#x27;</span>);
+
+<span class="hljs-comment">// Output:</span>
+<span class="hljs-comment">// Sync 1</span>
+<span class="hljs-comment">// Sync 2</span>
+<span class="hljs-comment">// Promise (microtask before macrotask)</span>
+<span class="hljs-comment">// setTimeout 0ms</span>
+<span class="hljs-comment">// setTimeout 100ms</span>
+</code></pre><h3 id="impact-on-event-loop-execution">Impact on Event Loop Execution</h3>
+<p><strong>Without setTimeout:</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">heavySync</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">1000000000</span>; i++) {
+    <span class="hljs-comment">// Blocks event loop</span>
+  }
+}
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Before&#x27;</span>);
+<span class="hljs-title function_">heavySync</span>();  <span class="hljs-comment">// Blocks everything</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;After&#x27;</span>);
+<span class="hljs-comment">// UI is frozen during heavySync</span>
+</code></pre><p><strong>With setTimeout (0ms):</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">heavyAsync</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">chunk</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">const</span> end = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">min</span>(i + <span class="hljs-number">1000000</span>, <span class="hljs-number">1000000000</span>);
+    <span class="hljs-keyword">for</span> (; i &lt; end; i++) {
+      <span class="hljs-comment">// Process chunk</span>
+    }
+    <span class="hljs-keyword">if</span> (i &lt; <span class="hljs-number">1000000000</span>) {
+      <span class="hljs-built_in">setTimeout</span>(chunk, <span class="hljs-number">0</span>);  <span class="hljs-comment">// Yield to event loop</span>
+    }
+  }
+  <span class="hljs-title function_">chunk</span>();
+}
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Before&#x27;</span>);
+<span class="hljs-title function_">heavyAsync</span>();  <span class="hljs-comment">// Returns immediately</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;After&#x27;</span>);
+<span class="hljs-comment">// UI remains responsive</span>
+</code></pre><h3 id="use-cases">Use Cases</h3>
+<ol>
+<li><strong>Breaking up long tasks</strong></li>
+</ol>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">processLargeArray</span>(<span class="hljs-params">array</span>) {
+  <span class="hljs-keyword">let</span> index = <span class="hljs-number">0</span>;
+
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">process</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">const</span> chunk = array.<span class="hljs-title function_">slice</span>(index, index + <span class="hljs-number">1000</span>);
+    chunk.<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> {
+      <span class="hljs-comment">// Process item</span>
+    });
+
+    index += <span class="hljs-number">1000</span>;
+
+    <span class="hljs-keyword">if</span> (index &lt; array.<span class="hljs-property">length</span>) {
+      <span class="hljs-built_in">setTimeout</span>(process, <span class="hljs-number">0</span>);  <span class="hljs-comment">// Let other code run</span>
+    }
+  }
+
+  <span class="hljs-title function_">process</span>();
+}
+</code></pre><ol start="2">
+<li><strong>Deferring execution</strong></li>
+</ol>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Execute after current code and microtasks</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">deferExecution</span>(<span class="hljs-params">fn</span>) {
+  <span class="hljs-built_in">setTimeout</span>(fn, <span class="hljs-number">0</span>);
+}
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;1&#x27;</span>);
+<span class="hljs-title function_">deferExecution</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;3&#x27;</span>));
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;2&#x27;</span>);
+<span class="hljs-comment">// Output: 1, 2, 3</span>
+</code></pre><ol start="3">
+<li><strong>Ensuring DOM updates</strong></li>
+</ol>
+<pre><code class="hljs language-javascript">element.<span class="hljs-property">textContent</span> = <span class="hljs-string">&#x27;Loading...&#x27;</span>;
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-comment">// DOM has been updated, now do heavy work</span>
+  <span class="hljs-title function_">heavyComputation</span>();
+}, <span class="hljs-number">0</span>);
+</code></pre><hr>
+<h2 id="macro-tasks-and-micro-tasks">Macro Tasks and Micro Tasks</h2>
+<h3 id="definitions">Definitions</h3>
+<p><strong>Macro Tasks (Task Queue):</strong></p>
+<ul>
+<li><code>setTimeout</code></li>
+<li><code>setInterval</code></li>
+<li><code>setImmediate</code> (Node.js)</li>
+<li>I/O operations</li>
+<li>UI rendering (browser)</li>
+<li><code>requestAnimationFrame</code> (browser)</li>
+</ul>
+<p><strong>Micro Tasks (Job Queue):</strong></p>
+<ul>
+<li><code>Promise.then/catch/finally</code></li>
+<li><code>queueMicrotask()</code></li>
+<li><code>process.nextTick()</code> (Node.js, highest priority)</li>
+<li><code>MutationObserver</code> (browser)</li>
+<li><code>async/await</code> (uses Promises)</li>
+</ul>
+<h3 id="execution-order">Execution Order</h3>
+<pre><code>┌─────────────────┐
+│  Call Stack     │ Execute synchronous code
+└────────┬────────┘
+         │
+         ↓
+┌─────────────────┐
+│ Microtask Queue │ Execute ALL microtasks
+└────────┬────────┘
+         │
+         ↓
+┌─────────────────┐
+│  Macrotask      │ Execute ONE macrotask
+│  (Task Queue)   │
+└────────┬────────┘
+         │
+         ↓
+┌─────────────────┐
+│ Microtask Queue │ Execute ALL microtasks again
+└────────┬────────┘
+         │
+         ↓ (repeat)
+</code></pre><h3 id="basic-example">Basic Example</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;1: Sync&#x27;</span>);  <span class="hljs-comment">// Call stack</span>
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;2: Macro task&#x27;</span>);
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;3: Micro task&#x27;</span>);
+});
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;4: Sync&#x27;</span>);  <span class="hljs-comment">// Call stack</span>
+
+<span class="hljs-comment">// Output:</span>
+<span class="hljs-comment">// 1: Sync</span>
+<span class="hljs-comment">// 4: Sync</span>
+<span class="hljs-comment">// 3: Micro task (all micros before macro)</span>
+<span class="hljs-comment">// 2: Macro task</span>
+</code></pre><h3 id="complex-example">Complex Example</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Start&#x27;</span>);  <span class="hljs-comment">// 1</span>
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Timeout 1&#x27;</span>);  <span class="hljs-comment">// 7</span>
+  <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Promise 3&#x27;</span>);  <span class="hljs-comment">// 8</span>
+  });
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>()
+  .<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Promise 1&#x27;</span>);  <span class="hljs-comment">// 3</span>
+    <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Timeout 2&#x27;</span>);  <span class="hljs-comment">// 9</span>
+    }, <span class="hljs-number">0</span>);
+  })
+  .<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Promise 2&#x27;</span>);  <span class="hljs-comment">// 4</span>
+  });
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Timeout 3&#x27;</span>);  <span class="hljs-comment">// 10</span>
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;End&#x27;</span>);  <span class="hljs-comment">// 2</span>
+
+<span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Promise 4&#x27;</span>);  <span class="hljs-comment">// 5</span>
+}).<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Promise 5&#x27;</span>);  <span class="hljs-comment">// 6</span>
+});
+
+<span class="hljs-comment">/* Execution order:
+1. Start (sync)
+2. End (sync)
+3. Promise 1 (microtask)
+4. Promise 2 (microtask - chained)
+5. Promise 4 (microtask)
+6. Promise 5 (microtask - chained)
+7. Timeout 1 (macrotask)
+8. Promise 3 (microtask after macrotask)
+9. Timeout 2 (macrotask)
+10. Timeout 3 (macrotask)
+*/</span>
+</code></pre><h3 id="differences-in-nodejs">Differences in Node.js</h3>
+<p>Node.js has <code>process.nextTick()</code> which has <strong>higher priority</strong> than microtasks:</p>
+<pre><code class="hljs language-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;1: Sync&#x27;</span>);
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;2: setTimeout&#x27;</span>);
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-title function_">setImmediate</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;3: setImmediate&#x27;</span>);
+});
+
+process.<span class="hljs-title function_">nextTick</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;4: nextTick&#x27;</span>);
+});
+
+<span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;5: Promise&#x27;</span>);
+});
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;6: Sync&#x27;</span>);
+
+<span class="hljs-comment">// Output in Node.js:</span>
+<span class="hljs-comment">// 1: Sync</span>
+<span class="hljs-comment">// 6: Sync</span>
+<span class="hljs-comment">// 4: nextTick (highest priority)</span>
+<span class="hljs-comment">// 5: Promise (microtask)</span>
+<span class="hljs-comment">// 2: setTimeout (macrotask - timers phase)</span>
+<span class="hljs-comment">// 3: setImmediate (macrotask - check phase)</span>
+</code></pre><h3 id="priority-order-in-nodejs">Priority Order in Node.js</h3>
+<ol>
+<li>Synchronous code (call stack)</li>
+<li><code>process.nextTick()</code> queue</li>
+<li>Microtask queue (Promises)</li>
+<li>Macrotask queue (timers, I/O, setImmediate)</li>
+</ol>
+<pre><code class="hljs language-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;1&#x27;</span>);
+
+<span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;2: Promise&#x27;</span>));
+
+process.<span class="hljs-title function_">nextTick</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;3: nextTick&#x27;</span>));
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;4: setTimeout&#x27;</span>), <span class="hljs-number">0</span>);
+
+<span class="hljs-title function_">queueMicrotask</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;5: queueMicrotask&#x27;</span>));
+
+process.<span class="hljs-title function_">nextTick</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;6: nextTick 2&#x27;</span>));
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;7&#x27;</span>);
+
+<span class="hljs-comment">// Output:</span>
+<span class="hljs-comment">// 1</span>
+<span class="hljs-comment">// 7</span>
+<span class="hljs-comment">// 3: nextTick</span>
+<span class="hljs-comment">// 6: nextTick 2</span>
+<span class="hljs-comment">// 2: Promise</span>
+<span class="hljs-comment">// 5: queueMicrotask</span>
+<span class="hljs-comment">// 4: setTimeout</span>
+</code></pre><h3 id="practical-implications">Practical Implications</h3>
+<h4 id="1-promise-chains-execute-before-settimeout">1. Promise chains execute before setTimeout</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;timeout&#x27;</span>);
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>()
+  .<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;promise 1&#x27;</span>))
+  .<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;promise 2&#x27;</span>))
+  .<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;promise 3&#x27;</span>));
+
+<span class="hljs-comment">// Output:</span>
+<span class="hljs-comment">// promise 1</span>
+<span class="hljs-comment">// promise 2</span>
+<span class="hljs-comment">// promise 3</span>
+<span class="hljs-comment">// timeout</span>
+</code></pre><h4 id="2-asyncawait-uses-microtasks">2. async/await uses microtasks</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">asyncFunc</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;async start&#x27;</span>);
+  <span class="hljs-keyword">await</span> <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>();
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;async end&#x27;</span>);  <span class="hljs-comment">// Microtask</span>
+}
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;timeout&#x27;</span>);
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-title function_">asyncFunc</span>();
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;sync&#x27;</span>);
+
+<span class="hljs-comment">// Output:</span>
+<span class="hljs-comment">// async start</span>
+<span class="hljs-comment">// sync</span>
+<span class="hljs-comment">// async end (microtask)</span>
+<span class="hljs-comment">// timeout (macrotask)</span>
+</code></pre><h4 id="3-microtasks-can-starve-macrotasks">3. Microtasks can starve macrotasks</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ⚠️ Warning: This will block macrotasks</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">recursiveMicrotask</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>().<span class="hljs-title function_">then</span>(recursiveMicrotask);
+}
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;This will never run!&#x27;</span>);
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-title function_">recursiveMicrotask</span>();  <span class="hljs-comment">// Infinite microtasks prevent macrotasks!</span>
+</code></pre><h4 id="4-event-loop-visualization">4. Event loop visualization</h4>
+<pre><code class="hljs language-javascript"><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;🔵 Script start&#x27;</span>);
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;⏰ setTimeout 1&#x27;</span>);
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>()
+  .<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;💜 Promise 1&#x27;</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>();
+  })
+  .<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;💜 Promise 2&#x27;</span>);
+  });
+
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;⏰ setTimeout 2&#x27;</span>);
+  <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;💜 Promise 3&#x27;</span>);
+  });
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;💜 Promise 4&#x27;</span>);
+});
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;🔵 Script end&#x27;</span>);
+
+<span class="hljs-comment">/* Output:
+🔵 Script start
+🔵 Script end
+💜 Promise 1
+💜 Promise 4
+💜 Promise 2
+⏰ setTimeout 1
+⏰ setTimeout 2
+💜 Promise 3
+*/</span>
+</code></pre><hr>
+<h2 id="summary">Summary</h2>
+<h3 id="key-takeaways">Key Takeaways</h3>
+<ol>
+<li><strong>Event loop</strong> enables async operations in single-threaded JavaScript</li>
+<li><strong>Blocking code</strong> freezes entire application (especially critical in Node.js)</li>
+<li><strong>setTimeout(fn, 0)</strong> doesn&#39;t execute immediately - goes to task queue</li>
+<li><strong>Microtasks</strong> execute before macrotasks</li>
+<li><strong>Priority</strong>: sync → nextTick → microtasks → macrotasks</li>
+<li>Use async APIs to avoid blocking</li>
+</ol>
+<h3 id="best-practices">Best Practices</h3>
+<ul>
+<li>Avoid synchronous operations (especially I/O)</li>
+<li>Break up long-running tasks with <code>setTimeout(fn, 0)</code></li>
+<li>Use async/await for cleaner async code</li>
+<li>Understand microtask vs macrotask for correct execution order</li>
+<li>Use debounce/throttle for frequent events</li>
+<li>Clear timers when no longer needed</li>
+</ul>
+<h3 id="quick-reference">Quick Reference</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Execution order</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;1&#x27;</span>);              <span class="hljs-comment">// Sync</span>
+process.<span class="hljs-title function_">nextTick</span>(<span class="hljs-function">() =&gt;</span> {});    <span class="hljs-comment">// 2nd (Node.js only)</span>
+<span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function">() =&gt;</span> {}); <span class="hljs-comment">// 3rd (microtask)</span>
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {}, <span class="hljs-number">0</span>);       <span class="hljs-comment">// 4th (macrotask)</span>
+<span class="hljs-title function_">setImmediate</span>(<span class="hljs-function">() =&gt;</span> {});        <span class="hljs-comment">// Last (Node.js, after poll)</span>
+
+<span class="hljs-comment">// Debounce</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">debounce</span>(<span class="hljs-params">fn, delay</span>) {
+  <span class="hljs-keyword">let</span> timeout;
+  <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">...args</span>) =&gt;</span> {
+    <span class="hljs-built_in">clearTimeout</span>(timeout);
+    timeout = <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> <span class="hljs-title function_">fn</span>(...args), delay);
+  };
+}
+
+<span class="hljs-comment">// Throttle</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">throttle</span>(<span class="hljs-params">fn, limit</span>) {
+  <span class="hljs-keyword">let</span> inThrottle;
+  <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">...args</span>) =&gt;</span> {
+    <span class="hljs-keyword">if</span> (!inThrottle) {
+      <span class="hljs-title function_">fn</span>(...args);
+      inThrottle = <span class="hljs-literal">true</span>;
+      <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> inThrottle = <span class="hljs-literal">false</span>, limit);
+    }
+  };
+}
+</code></pre><h3 id="common-patterns">Common Patterns</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Break up long task</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">processInChunks</span>(<span class="hljs-params">array</span>) {
+  <span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">process</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">const</span> chunk = array.<span class="hljs-title function_">slice</span>(i, i + <span class="hljs-number">1000</span>);
+    <span class="hljs-comment">// Process chunk</span>
+    i += <span class="hljs-number">1000</span>;
+    <span class="hljs-keyword">if</span> (i &lt; array.<span class="hljs-property">length</span>) {
+      <span class="hljs-built_in">setTimeout</span>(process, <span class="hljs-number">0</span>);
+    }
+  }
+  <span class="hljs-title function_">process</span>();
+}
+
+<span class="hljs-comment">// Defer execution</span>
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-comment">// Runs after current code + microtasks</span>
+}, <span class="hljs-number">0</span>);
+
+<span class="hljs-comment">// Ensure DOM update</span>
+element.<span class="hljs-property">textContent</span> = <span class="hljs-string">&#x27;Loading...&#x27;</span>;
+<span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-comment">// DOM updated, now do work</span>
+}, <span class="hljs-number">0</span>);
+</code></pre><div class="page-navigation">
+            <a href="06-classes.html" class="nav-btn nav-prev" data-nav="prev">
+                <span class="nav-label">Previous</span>
+                <span class="nav-title">Classes</span>
+            </a>
+        
+            <a href="08-garbage-collection.html" class="nav-btn nav-next" data-nav="next">
+                <span class="nav-label">Next</span>
+                <span class="nav-title">Garbage Collection</span>
+            </a>
+        </div>
+        <div class="progress-section">
+            <div id="progress-controls"></div>
+            <div class="notes-section">
+                <h3>Your Notes</h3>
+                <textarea id="page-notes" placeholder="Add your notes here... (saved automatically)"></textarea>
+            </div>
+        </div>
+    
+    </main>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" aria-label="Back to top">↑</button>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="modal">
+        <div class="modal-content search-content">
+            <div class="search-header">
+                <input type="text" id="search-input" placeholder="Search topics..." autofocus>
+                <button id="search-close" aria-label="Close search">✕</button>
+            </div>
+            <div id="search-results" class="search-results"></div>
+            <div class="search-footer">
+                <span>↑↓ Navigate</span>
+                <span>↵ Select</span>
+                <span>Esc Close</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shortcuts Modal -->
+    <div id="shortcuts-modal" class="modal">
+        <div class="modal-content shortcuts-modal-content">
+            <div class="modal-header">
+                <h2>Keyboard Shortcuts</h2>
+                <button id="shortcuts-close" aria-label="Close shortcuts">✕</button>
+            </div>
+            <div class="shortcuts-content"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/nav.js"></script>
+    <script src="/js/progress.js"></script>
+    <script src="/js/search.js"></script>
+    <script src="/js/shortcuts.js"></script>
+</body>
+
+</html>

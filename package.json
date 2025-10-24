@@ -1,0 +1,22 @@
+{
+  "name": "theory-practice-study-guide",
+  "version": "1.0.0",
+  "description": "Study guide for JavaScript/Node.js theory test preparation",
+  "scripts": {
+    "build": "cd js && node build.js",
+    "watch": "cd js && node build.js --watch"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "highlight.js": "^11.9.0",
+    "marked": "^12.0.0",
+    "marked-highlight": "^2.1.0"
+  },
+  "keywords": [
+    "study-guide",
+    "javascript",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "MIT"
+}

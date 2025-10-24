@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closures</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+</head>
+
+<body>
+    <!-- Header Toolbar -->
+    <div id="header-toolbar">
+        <button id="search-trigger" aria-label="Search" title="Search (Cmd+K)">
+            🔍
+        </button>
+        <button id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle Dark Mode (Cmd+D)">
+            <span id="dark-mode-icon">🌙</span>
+        </button>
+        <button id="shortcuts-help" onclick="window.Shortcuts.show()" aria-label="Keyboard shortcuts"
+            title="Shortcuts (?)">
+            ⌨️
+        </button>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button id="menu-toggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Progress Bar -->
+    <div id="progress-bar">
+        <div id="progress-fill"></div>
+    </div>
+
+    <!-- Overall Progress Indicator -->
+    <div id="overall-progress">
+        <div id="overall-progress-bar" style="width: 0%"></div>
+        <span id="progress-text">0/0 topics completed</span>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar">
+        <div id="sidebar-header">
+            <h2>JS/NodeJs Concepts</h2>
+        </div>
+        <ul id="nav-list">
+                        <li><a href="01-git-version-control.html"><span class="nav-number">1.</span>Git & Version Control</a></li>
+            <li><a href="02-javascript-data-types.html"><span class="nav-number">2.</span>JavaScript Data Types</a></li>
+            <li><a href="03-prototypal-inheritance.html"><span class="nav-number">3.</span>Prototypal Inheritance</a></li>
+            <li><a href="04-closures.html" class="active"><span class="nav-number">4.</span>Closures</a></li>
+            <li><a href="05-context.html"><span class="nav-number">5.</span>Context (this)</a></li>
+            <li><a href="06-classes.html"><span class="nav-number">6.</span>Classes</a></li>
+            <li><a href="07-event-loop-async.html"><span class="nav-number">7.</span>Event Loop & Async</a></li>
+            <li><a href="08-garbage-collection.html"><span class="nav-number">8.</span>Garbage Collection</a></li>
+        </ul>
+        <div id="sidebar-footer">
+            <button id="reset-progress" class="sidebar-btn">Reset Progress</button>
+            <button id="export-progress" class="sidebar-btn">Export</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        
+        <aside class="table-of-contents">
+            <h3>On This Page</h3>
+            <nav class="toc-nav">
+                <ul><li class=""><a href="#table-of-contents">Table of Contents</a></li>
+<li class=""><a href="#basic-definition-and-concept">Basic Definition and Concept</a></li>
+<li class="toc-sub"><a href="#what-is-a-closure">What is a Closure?</a></li>
+<li class="toc-sub"><a href="#simple-example">Simple Example</a></li>
+<li class="toc-sub"><a href="#how-it-works">How It Works</a></li>
+<li class="toc-sub"><a href="#lexical-scoping">Lexical Scoping</a></li>
+<li class=""><a href="#practical-scenarios">Practical Scenarios</a></li>
+<li class="toc-sub"><a href="#1-data-privacy-encapsulation">1. Data Privacy / Encapsulation</a></li>
+<li class="toc-sub"><a href="#2-function-factories">2. Function Factories</a></li>
+<li class="toc-sub"><a href="#3-event-handlers-and-callbacks">3. Event Handlers and Callbacks</a></li>
+<li class="toc-sub"><a href="#4-partial-application-and-currying">4. Partial Application and Currying</a></li>
+<li class="toc-sub"><a href="#5-module-pattern">5. Module Pattern</a></li>
+<li class="toc-sub"><a href="#6-iterator-pattern">6. Iterator Pattern</a></li>
+<li class=""><a href="#importance-of-closures">Importance of Closures</a></li>
+<li class="toc-sub"><a href="#1-data-privacy">1. Data Privacy</a></li>
+<li class="toc-sub"><a href="#2-functional-programming">2. Functional Programming</a></li>
+<li class="toc-sub"><a href="#3-callbacks-and-event-handling">3. Callbacks and Event Handling</a></li>
+<li class="toc-sub"><a href="#4-maintaining-state">4. Maintaining State</a></li>
+<li class=""><a href="#common-issues-and-pitfalls">Common Issues and Pitfalls</a></li>
+<li class="toc-sub"><a href="#1-loop-closure-problem">1. Loop Closure Problem</a></li>
+<li class="toc-sub"><a href="#2-memory-leaks">2. Memory Leaks</a></li>
+<li class="toc-sub"><a href="#3-accidental-global-variables">3. Accidental Global Variables</a></li>
+<li class="toc-sub"><a href="#4-over-closure">4. Over-Closure</a></li>
+<li class="toc-sub"><a href="#5-closure-in-callbacks-with-wrong-context">5. Closure in Callbacks with Wrong Context</a></li>
+<li class=""><a href="#example-implementations">Example Implementations</a></li>
+<li class="toc-sub"><a href="#1-private-variables-with-closures">1. Private Variables with Closures</a></li>
+<li class="toc-sub"><a href="#2-memoization-caching">2. Memoization (Caching)</a></li>
+<li class="toc-sub"><a href="#3-once-function">3. Once Function</a></li>
+<li class="toc-sub"><a href="#4-debounce-function">4. Debounce Function</a></li>
+<li class="toc-sub"><a href="#5-throttle-function">5. Throttle Function</a></li>
+<li class="toc-sub"><a href="#6-counter-with-multiple-operations">6. Counter with Multiple Operations</a></li>
+<li class=""><a href="#writing-and-analyzing-closures">Writing and Analyzing Closures</a></li>
+<li class="toc-sub"><a href="#analysis-checklist">Analysis Checklist</a></li>
+<li class="toc-sub"><a href="#example-analysis">Example Analysis</a></li>
+<li class="toc-sub"><a href="#scope-encapsulation-pattern">Scope Encapsulation Pattern</a></li>
+<li class="toc-sub"><a href="#advanced-closure-with-private-state-and-methods">Advanced: Closure with Private State and Methods</a></li>
+<li class="toc-sub"><a href="#closure-scope-diagram">Closure Scope Diagram</a></li>
+<li class=""><a href="#summary">Summary</a></li>
+<li class="toc-sub"><a href="#key-takeaways">Key Takeaways</a></li>
+<li class="toc-sub"><a href="#best-practices">Best Practices</a></li>
+<li class="toc-sub"><a href="#common-patterns">Common Patterns</a></li>
+<li class="toc-sub"><a href="#interview-questions-to-prepare">Interview Questions to Prepare</a></li></ul>
+            </nav>
+        </aside>
+    
+        <aside class="table-of-contents">
+            <h3>On This Page</h3>
+            <nav class="toc-nav">
+                <ul><li class=""><a href="#table-of-contents">Table of Contents</a></li>
+<li class=""><a href="#basic-definition-and-concept">Basic Definition and Concept</a></li>
+<li class="toc-sub"><a href="#what-is-a-closure">What is a Closure?</a></li>
+<li class="toc-sub"><a href="#simple-example">Simple Example</a></li>
+<li class="toc-sub"><a href="#how-it-works">How It Works</a></li>
+<li class="toc-sub"><a href="#lexical-scoping">Lexical Scoping</a></li>
+<li class=""><a href="#practical-scenarios">Practical Scenarios</a></li>
+<li class="toc-sub"><a href="#1-data-privacy-encapsulation">1. Data Privacy / Encapsulation</a></li>
+<li class="toc-sub"><a href="#2-function-factories">2. Function Factories</a></li>
+<li class="toc-sub"><a href="#3-event-handlers-and-callbacks">3. Event Handlers and Callbacks</a></li>
+<li class="toc-sub"><a href="#4-partial-application-and-currying">4. Partial Application and Currying</a></li>
+<li class="toc-sub"><a href="#5-module-pattern">5. Module Pattern</a></li>
+<li class="toc-sub"><a href="#6-iterator-pattern">6. Iterator Pattern</a></li>
+<li class=""><a href="#importance-of-closures">Importance of Closures</a></li>
+<li class="toc-sub"><a href="#1-data-privacy">1. Data Privacy</a></li>
+<li class="toc-sub"><a href="#2-functional-programming">2. Functional Programming</a></li>
+<li class="toc-sub"><a href="#3-callbacks-and-event-handling">3. Callbacks and Event Handling</a></li>
+<li class="toc-sub"><a href="#4-maintaining-state">4. Maintaining State</a></li>
+<li class=""><a href="#common-issues-and-pitfalls">Common Issues and Pitfalls</a></li>
+<li class="toc-sub"><a href="#1-loop-closure-problem">1. Loop Closure Problem</a></li>
+<li class="toc-sub"><a href="#2-memory-leaks">2. Memory Leaks</a></li>
+<li class="toc-sub"><a href="#3-accidental-global-variables">3. Accidental Global Variables</a></li>
+<li class="toc-sub"><a href="#4-over-closure">4. Over-Closure</a></li>
+<li class="toc-sub"><a href="#5-closure-in-callbacks-with-wrong-context">5. Closure in Callbacks with Wrong Context</a></li>
+<li class=""><a href="#example-implementations">Example Implementations</a></li>
+<li class="toc-sub"><a href="#1-private-variables-with-closures">1. Private Variables with Closures</a></li>
+<li class="toc-sub"><a href="#2-memoization-caching">2. Memoization (Caching)</a></li>
+<li class="toc-sub"><a href="#3-once-function">3. Once Function</a></li>
+<li class="toc-sub"><a href="#4-debounce-function">4. Debounce Function</a></li>
+<li class="toc-sub"><a href="#5-throttle-function">5. Throttle Function</a></li>
+<li class="toc-sub"><a href="#6-counter-with-multiple-operations">6. Counter with Multiple Operations</a></li>
+<li class=""><a href="#writing-and-analyzing-closures">Writing and Analyzing Closures</a></li>
+<li class="toc-sub"><a href="#analysis-checklist">Analysis Checklist</a></li>
+<li class="toc-sub"><a href="#example-analysis">Example Analysis</a></li>
+<li class="toc-sub"><a href="#scope-encapsulation-pattern">Scope Encapsulation Pattern</a></li>
+<li class="toc-sub"><a href="#advanced-closure-with-private-state-and-methods">Advanced: Closure with Private State and Methods</a></li>
+<li class="toc-sub"><a href="#closure-scope-diagram">Closure Scope Diagram</a></li>
+<li class=""><a href="#summary">Summary</a></li>
+<li class="toc-sub"><a href="#key-takeaways">Key Takeaways</a></li>
+<li class="toc-sub"><a href="#best-practices">Best Practices</a></li>
+<li class="toc-sub"><a href="#common-patterns">Common Patterns</a></li>
+<li class="toc-sub"><a href="#interview-questions-to-prepare">Interview Questions to Prepare</a></li></ul>
+            </nav>
+        </aside>
+    <h1 id="closures">Closures</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#basic-definition-and-concept">Basic Definition and Concept</a></li>
+<li><a href="#practical-scenarios">Practical Scenarios</a></li>
+<li><a href="#importance-of-closures">Importance of Closures</a></li>
+<li><a href="#common-issues-and-pitfalls">Common Issues and Pitfalls</a></li>
+<li><a href="#example-implementations">Example Implementations</a></li>
+<li><a href="#writing-and-analyzing-closures">Writing and Analyzing Closures</a></li>
+</ul>
+<hr>
+<h2 id="basic-definition-and-concept">Basic Definition and Concept</h2>
+<h3 id="what-is-a-closure">What is a Closure?</h3>
+<p>A <strong>closure</strong> is a function bundled together with references to its surrounding state (lexical environment).</p>
+<p><strong>Key Points:</strong></p>
+<ul>
+<li>Function retains access to variables from outer scope</li>
+<li>Even after the outer function has returned</li>
+<li>Created every time a function is created</li>
+<li>Lexical scoping (based on where variables are declared)</li>
+</ul>
+<h3 id="simple-example">Simple Example</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">outer</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> message = <span class="hljs-string">&quot;Hello&quot;</span>;  <span class="hljs-comment">// Variable in outer scope</span>
+
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">inner</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(message);  <span class="hljs-comment">// Accesses outer variable</span>
+  }
+
+  <span class="hljs-keyword">return</span> inner;
+}
+
+<span class="hljs-keyword">const</span> myFunc = <span class="hljs-title function_">outer</span>();
+<span class="hljs-title function_">myFunc</span>(); <span class="hljs-comment">// &quot;Hello&quot; - closure preserved access to message</span>
+</code></pre><h3 id="how-it-works">How It Works</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">makeCounter</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">let</span> count = <span class="hljs-number">0</span>;  <span class="hljs-comment">// Private variable</span>
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    count++;  <span class="hljs-comment">// Closure: access to count</span>
+    <span class="hljs-keyword">return</span> count;
+  };
+}
+
+<span class="hljs-keyword">const</span> counter = <span class="hljs-title function_">makeCounter</span>();
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">counter</span>()); <span class="hljs-comment">// 1</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">counter</span>()); <span class="hljs-comment">// 2</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">counter</span>()); <span class="hljs-comment">// 3</span>
+
+<span class="hljs-comment">// Each call to makeCounter creates a new closure</span>
+<span class="hljs-keyword">const</span> counter2 = <span class="hljs-title function_">makeCounter</span>();
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">counter2</span>()); <span class="hljs-comment">// 1 (independent count)</span>
+</code></pre><h3 id="lexical-scoping">Lexical Scoping</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> globalVar = <span class="hljs-string">&quot;global&quot;</span>;
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">outer</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> outerVar = <span class="hljs-string">&quot;outer&quot;</span>;
+
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">middle</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">const</span> middleVar = <span class="hljs-string">&quot;middle&quot;</span>;
+
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">inner</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">const</span> innerVar = <span class="hljs-string">&quot;inner&quot;</span>;
+
+      <span class="hljs-comment">// Inner function has access to ALL outer scopes</span>
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(innerVar);   <span class="hljs-comment">// &quot;inner&quot;</span>
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(middleVar);  <span class="hljs-comment">// &quot;middle&quot;</span>
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(outerVar);   <span class="hljs-comment">// &quot;outer&quot;</span>
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(globalVar);  <span class="hljs-comment">// &quot;global&quot;</span>
+    }
+
+    <span class="hljs-keyword">return</span> inner;
+  }
+
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_">middle</span>();
+}
+
+<span class="hljs-keyword">const</span> myFunc = <span class="hljs-title function_">outer</span>();
+<span class="hljs-title function_">myFunc</span>();
+</code></pre><hr>
+<h2 id="practical-scenarios">Practical Scenarios</h2>
+<h3 id="1-data-privacy-encapsulation">1. Data Privacy / Encapsulation</h3>
+<p>Create private variables that can&#39;t be accessed directly.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">createBankAccount</span>(<span class="hljs-params">initialBalance</span>) {
+  <span class="hljs-comment">// Private variable</span>
+  <span class="hljs-keyword">let</span> balance = initialBalance;
+
+  <span class="hljs-comment">// Public interface</span>
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-title function_">deposit</span>(<span class="hljs-params">amount</span>) {
+      <span class="hljs-keyword">if</span> (amount &gt; <span class="hljs-number">0</span>) {
+        balance += amount;
+        <span class="hljs-keyword">return</span> balance;
+      }
+    },
+
+    <span class="hljs-title function_">withdraw</span>(<span class="hljs-params">amount</span>) {
+      <span class="hljs-keyword">if</span> (amount &gt; <span class="hljs-number">0</span> &amp;&amp; amount &lt;= balance) {
+        balance -= amount;
+        <span class="hljs-keyword">return</span> balance;
+      }
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&quot;Insufficient funds&quot;</span>);
+    },
+
+    <span class="hljs-title function_">getBalance</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">return</span> balance;
+    }
+  };
+}
+
+<span class="hljs-keyword">const</span> account = <span class="hljs-title function_">createBankAccount</span>(<span class="hljs-number">100</span>);
+account.<span class="hljs-title function_">deposit</span>(<span class="hljs-number">50</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(account.<span class="hljs-title function_">getBalance</span>());  <span class="hljs-comment">// 150</span>
+account.<span class="hljs-title function_">withdraw</span>(<span class="hljs-number">30</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(account.<span class="hljs-title function_">getBalance</span>());  <span class="hljs-comment">// 120</span>
+
+<span class="hljs-comment">// balance is private - no direct access</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(account.<span class="hljs-property">balance</span>);  <span class="hljs-comment">// undefined</span>
+<span class="hljs-comment">// account.balance = 99999;  // Doesn&#x27;t affect actual balance</span>
+</code></pre><h3 id="2-function-factories">2. Function Factories</h3>
+<p>Create specialized functions with preset configuration.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">makeMultiplier</span>(<span class="hljs-params">multiplier</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params">number</span>) {
+    <span class="hljs-keyword">return</span> number * multiplier;
+  };
+}
+
+<span class="hljs-keyword">const</span> double = <span class="hljs-title function_">makeMultiplier</span>(<span class="hljs-number">2</span>);
+<span class="hljs-keyword">const</span> triple = <span class="hljs-title function_">makeMultiplier</span>(<span class="hljs-number">3</span>);
+<span class="hljs-keyword">const</span> quadruple = <span class="hljs-title function_">makeMultiplier</span>(<span class="hljs-number">4</span>);
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">double</span>(<span class="hljs-number">5</span>));      <span class="hljs-comment">// 10</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">triple</span>(<span class="hljs-number">5</span>));      <span class="hljs-comment">// 15</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">quadruple</span>(<span class="hljs-number">5</span>));   <span class="hljs-comment">// 20</span>
+
+<span class="hljs-comment">// More practical example: greeting function</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">makeGreeter</span>(<span class="hljs-params">greeting</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params">name</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-string">`<span class="hljs-subst">${greeting}</span>, <span class="hljs-subst">${name}</span>!`</span>;
+  };
+}
+
+<span class="hljs-keyword">const</span> sayHello = <span class="hljs-title function_">makeGreeter</span>(<span class="hljs-string">&quot;Hello&quot;</span>);
+<span class="hljs-keyword">const</span> sayHi = <span class="hljs-title function_">makeGreeter</span>(<span class="hljs-string">&quot;Hi&quot;</span>);
+<span class="hljs-keyword">const</span> sayGoodbye = <span class="hljs-title function_">makeGreeter</span>(<span class="hljs-string">&quot;Goodbye&quot;</span>);
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">sayHello</span>(<span class="hljs-string">&quot;Alice&quot;</span>));    <span class="hljs-comment">// &quot;Hello, Alice!&quot;</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">sayHi</span>(<span class="hljs-string">&quot;Bob&quot;</span>));         <span class="hljs-comment">// &quot;Hi, Bob!&quot;</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">sayGoodbye</span>(<span class="hljs-string">&quot;Charlie&quot;</span>)); <span class="hljs-comment">// &quot;Goodbye, Charlie!&quot;</span>
+</code></pre><h3 id="3-event-handlers-and-callbacks">3. Event Handlers and Callbacks</h3>
+<p>Preserve context and data for async operations.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">setupButtons</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> buttons = [<span class="hljs-string">&quot;Login&quot;</span>, <span class="hljs-string">&quot;Signup&quot;</span>, <span class="hljs-string">&quot;Logout&quot;</span>];
+
+  buttons.<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">buttonText, index</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> button = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;button&#x27;</span>);
+    button.<span class="hljs-property">textContent</span> = buttonText;
+
+    <span class="hljs-comment">// Closure preserves buttonText and index</span>
+    button.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Button <span class="hljs-subst">${index}</span>: <span class="hljs-subst">${buttonText}</span> clicked`</span>);
+    });
+
+    <span class="hljs-variable language_">document</span>.<span class="hljs-property">body</span>.<span class="hljs-title function_">appendChild</span>(button);
+  });
+}
+
+<span class="hljs-comment">// Another example: timer with specific message</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">delayedMessage</span>(<span class="hljs-params">message, delay</span>) {
+  <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(message);  <span class="hljs-comment">// Closure over message</span>
+  }, delay);
+}
+
+<span class="hljs-title function_">delayedMessage</span>(<span class="hljs-string">&quot;First&quot;</span>, <span class="hljs-number">1000</span>);
+<span class="hljs-title function_">delayedMessage</span>(<span class="hljs-string">&quot;Second&quot;</span>, <span class="hljs-number">2000</span>);
+<span class="hljs-title function_">delayedMessage</span>(<span class="hljs-string">&quot;Third&quot;</span>, <span class="hljs-number">3000</span>);
+</code></pre><h3 id="4-partial-application-and-currying">4. Partial Application and Currying</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Partial application</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">add</span>(<span class="hljs-params">a, b, c</span>) {
+  <span class="hljs-keyword">return</span> a + b + c;
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">partial</span>(<span class="hljs-params">fn, ...fixedArgs</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params">...remainingArgs</span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-title function_">fn</span>(...fixedArgs, ...remainingArgs);
+  };
+}
+
+<span class="hljs-keyword">const</span> add5 = <span class="hljs-title function_">partial</span>(add, <span class="hljs-number">5</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">add5</span>(<span class="hljs-number">10</span>, <span class="hljs-number">15</span>)); <span class="hljs-comment">// 30 (5 + 10 + 15)</span>
+
+<span class="hljs-comment">// Currying</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">curry</span>(<span class="hljs-params">fn</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">curried</span>(<span class="hljs-params">...args</span>) {
+    <span class="hljs-keyword">if</span> (args.<span class="hljs-property">length</span> &gt;= fn.<span class="hljs-property">length</span>) {
+      <span class="hljs-keyword">return</span> fn.<span class="hljs-title function_">apply</span>(<span class="hljs-variable language_">this</span>, args);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params">...nextArgs</span>) {
+      <span class="hljs-keyword">return</span> curried.<span class="hljs-title function_">apply</span>(<span class="hljs-variable language_">this</span>, args.<span class="hljs-title function_">concat</span>(nextArgs));
+    };
+  };
+}
+
+<span class="hljs-keyword">const</span> curriedAdd = <span class="hljs-title function_">curry</span>(add);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">curriedAdd</span>(<span class="hljs-number">1</span>)(<span class="hljs-number">2</span>)(<span class="hljs-number">3</span>));     <span class="hljs-comment">// 6</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">curriedAdd</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>)(<span class="hljs-number">3</span>));     <span class="hljs-comment">// 6</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">curriedAdd</span>(<span class="hljs-number">1</span>)(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>));     <span class="hljs-comment">// 6</span>
+</code></pre><h3 id="5-module-pattern">5. Module Pattern</h3>
+<p>Create modules with private and public members.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> <span class="hljs-title class_">Calculator</span> = (<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-comment">// Private variables and functions</span>
+  <span class="hljs-keyword">let</span> result = <span class="hljs-number">0</span>;
+
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">validateNumber</span>(<span class="hljs-params">n</span>) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> n !== <span class="hljs-string">&#x27;number&#x27;</span> || <span class="hljs-built_in">isNaN</span>(n)) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Invalid number&#x27;</span>);
+    }
+  }
+
+  <span class="hljs-comment">// Public API</span>
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-title function_">add</span>(<span class="hljs-params">n</span>) {
+      <span class="hljs-title function_">validateNumber</span>(n);
+      result += n;
+      <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>;
+    },
+
+    <span class="hljs-title function_">subtract</span>(<span class="hljs-params">n</span>) {
+      <span class="hljs-title function_">validateNumber</span>(n);
+      result -= n;
+      <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>;
+    },
+
+    <span class="hljs-title function_">multiply</span>(<span class="hljs-params">n</span>) {
+      <span class="hljs-title function_">validateNumber</span>(n);
+      result *= n;
+      <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>;
+    },
+
+    <span class="hljs-title function_">getResult</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">return</span> result;
+    },
+
+    <span class="hljs-title function_">reset</span>(<span class="hljs-params"></span>) {
+      result = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>;
+    }
+  };
+})();
+
+<span class="hljs-title class_">Calculator</span>.<span class="hljs-title function_">add</span>(<span class="hljs-number">10</span>).<span class="hljs-title function_">multiply</span>(<span class="hljs-number">2</span>).<span class="hljs-title function_">subtract</span>(<span class="hljs-number">5</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Calculator</span>.<span class="hljs-title function_">getResult</span>());  <span class="hljs-comment">// 15</span>
+<span class="hljs-title class_">Calculator</span>.<span class="hljs-title function_">reset</span>();
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">Calculator</span>.<span class="hljs-title function_">getResult</span>());  <span class="hljs-comment">// 0</span>
+
+<span class="hljs-comment">// Private members are not accessible</span>
+<span class="hljs-comment">// Calculator.result;  // undefined</span>
+<span class="hljs-comment">// Calculator.validateNumber(5);  // Error</span>
+</code></pre><h3 id="6-iterator-pattern">6. Iterator Pattern</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">createIterator</span>(<span class="hljs-params">array</span>) {
+  <span class="hljs-keyword">let</span> index = <span class="hljs-number">0</span>;
+
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-title function_">next</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">if</span> (index &lt; array.<span class="hljs-property">length</span>) {
+        <span class="hljs-keyword">return</span> {
+          <span class="hljs-attr">value</span>: array[index++],
+          <span class="hljs-attr">done</span>: <span class="hljs-literal">false</span>
+        };
+      }
+      <span class="hljs-keyword">return</span> { <span class="hljs-attr">done</span>: <span class="hljs-literal">true</span> };
+    },
+
+    <span class="hljs-title function_">hasNext</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">return</span> index &lt; array.<span class="hljs-property">length</span>;
+    },
+
+    <span class="hljs-title function_">reset</span>(<span class="hljs-params"></span>) {
+      index = <span class="hljs-number">0</span>;
+    }
+  };
+}
+
+<span class="hljs-keyword">const</span> iterator = <span class="hljs-title function_">createIterator</span>([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>]);
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(iterator.<span class="hljs-title function_">next</span>()); <span class="hljs-comment">// { value: 1, done: false }</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(iterator.<span class="hljs-title function_">next</span>()); <span class="hljs-comment">// { value: 2, done: false }</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(iterator.<span class="hljs-title function_">hasNext</span>()); <span class="hljs-comment">// true</span>
+iterator.<span class="hljs-title function_">reset</span>();
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(iterator.<span class="hljs-title function_">next</span>()); <span class="hljs-comment">// { value: 1, done: false }</span>
+</code></pre><hr>
+<h2 id="importance-of-closures">Importance of Closures</h2>
+<h3 id="1-data-privacy">1. Data Privacy</h3>
+<p>Enable true private variables in JavaScript.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">createUser</span>(<span class="hljs-params">name</span>) {
+  <span class="hljs-keyword">let</span> _password = <span class="hljs-literal">null</span>;  <span class="hljs-comment">// Private</span>
+
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-title function_">getName</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">return</span> name;
+    },
+
+    <span class="hljs-title function_">setPassword</span>(<span class="hljs-params">pwd</span>) {
+      _password = pwd;
+    },
+
+    <span class="hljs-title function_">checkPassword</span>(<span class="hljs-params">pwd</span>) {
+      <span class="hljs-keyword">return</span> _password === pwd;
+    }
+  };
+}
+
+<span class="hljs-keyword">const</span> user = <span class="hljs-title function_">createUser</span>(<span class="hljs-string">&quot;Alice&quot;</span>);
+user.<span class="hljs-title function_">setPassword</span>(<span class="hljs-string">&quot;secret123&quot;</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(user.<span class="hljs-title function_">checkPassword</span>(<span class="hljs-string">&quot;secret123&quot;</span>));  <span class="hljs-comment">// true</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(user.<span class="hljs-property">_password</span>);  <span class="hljs-comment">// undefined (truly private)</span>
+</code></pre><h3 id="2-functional-programming">2. Functional Programming</h3>
+<p>Foundation for many FP patterns.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Higher-order functions</span>
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">compose</span> = (<span class="hljs-params">...fns</span>) =&gt; <span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span>
+  fns.<span class="hljs-title function_">reduceRight</span>(<span class="hljs-function">(<span class="hljs-params">acc, fn</span>) =&gt;</span> <span class="hljs-title function_">fn</span>(acc), x);
+
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">add1</span> = x =&gt; x + <span class="hljs-number">1</span>;
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">double</span> = x =&gt; x * <span class="hljs-number">2</span>;
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">square</span> = x =&gt; x * x;
+
+<span class="hljs-keyword">const</span> compute = <span class="hljs-title function_">compose</span>(square, double, add1);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">compute</span>(<span class="hljs-number">3</span>));  <span class="hljs-comment">// 64: ((3 + 1) * 2)^2 = (8)^2</span>
+</code></pre><h3 id="3-callbacks-and-event-handling">3. Callbacks and Event Handling</h3>
+<p>Essential for asynchronous programming.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">fetchData</span>(<span class="hljs-params">url, onSuccess, onError</span>) {
+  <span class="hljs-comment">// Closures preserve onSuccess and onError</span>
+  <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-keyword">if</span> (url) {
+      <span class="hljs-title function_">onSuccess</span>({ <span class="hljs-attr">data</span>: <span class="hljs-string">&quot;Success!&quot;</span> });
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-title function_">onError</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&quot;Invalid URL&quot;</span>));
+    }
+  }, <span class="hljs-number">1000</span>);
+}
+
+<span class="hljs-title function_">fetchData</span>(
+  <span class="hljs-string">&quot;https://api.example.com&quot;</span>,
+  <span class="hljs-function">(<span class="hljs-params">result</span>) =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(result.<span class="hljs-property">data</span>),
+  <span class="hljs-function">(<span class="hljs-params">error</span>) =&gt;</span> <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(error.<span class="hljs-property">message</span>)
+);
+</code></pre><h3 id="4-maintaining-state">4. Maintaining State</h3>
+<p>Without global variables.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">createGame</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">let</span> score = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">let</span> level = <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">let</span> lives = <span class="hljs-number">3</span>;
+
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-title function_">increaseScore</span>(<span class="hljs-params">points</span>) {
+      score += points;
+      <span class="hljs-keyword">if</span> (score &gt; level * <span class="hljs-number">100</span>) {
+        level++;
+      }
+    },
+
+    <span class="hljs-title function_">loseLife</span>(<span class="hljs-params"></span>) {
+      lives--;
+      <span class="hljs-keyword">if</span> (lives === <span class="hljs-number">0</span>) {
+        <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">gameOver</span>();
+      }
+    },
+
+    <span class="hljs-title function_">gameOver</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Game Over! Final score: <span class="hljs-subst">${score}</span>, Level: <span class="hljs-subst">${level}</span>`</span>);
+    },
+
+    <span class="hljs-title function_">getStatus</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">return</span> { score, level, lives };
+    }
+  };
+}
+
+<span class="hljs-keyword">const</span> game = <span class="hljs-title function_">createGame</span>();
+game.<span class="hljs-title function_">increaseScore</span>(<span class="hljs-number">50</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(game.<span class="hljs-title function_">getStatus</span>());  <span class="hljs-comment">// { score: 50, level: 1, lives: 3 }</span>
+</code></pre><hr>
+<h2 id="common-issues-and-pitfalls">Common Issues and Pitfalls</h2>
+<h3 id="1-loop-closure-problem">1. Loop Closure Problem</h3>
+<p><strong>The Problem:</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ WRONG: All callbacks reference the same i</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; i++) {
+  <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(i);  <span class="hljs-comment">// 3, 3, 3 (not 0, 1, 2!)</span>
+  }, <span class="hljs-number">100</span>);
+}
+
+<span class="hljs-comment">// Why? By the time callbacks run, loop has finished</span>
+<span class="hljs-comment">// All callbacks share the same i, which is now 3</span>
+</code></pre><p><strong>Solution 1: IIFE (Immediately Invoked Function Expression)</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ✅ CORRECT: IIFE creates new scope for each iteration</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; i++) {
+  (<span class="hljs-keyword">function</span>(<span class="hljs-params">j</span>) {
+    <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(j);  <span class="hljs-comment">// 0, 1, 2</span>
+    }, <span class="hljs-number">100</span>);
+  })(i);
+}
+</code></pre><p><strong>Solution 2: let (Block Scope)</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ✅ CORRECT: let creates new binding for each iteration</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; i++) {
+  <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(i);  <span class="hljs-comment">// 0, 1, 2</span>
+  }, <span class="hljs-number">100</span>);
+}
+</code></pre><p><strong>Solution 3: forEach</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ✅ CORRECT: forEach callback creates new scope</span>
+[<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>].<span class="hljs-title function_">forEach</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params">i</span>) {
+  <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(i);  <span class="hljs-comment">// 0, 1, 2</span>
+  }, <span class="hljs-number">100</span>);
+});
+</code></pre><h3 id="2-memory-leaks">2. Memory Leaks</h3>
+<p>Closures keep references to variables, which can prevent garbage collection.</p>
+<p><strong>Problem:</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ Memory leak: closure keeps reference to large data</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">createHandler</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> largeData = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Array</span>(<span class="hljs-number">1000000</span>).<span class="hljs-title function_">fill</span>(<span class="hljs-string">&#x27;data&#x27;</span>);
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(largeData.<span class="hljs-property">length</span>);  <span class="hljs-comment">// Entire array kept in memory</span>
+  };
+}
+
+<span class="hljs-keyword">const</span> handler = <span class="hljs-title function_">createHandler</span>();
+<span class="hljs-comment">// largeData can&#x27;t be garbage collected</span>
+</code></pre><p><strong>Solution:</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ✅ Reference only what you need</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">createHandler</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> largeData = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Array</span>(<span class="hljs-number">1000000</span>).<span class="hljs-title function_">fill</span>(<span class="hljs-string">&#x27;data&#x27;</span>);
+  <span class="hljs-keyword">const</span> dataLength = largeData.<span class="hljs-property">length</span>;  <span class="hljs-comment">// Extract needed value</span>
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(dataLength);  <span class="hljs-comment">// Only number kept in memory</span>
+  };
+}
+
+<span class="hljs-keyword">const</span> handler = <span class="hljs-title function_">createHandler</span>();
+<span class="hljs-comment">// largeData can now be garbage collected</span>
+</code></pre><h3 id="3-accidental-global-variables">3. Accidental Global Variables</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ Forgot var/let/const - creates global!</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">createCounter</span>(<span class="hljs-params"></span>) {
+  count = <span class="hljs-number">0</span>;  <span class="hljs-comment">// Oops! Global variable</span>
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    count++;
+    <span class="hljs-keyword">return</span> count;
+  };
+}
+
+<span class="hljs-keyword">const</span> counter1 = <span class="hljs-title function_">createCounter</span>();
+<span class="hljs-keyword">const</span> counter2 = <span class="hljs-title function_">createCounter</span>();
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">counter1</span>());  <span class="hljs-comment">// 1</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">counter2</span>());  <span class="hljs-comment">// 2 (shared global count!)</span>
+</code></pre><p><strong>Solution:</strong></p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ✅ Always use var/let/const</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">createCounter</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">let</span> count = <span class="hljs-number">0</span>;  <span class="hljs-comment">// Local variable</span>
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    count++;
+    <span class="hljs-keyword">return</span> count;
+  };
+}
+
+<span class="hljs-keyword">const</span> counter1 = <span class="hljs-title function_">createCounter</span>();
+<span class="hljs-keyword">const</span> counter2 = <span class="hljs-title function_">createCounter</span>();
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">counter1</span>());  <span class="hljs-comment">// 1</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">counter2</span>());  <span class="hljs-comment">// 1 (independent counts)</span>
+</code></pre><h3 id="4-over-closure">4. Over-Closure</h3>
+<p>Closing over unnecessary variables.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// ❌ Closes over entire obj even though only need id</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">createGetter</span>(<span class="hljs-params">obj</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">return</span> obj.<span class="hljs-property">id</span>;  <span class="hljs-comment">// Keeps entire object in memory</span>
+  };
+}
+
+<span class="hljs-comment">// ✅ Extract only what you need</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">createGetter</span>(<span class="hljs-params">obj</span>) {
+  <span class="hljs-keyword">const</span> id = obj.<span class="hljs-property">id</span>;
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">return</span> id;  <span class="hljs-comment">// Only keeps id in memory</span>
+  };
+}
+</code></pre><h3 id="5-closure-in-callbacks-with-wrong-context">5. Closure in Callbacks with Wrong Context</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> obj = {
+  <span class="hljs-attr">value</span>: <span class="hljs-number">42</span>,
+
+  <span class="hljs-comment">// ❌ This context lost in setTimeout</span>
+  <span class="hljs-title function_">getValue</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span>);  <span class="hljs-comment">// undefined</span>
+    }, <span class="hljs-number">100</span>);
+  }
+};
+
+<span class="hljs-comment">// ✅ Solution 1: Arrow function (lexical this)</span>
+<span class="hljs-keyword">const</span> obj1 = {
+  <span class="hljs-attr">value</span>: <span class="hljs-number">42</span>,
+
+  <span class="hljs-title function_">getValue</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span>);  <span class="hljs-comment">// 42</span>
+    }, <span class="hljs-number">100</span>);
+  }
+};
+
+<span class="hljs-comment">// ✅ Solution 2: Store this reference</span>
+<span class="hljs-keyword">const</span> obj2 = {
+  <span class="hljs-attr">value</span>: <span class="hljs-number">42</span>,
+
+  <span class="hljs-title function_">getValue</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">const</span> self = <span class="hljs-variable language_">this</span>;
+    <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(self.<span class="hljs-property">value</span>);  <span class="hljs-comment">// 42</span>
+    }, <span class="hljs-number">100</span>);
+  }
+};
+
+<span class="hljs-comment">// ✅ Solution 3: bind</span>
+<span class="hljs-keyword">const</span> obj3 = {
+  <span class="hljs-attr">value</span>: <span class="hljs-number">42</span>,
+
+  <span class="hljs-title function_">getValue</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-built_in">setTimeout</span>(<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-variable language_">this</span>.<span class="hljs-property">value</span>);  <span class="hljs-comment">// 42</span>
+    }.<span class="hljs-title function_">bind</span>(<span class="hljs-variable language_">this</span>), <span class="hljs-number">100</span>);
+  }
+};
+</code></pre><hr>
+<h2 id="example-implementations">Example Implementations</h2>
+<h3 id="1-private-variables-with-closures">1. Private Variables with Closures</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">BankAccount</span>(<span class="hljs-params">initialBalance</span>) {
+  <span class="hljs-comment">// Private variables</span>
+  <span class="hljs-keyword">let</span> balance = initialBalance;
+  <span class="hljs-keyword">const</span> transactionHistory = [];
+
+  <span class="hljs-comment">// Private function</span>
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">recordTransaction</span>(<span class="hljs-params">type, amount</span>) {
+    transactionHistory.<span class="hljs-title function_">push</span>({
+      type,
+      amount,
+      balance,
+      <span class="hljs-attr">date</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()
+    });
+  }
+
+  <span class="hljs-comment">// Public methods</span>
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">deposit</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">amount</span>) {
+    <span class="hljs-keyword">if</span> (amount &lt;= <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&quot;Amount must be positive&quot;</span>);
+    }
+    balance += amount;
+    <span class="hljs-title function_">recordTransaction</span>(<span class="hljs-string">&#x27;deposit&#x27;</span>, amount);
+    <span class="hljs-keyword">return</span> balance;
+  };
+
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">withdraw</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params">amount</span>) {
+    <span class="hljs-keyword">if</span> (amount &lt;= <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&quot;Amount must be positive&quot;</span>);
+    }
+    <span class="hljs-keyword">if</span> (amount &gt; balance) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&quot;Insufficient funds&quot;</span>);
+    }
+    balance -= amount;
+    <span class="hljs-title function_">recordTransaction</span>(<span class="hljs-string">&#x27;withdraw&#x27;</span>, amount);
+    <span class="hljs-keyword">return</span> balance;
+  };
+
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">getBalance</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">return</span> balance;
+  };
+
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">getHistory</span> = <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-comment">// Return copy to prevent modification</span>
+    <span class="hljs-keyword">return</span> [...transactionHistory];
+  };
+}
+
+<span class="hljs-keyword">const</span> account = <span class="hljs-keyword">new</span> <span class="hljs-title class_">BankAccount</span>(<span class="hljs-number">1000</span>);
+account.<span class="hljs-title function_">deposit</span>(<span class="hljs-number">500</span>);
+account.<span class="hljs-title function_">withdraw</span>(<span class="hljs-number">200</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(account.<span class="hljs-title function_">getBalance</span>());  <span class="hljs-comment">// 1300</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(account.<span class="hljs-title function_">getHistory</span>());  <span class="hljs-comment">// Array of transactions</span>
+
+<span class="hljs-comment">// Private variables are truly private</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(account.<span class="hljs-property">balance</span>);  <span class="hljs-comment">// undefined</span>
+</code></pre><h3 id="2-memoization-caching">2. Memoization (Caching)</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">memoize</span>(<span class="hljs-params">fn</span>) {
+  <span class="hljs-keyword">const</span> cache = {};
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params">...args</span>) {
+    <span class="hljs-keyword">const</span> key = <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">stringify</span>(args);
+
+    <span class="hljs-keyword">if</span> (key <span class="hljs-keyword">in</span> cache) {
+      <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Fetching from cache:&#x27;</span>, key);
+      <span class="hljs-keyword">return</span> cache[key];
+    }
+
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Calculating result&#x27;</span>);
+    <span class="hljs-keyword">const</span> result = fn.<span class="hljs-title function_">apply</span>(<span class="hljs-variable language_">this</span>, args);
+    cache[key] = result;
+    <span class="hljs-keyword">return</span> result;
+  };
+}
+
+<span class="hljs-comment">// Expensive function</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">fibonacci</span>(<span class="hljs-params">n</span>) {
+  <span class="hljs-keyword">if</span> (n &lt;= <span class="hljs-number">1</span>) <span class="hljs-keyword">return</span> n;
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_">fibonacci</span>(n - <span class="hljs-number">1</span>) + <span class="hljs-title function_">fibonacci</span>(n - <span class="hljs-number">2</span>);
+}
+
+<span class="hljs-keyword">const</span> memoizedFib = <span class="hljs-title function_">memoize</span>(fibonacci);
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">memoizedFib</span>(<span class="hljs-number">40</span>));  <span class="hljs-comment">// Calculating result (takes time)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">memoizedFib</span>(<span class="hljs-number">40</span>));  <span class="hljs-comment">// Fetching from cache (instant!)</span>
+
+<span class="hljs-comment">// Another example: API call caching</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">fetchUser</span>(<span class="hljs-params">userId</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`/api/users/<span class="hljs-subst">${userId}</span>`</span>).<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">r</span> =&gt;</span> r.<span class="hljs-title function_">json</span>());
+}
+
+<span class="hljs-keyword">const</span> cachedFetchUser = <span class="hljs-title function_">memoize</span>(fetchUser);
+</code></pre><h3 id="3-once-function">3. Once Function</h3>
+<p>Execute function only once, return cached result after.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">once</span>(<span class="hljs-params">fn</span>) {
+  <span class="hljs-keyword">let</span> called = <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">let</span> result;
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params">...args</span>) {
+    <span class="hljs-keyword">if</span> (!called) {
+      called = <span class="hljs-literal">true</span>;
+      result = fn.<span class="hljs-title function_">apply</span>(<span class="hljs-variable language_">this</span>, args);
+    }
+    <span class="hljs-keyword">return</span> result;
+  };
+}
+
+<span class="hljs-keyword">const</span> initialize = <span class="hljs-title function_">once</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Initializing application...&quot;</span>);
+  <span class="hljs-keyword">return</span> { <span class="hljs-attr">initialized</span>: <span class="hljs-literal">true</span> };
+});
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">initialize</span>());  <span class="hljs-comment">// &quot;Initializing application...&quot; { initialized: true }</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">initialize</span>());  <span class="hljs-comment">// { initialized: true } (no log)</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title function_">initialize</span>());  <span class="hljs-comment">// { initialized: true } (no log)</span>
+
+<span class="hljs-comment">// Practical use: expensive initialization</span>
+<span class="hljs-keyword">const</span> connectDatabase = <span class="hljs-title function_">once</span>(<span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;Connecting to database...&quot;</span>);
+  <span class="hljs-comment">// Expensive connection logic</span>
+  <span class="hljs-keyword">return</span> { <span class="hljs-attr">connection</span>: <span class="hljs-string">&quot;db_connection&quot;</span> };
+});
+</code></pre><h3 id="4-debounce-function">4. Debounce Function</h3>
+<p>Delay function execution until after a pause.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">debounce</span>(<span class="hljs-params">fn, delay</span>) {
+  <span class="hljs-keyword">let</span> timeoutId;
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params">...args</span>) {
+    <span class="hljs-comment">// Clear previous timeout</span>
+    <span class="hljs-built_in">clearTimeout</span>(timeoutId);
+
+    <span class="hljs-comment">// Set new timeout</span>
+    timeoutId = <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+      fn.<span class="hljs-title function_">apply</span>(<span class="hljs-variable language_">this</span>, args);
+    }, delay);
+  };
+}
+
+<span class="hljs-comment">// Example: search input</span>
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">searchAPI</span> = (<span class="hljs-params">query</span>) =&gt; {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Searching for: <span class="hljs-subst">${query}</span>`</span>);
+  <span class="hljs-comment">// API call here</span>
+};
+
+<span class="hljs-keyword">const</span> debouncedSearch = <span class="hljs-title function_">debounce</span>(searchAPI, <span class="hljs-number">300</span>);
+
+<span class="hljs-comment">// User types &quot;hello&quot;</span>
+<span class="hljs-title function_">debouncedSearch</span>(<span class="hljs-string">&#x27;h&#x27;</span>);    <span class="hljs-comment">// Timeout set</span>
+<span class="hljs-title function_">debouncedSearch</span>(<span class="hljs-string">&#x27;he&#x27;</span>);   <span class="hljs-comment">// Previous timeout cleared, new one set</span>
+<span class="hljs-title function_">debouncedSearch</span>(<span class="hljs-string">&#x27;hel&#x27;</span>);  <span class="hljs-comment">// Previous timeout cleared, new one set</span>
+<span class="hljs-title function_">debouncedSearch</span>(<span class="hljs-string">&#x27;hell&#x27;</span>); <span class="hljs-comment">// Previous timeout cleared, new one set</span>
+<span class="hljs-title function_">debouncedSearch</span>(<span class="hljs-string">&#x27;hello&#x27;</span>);<span class="hljs-comment">// Previous timeout cleared, new one set</span>
+<span class="hljs-comment">// After 300ms of no typing: &quot;Searching for: hello&quot;</span>
+</code></pre><h3 id="5-throttle-function">5. Throttle Function</h3>
+<p>Limit function execution to once per time period.</p>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">throttle</span>(<span class="hljs-params">fn, limit</span>) {
+  <span class="hljs-keyword">let</span> inThrottle;
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params">...args</span>) {
+    <span class="hljs-keyword">if</span> (!inThrottle) {
+      fn.<span class="hljs-title function_">apply</span>(<span class="hljs-variable language_">this</span>, args);
+      inThrottle = <span class="hljs-literal">true</span>;
+
+      <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> {
+        inThrottle = <span class="hljs-literal">false</span>;
+      }, limit);
+    }
+  };
+}
+
+<span class="hljs-comment">// Example: scroll event</span>
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">handleScroll</span> = (<span class="hljs-params"></span>) =&gt; {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;Scroll position:&#x27;</span>, <span class="hljs-variable language_">window</span>.<span class="hljs-property">scrollY</span>);
+};
+
+<span class="hljs-keyword">const</span> throttledScroll = <span class="hljs-title function_">throttle</span>(handleScroll, <span class="hljs-number">1000</span>);
+
+<span class="hljs-comment">// Will only log once per second, no matter how much user scrolls</span>
+<span class="hljs-variable language_">window</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;scroll&#x27;</span>, throttledScroll);
+</code></pre><h3 id="6-counter-with-multiple-operations">6. Counter with Multiple Operations</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">createCounter</span>(<span class="hljs-params">initialValue = <span class="hljs-number">0</span></span>) {
+  <span class="hljs-keyword">let</span> count = initialValue;
+  <span class="hljs-keyword">const</span> listeners = [];
+
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">notify</span>(<span class="hljs-params"></span>) {
+    listeners.<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">listener</span> =&gt;</span> <span class="hljs-title function_">listener</span>(count));
+  }
+
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-title function_">increment</span>(<span class="hljs-params">step = <span class="hljs-number">1</span></span>) {
+      count += step;
+      <span class="hljs-title function_">notify</span>();
+      <span class="hljs-keyword">return</span> count;
+    },
+
+    <span class="hljs-title function_">decrement</span>(<span class="hljs-params">step = <span class="hljs-number">1</span></span>) {
+      count -= step;
+      <span class="hljs-title function_">notify</span>();
+      <span class="hljs-keyword">return</span> count;
+    },
+
+    <span class="hljs-title function_">reset</span>(<span class="hljs-params"></span>) {
+      count = initialValue;
+      <span class="hljs-title function_">notify</span>();
+      <span class="hljs-keyword">return</span> count;
+    },
+
+    <span class="hljs-title function_">getValue</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">return</span> count;
+    },
+
+    <span class="hljs-title function_">subscribe</span>(<span class="hljs-params">listener</span>) {
+      listeners.<span class="hljs-title function_">push</span>(listener);
+      <span class="hljs-keyword">return</span> <span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-keyword">const</span> index = listeners.<span class="hljs-title function_">indexOf</span>(listener);
+        <span class="hljs-keyword">if</span> (index &gt; -<span class="hljs-number">1</span>) {
+          listeners.<span class="hljs-title function_">splice</span>(index, <span class="hljs-number">1</span>);
+        }
+      };
+    }
+  };
+}
+
+<span class="hljs-keyword">const</span> counter = <span class="hljs-title function_">createCounter</span>(<span class="hljs-number">10</span>);
+
+<span class="hljs-keyword">const</span> unsubscribe = counter.<span class="hljs-title function_">subscribe</span>(<span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Counter changed to: <span class="hljs-subst">${value}</span>`</span>);
+});
+
+counter.<span class="hljs-title function_">increment</span>();    <span class="hljs-comment">// &quot;Counter changed to: 11&quot;</span>
+counter.<span class="hljs-title function_">increment</span>(<span class="hljs-number">5</span>);   <span class="hljs-comment">// &quot;Counter changed to: 16&quot;</span>
+counter.<span class="hljs-title function_">decrement</span>(<span class="hljs-number">3</span>);   <span class="hljs-comment">// &quot;Counter changed to: 13&quot;</span>
+counter.<span class="hljs-title function_">reset</span>();        <span class="hljs-comment">// &quot;Counter changed to: 10&quot;</span>
+
+<span class="hljs-title function_">unsubscribe</span>();
+counter.<span class="hljs-title function_">increment</span>();    <span class="hljs-comment">// No log (unsubscribed)</span>
+</code></pre><hr>
+<h2 id="writing-and-analyzing-closures">Writing and Analyzing Closures</h2>
+<h3 id="analysis-checklist">Analysis Checklist</h3>
+<p>When analyzing closure code:</p>
+<ol>
+<li><strong>Identify inner function(s)</strong></li>
+<li><strong>Find variables from outer scope referenced by inner function</strong></li>
+<li><strong>Determine if inner function escapes outer scope</strong> (returned, assigned, passed as callback)</li>
+<li><strong>Trace variable lifetime</strong> - what stays in memory?</li>
+<li><strong>Check for potential memory leaks</strong> or unintended references</li>
+</ol>
+<h3 id="example-analysis">Example Analysis</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">makeMultiplier</span>(<span class="hljs-params">factor</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">function</span>(<span class="hljs-params">number</span>) {
+    <span class="hljs-keyword">return</span> number * factor;
+  };
+}
+
+<span class="hljs-keyword">const</span> triple = <span class="hljs-title function_">makeMultiplier</span>(<span class="hljs-number">3</span>);
+</code></pre><p><strong>Analysis:</strong></p>
+<ol>
+<li>Inner function: <code>function(number) { ... }</code></li>
+<li>Outer variable referenced: <code>factor</code></li>
+<li>Escapes: Yes, returned from <code>makeMultiplier</code></li>
+<li>Lifetime: <code>factor</code> (value 3) stays in memory as long as <code>triple</code> exists</li>
+<li>Memory concerns: Minimal, only stores one number</li>
+</ol>
+<h3 id="scope-encapsulation-pattern">Scope Encapsulation Pattern</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">const</span> <span class="hljs-title class_">UserManager</span> = (<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-comment">// Private variables</span>
+  <span class="hljs-keyword">let</span> users = [];
+  <span class="hljs-keyword">let</span> currentId = <span class="hljs-number">0</span>;
+
+  <span class="hljs-comment">// Private functions</span>
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">generateId</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">return</span> ++currentId;
+  }
+
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">validateUser</span>(<span class="hljs-params">user</span>) {
+    <span class="hljs-keyword">return</span> user.<span class="hljs-property">name</span> &amp;&amp; user.<span class="hljs-property">email</span>;
+  }
+
+  <span class="hljs-comment">// Public API</span>
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-title function_">addUser</span>(<span class="hljs-params">name, email</span>) {
+      <span class="hljs-keyword">const</span> user = {
+        <span class="hljs-attr">id</span>: <span class="hljs-title function_">generateId</span>(),
+        name,
+        email,
+        <span class="hljs-attr">createdAt</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()
+      };
+
+      <span class="hljs-keyword">if</span> (!<span class="hljs-title function_">validateUser</span>(user)) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Invalid user data&#x27;</span>);
+      }
+
+      users.<span class="hljs-title function_">push</span>(user);
+      <span class="hljs-keyword">return</span> user;
+    },
+
+    <span class="hljs-title function_">getUser</span>(<span class="hljs-params">id</span>) {
+      <span class="hljs-keyword">return</span> users.<span class="hljs-title function_">find</span>(<span class="hljs-function"><span class="hljs-params">u</span> =&gt;</span> u.<span class="hljs-property">id</span> === id);
+    },
+
+    <span class="hljs-title function_">getAllUsers</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-comment">// Return copy to prevent external modification</span>
+      <span class="hljs-keyword">return</span> users.<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">u</span> =&gt;</span> ({ ...u }));
+    },
+
+    <span class="hljs-title function_">removeUser</span>(<span class="hljs-params">id</span>) {
+      <span class="hljs-keyword">const</span> index = users.<span class="hljs-title function_">findIndex</span>(<span class="hljs-function"><span class="hljs-params">u</span> =&gt;</span> u.<span class="hljs-property">id</span> === id);
+      <span class="hljs-keyword">if</span> (index &gt; -<span class="hljs-number">1</span>) {
+        users.<span class="hljs-title function_">splice</span>(index, <span class="hljs-number">1</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    },
+
+    <span class="hljs-title function_">getUserCount</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">return</span> users.<span class="hljs-property">length</span>;
+    }
+  };
+})();
+
+<span class="hljs-comment">// Usage</span>
+<span class="hljs-title class_">UserManager</span>.<span class="hljs-title function_">addUser</span>(<span class="hljs-string">&#x27;Alice&#x27;</span>, <span class="hljs-string">&#x27;alice@example.com&#x27;</span>);
+<span class="hljs-title class_">UserManager</span>.<span class="hljs-title function_">addUser</span>(<span class="hljs-string">&#x27;Bob&#x27;</span>, <span class="hljs-string">&#x27;bob@example.com&#x27;</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">UserManager</span>.<span class="hljs-title function_">getAllUsers</span>());
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-title class_">UserManager</span>.<span class="hljs-title function_">getUserCount</span>());  <span class="hljs-comment">// 2</span>
+
+<span class="hljs-comment">// Private members are not accessible</span>
+<span class="hljs-comment">// UserManager.users;  // undefined</span>
+<span class="hljs-comment">// UserManager.generateId();  // Error</span>
+</code></pre><h3 id="advanced-closure-with-private-state-and-methods">Advanced: Closure with Private State and Methods</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">createStateMachine</span>(<span class="hljs-params">initialState</span>) {
+  <span class="hljs-keyword">let</span> state = initialState;
+  <span class="hljs-keyword">const</span> transitions = {};
+  <span class="hljs-keyword">const</span> listeners = [];
+
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">notify</span>(<span class="hljs-params">oldState, newState</span>) {
+    listeners.<span class="hljs-title function_">forEach</span>(<span class="hljs-function"><span class="hljs-params">listener</span> =&gt;</span> <span class="hljs-title function_">listener</span>(oldState, newState));
+  }
+
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-title function_">getState</span>(<span class="hljs-params"></span>) {
+      <span class="hljs-keyword">return</span> state;
+    },
+
+    <span class="hljs-title function_">addTransition</span>(<span class="hljs-params">fromState, toState, condition = () =&gt; <span class="hljs-literal">true</span></span>) {
+      <span class="hljs-keyword">if</span> (!transitions[fromState]) {
+        transitions[fromState] = [];
+      }
+      transitions[fromState].<span class="hljs-title function_">push</span>({ toState, condition });
+    },
+
+    <span class="hljs-title function_">transition</span>(<span class="hljs-params">toState</span>) {
+      <span class="hljs-keyword">const</span> possibleTransitions = transitions[state] || [];
+      <span class="hljs-keyword">const</span> validTransition = possibleTransitions.<span class="hljs-title function_">find</span>(
+        <span class="hljs-function"><span class="hljs-params">t</span> =&gt;</span> t.<span class="hljs-property">toState</span> === toState &amp;&amp; t.<span class="hljs-title function_">condition</span>()
+      );
+
+      <span class="hljs-keyword">if</span> (validTransition) {
+        <span class="hljs-keyword">const</span> oldState = state;
+        state = toState;
+        <span class="hljs-title function_">notify</span>(oldState, state);
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      }
+
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    },
+
+    <span class="hljs-title function_">onStateChange</span>(<span class="hljs-params">listener</span>) {
+      listeners.<span class="hljs-title function_">push</span>(listener);
+      <span class="hljs-keyword">return</span> <span class="hljs-function">() =&gt;</span> {
+        <span class="hljs-keyword">const</span> index = listeners.<span class="hljs-title function_">indexOf</span>(listener);
+        <span class="hljs-keyword">if</span> (index &gt; -<span class="hljs-number">1</span>) {
+          listeners.<span class="hljs-title function_">splice</span>(index, <span class="hljs-number">1</span>);
+        }
+      };
+    }
+  };
+}
+
+<span class="hljs-comment">// Usage: Traffic light</span>
+<span class="hljs-keyword">const</span> trafficLight = <span class="hljs-title function_">createStateMachine</span>(<span class="hljs-string">&#x27;red&#x27;</span>);
+
+trafficLight.<span class="hljs-title function_">addTransition</span>(<span class="hljs-string">&#x27;red&#x27;</span>, <span class="hljs-string">&#x27;green&#x27;</span>);
+trafficLight.<span class="hljs-title function_">addTransition</span>(<span class="hljs-string">&#x27;green&#x27;</span>, <span class="hljs-string">&#x27;yellow&#x27;</span>);
+trafficLight.<span class="hljs-title function_">addTransition</span>(<span class="hljs-string">&#x27;yellow&#x27;</span>, <span class="hljs-string">&#x27;red&#x27;</span>);
+
+trafficLight.<span class="hljs-title function_">onStateChange</span>(<span class="hljs-function">(<span class="hljs-params">oldState, newState</span>) =&gt;</span> {
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Light changed from <span class="hljs-subst">${oldState}</span> to <span class="hljs-subst">${newState}</span>`</span>);
+});
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(trafficLight.<span class="hljs-title function_">getState</span>());  <span class="hljs-comment">// &#x27;red&#x27;</span>
+trafficLight.<span class="hljs-title function_">transition</span>(<span class="hljs-string">&#x27;green&#x27;</span>);       <span class="hljs-comment">// &quot;Light changed from red to green&quot;</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(trafficLight.<span class="hljs-title function_">getState</span>());  <span class="hljs-comment">// &#x27;green&#x27;</span>
+trafficLight.<span class="hljs-title function_">transition</span>(<span class="hljs-string">&#x27;yellow&#x27;</span>);      <span class="hljs-comment">// &quot;Light changed from green to yellow&quot;</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(trafficLight.<span class="hljs-title function_">getState</span>());  <span class="hljs-comment">// &#x27;yellow&#x27;</span>
+</code></pre><h3 id="closure-scope-diagram">Closure Scope Diagram</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">outer</span>(<span class="hljs-params">a</span>) {
+  <span class="hljs-keyword">const</span> b = <span class="hljs-number">10</span>;
+
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">middle</span>(<span class="hljs-params">c</span>) {
+    <span class="hljs-keyword">const</span> d = <span class="hljs-number">20</span>;
+
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">inner</span>(<span class="hljs-params">e</span>) {
+      <span class="hljs-keyword">const</span> f = <span class="hljs-number">30</span>;
+
+      <span class="hljs-comment">// inner has access to ALL outer scopes</span>
+      <span class="hljs-keyword">return</span> a + b + c + d + e + f;
+    }
+
+    <span class="hljs-keyword">return</span> inner;
+  }
+
+  <span class="hljs-keyword">return</span> middle;
+}
+
+<span class="hljs-keyword">const</span> mid = <span class="hljs-title function_">outer</span>(<span class="hljs-number">1</span>);     <span class="hljs-comment">// a=1, b=10 in closure</span>
+<span class="hljs-keyword">const</span> inn = <span class="hljs-title function_">mid</span>(<span class="hljs-number">2</span>);       <span class="hljs-comment">// a=1, b=10, c=2, d=20 in closure</span>
+<span class="hljs-keyword">const</span> result = <span class="hljs-title function_">inn</span>(<span class="hljs-number">3</span>);    <span class="hljs-comment">// a=1, b=10, c=2, d=20, e=3, f=30</span>
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(result);      <span class="hljs-comment">// 66</span>
+
+<span class="hljs-comment">/*
+Closure Scopes:
+
+inner function has access to:
+├─ f (own scope)
+├─ e (parameter)
+├─ d (middle scope)
+├─ c (middle parameter)
+├─ b (outer scope)
+├─ a (outer parameter)
+└─ global scope
+*/</span>
+</code></pre><hr>
+<h2 id="summary">Summary</h2>
+<h3 id="key-takeaways">Key Takeaways</h3>
+<ol>
+<li><strong>Closure</strong> = Function + Lexical environment</li>
+<li><strong>Created</strong> when inner function references outer variables</li>
+<li><strong>Persists</strong> even after outer function returns</li>
+<li><strong>Enables</strong> data privacy, factories, callbacks, state management</li>
+<li><strong>Watch for</strong> loop problems, memory leaks, unintended references</li>
+</ol>
+<h3 id="best-practices">Best Practices</h3>
+<ul>
+<li>Use closures for data privacy</li>
+<li>Extract only needed values to avoid memory leaks</li>
+<li>Use <code>let</code> in loops instead of <code>var</code></li>
+<li>Be aware of what stays in memory</li>
+<li>Return functions for reusability</li>
+<li>Use IIFE for immediate execution</li>
+<li>Consider arrow functions for context preservation</li>
+</ul>
+<h3 id="common-patterns">Common Patterns</h3>
+<pre><code class="hljs language-javascript"><span class="hljs-comment">// Private variables</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">create</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">let</span> private = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-attr">get</span>: <span class="hljs-function">() =&gt;</span> private,
+    <span class="hljs-attr">set</span>: <span class="hljs-function">(<span class="hljs-params">val</span>) =&gt;</span> private = val
+  };
+}
+
+<span class="hljs-comment">// Function factory</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">makeFunc</span>(<span class="hljs-params">config</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">input</span>) =&gt;</span> <span class="hljs-title function_">process</span>(input, config);
+}
+
+<span class="hljs-comment">// Module pattern</span>
+<span class="hljs-keyword">const</span> <span class="hljs-variable language_">module</span> = (<span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">let</span> private = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">return</span> { <span class="hljs-attr">public</span>: <span class="hljs-function">() =&gt;</span> private };
+})();
+
+<span class="hljs-comment">// Event handler</span>
+element.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-comment">// Closure over element and outer variables</span>
+});
+</code></pre><h3 id="interview-questions-to-prepare">Interview Questions to Prepare</h3>
+<ol>
+<li>What is a closure?</li>
+<li>How do closures work in loops?</li>
+<li>What are memory implications of closures?</li>
+<li>Give practical examples of closure usage</li>
+<li>Explain the difference between closure and scope</li>
+<li>How do you create private variables in JavaScript?</li>
+<li>What is the module pattern?</li>
+<li>How do closures relate to callbacks?</li>
+</ol>
+<div class="page-navigation">
+            <a href="03-prototypal-inheritance.html" class="nav-btn nav-prev" data-nav="prev">
+                <span class="nav-label">Previous</span>
+                <span class="nav-title">Prototypal Inheritance</span>
+            </a>
+        
+            <a href="05-context.html" class="nav-btn nav-next" data-nav="next">
+                <span class="nav-label">Next</span>
+                <span class="nav-title">Context (this)</span>
+            </a>
+        </div>
+        <div class="progress-section">
+            <div id="progress-controls"></div>
+            <div class="notes-section">
+                <h3>Your Notes</h3>
+                <textarea id="page-notes" placeholder="Add your notes here... (saved automatically)"></textarea>
+            </div>
+        </div>
+    
+    </main>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" aria-label="Back to top">↑</button>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="modal">
+        <div class="modal-content search-content">
+            <div class="search-header">
+                <input type="text" id="search-input" placeholder="Search topics..." autofocus>
+                <button id="search-close" aria-label="Close search">✕</button>
+            </div>
+            <div id="search-results" class="search-results"></div>
+            <div class="search-footer">
+                <span>↑↓ Navigate</span>
+                <span>↵ Select</span>
+                <span>Esc Close</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shortcuts Modal -->
+    <div id="shortcuts-modal" class="modal">
+        <div class="modal-content shortcuts-modal-content">
+            <div class="modal-header">
+                <h2>Keyboard Shortcuts</h2>
+                <button id="shortcuts-close" aria-label="Close shortcuts">✕</button>
+            </div>
+            <div class="shortcuts-content"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/nav.js"></script>
+    <script src="/js/progress.js"></script>
+    <script src="/js/search.js"></script>
+    <script src="/js/shortcuts.js"></script>
+</body>
+
+</html>
