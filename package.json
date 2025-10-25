@@ -4,13 +4,22 @@
   "description": "Study guide for JavaScript/Node.js theory test preparation",
   "scripts": {
     "build": "cd docs/js && node build.js",
-    "watch": "cd docs/js && node build.js --watch"
+    "watch": "cd docs/js && node build.js --watch",
+    "lint": "eslint docs/js/**/*.js",
+    "lint:fix": "eslint docs/js/**/*.js --fix",
+    "format": "prettier --write \"docs/js/**/*.js\"",
+    "format:check": "prettier --check \"docs/js/**/*.js\""
   },
   "dependencies": {
     "express": "^5.1.0",
     "highlight.js": "^11.9.0",
     "marked": "^12.0.0",
     "marked-highlight": "^2.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.2.5"
   },
   "keywords": [
     "study-guide",

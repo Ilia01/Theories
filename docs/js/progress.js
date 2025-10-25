@@ -137,16 +137,16 @@
       indicator.className = 'progress-indicator';
 
       if (progress.status === PROGRESS.COMPLETED) {
-        indicator.textContent = '✓';
+        indicator.innerHTML = '<i class="fas fa-check"></i>';
         indicator.classList.add('completed');
         link.classList.add('page-completed');
       } else if (progress.status === PROGRESS.IN_PROGRESS) {
-        indicator.textContent = '◐';
+        indicator.innerHTML = '<i class="fas fa-circle-half-stroke"></i>';
         indicator.classList.add('in-progress');
         link.classList.add('page-in-progress');
       }
 
-      if (indicator.textContent) {
+      if (indicator.innerHTML) {
         link.appendChild(indicator);
       }
     });
@@ -182,7 +182,7 @@
           </button>
           <button class="progress-btn ${progress.status === PROGRESS.COMPLETED ? 'active' : ''}"
                   data-status="${PROGRESS.COMPLETED}">
-            ✓ Completed
+            <i class="fas fa-check"></i> Completed
           </button>
         </div>
       `;

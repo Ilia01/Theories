@@ -10,10 +10,14 @@
 
   function setupTableOfContents() {
     const toc = document.querySelector('.table-of-contents');
-    if (!toc) return;
+    if (!toc) {
+      console.warn('Table of Contents not found');
+    };
 
     const links = toc.querySelectorAll('a');
-    if (links.length === 0) return;
+    if (links.length === 0) {
+      console.warn('No links found in Table of Contents');
+    };
 
     const headingIds = Array.from(links).map(link => {
       const href = link.getAttribute('href');
@@ -39,11 +43,7 @@
 
         for (let link of links) {
           const href = link.getAttribute('href');
-          if (href === `#${activeId}`) {
-            link.classList.add('active');
-          } else {
-            link.classList.remove('active');
-          }
+          link.classList.toggle('active', href === `#${activeId}`)
         };
       }, 50);
     }
@@ -51,7 +51,7 @@
     window.addEventListener('scroll', updateActiveHeading);
     updateActiveHeading();
 
-    links.forEach(link => {
+    for (let link of links) {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         const targetId = link.getAttribute('href').substring(1);
@@ -63,7 +63,7 @@
           });
         }
       });
-    });
+    };
   }
 
   function setupMobileMenu() {

@@ -177,7 +177,7 @@ function processPage(page) {
 
     const meta = `
         <div class="page-meta">
-            <span class="reading-time">⏱ ${readingTime} min read</span>
+            <span class="reading-time"><i class="far fa-clock"></i> ${readingTime} min read</span>
         </div>
     `;
     htmlContent = toc + htmlContent;

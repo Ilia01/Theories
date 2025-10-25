@@ -1,6 +1,35 @@
-#  JavaScript Theory and Practice Study Guide
+# JavaScript Theory and Practice Study Guide
 
-## 📚 Contents
+[![Deploy to GitHub Pages](https://github.com/Ilia01/Theories/actions/workflows/deploy.yml/badge.svg)](https://github.com/Ilia01/Theories/actions/workflows/deploy.yml)
+
+A comprehensive study guide for JavaScript/Node.js theory test preparation, built with modern web technologies and deployed automatically to GitHub Pages.
+
+## Quick Start
+
+### For Studying
+Visit the live site: [https://ilia01.github.io/Theories/](https://ilia01.github.io/Theories/)
+
+### For Development
+
+```bash
+# Clone the repository
+git clone https://github.com/Ilia01/Theories.git
+cd Theories
+
+# Install dependencies
+npm install
+
+# Build the site
+npm run build
+
+# (Optional) Run linting
+npm run lint
+
+# (Optional) Format code
+npm run format
+```
+
+## Contents
 
 This guide covers 8 major topic areas:
 
@@ -106,12 +135,117 @@ Each topic covers multiple skill levels:
 - [FreeCodeCamp](https://www.freecodecamp.org/)
 - [Learn Git Branching](https://learngitbranching.js.org/)
 
-## 🤝 Contributing
+## Architecture
 
-Found an error or want to improve the content?
-1. Note the file and section
-2. Describe the issue or improvement
-3. Provide corrected content if applicable
+### Project Structure
+```
+theory_practice/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml          # GitHub Actions deployment workflow
+├── docs/                       # Output directory (served by GitHub Pages)
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   ├── build.js           # Build script
+│   │   ├── nav.js             # Navigation functionality
+│   │   ├── progress.js        # Progress tracking system
+│   │   ├── search.js          # Search functionality
+│   │   └── shortcuts.js       # Keyboard shortcuts
+│   ├── template.html          # HTML template
+│   └── *.html                 # Generated HTML pages
+├── *.md                       # Markdown source files
+└── package.json
+```
+
+### Build Process
+
+The site uses a custom build system that:
+1. Reads markdown source files (*.md)
+2. Converts markdown to HTML using `marked` with syntax highlighting via `highlight.js`
+3. Injects content into the template
+4. Generates table of contents automatically
+5. Outputs final HTML files to the `docs/` directory
+
+### Progress Tracking
+
+Progress tracking is **individual per user** and works entirely client-side:
+- Uses browser `localStorage` to store progress
+- Each user has their own progress stored locally
+- No backend required
+- Progress persists across sessions on the same device
+- Users can export/import their progress as JSON
+
+## Deployment
+
+### Automatic Deployment (GitHub Pages)
+
+The site automatically deploys to GitHub Pages when you push to the `main` branch:
+
+1. GitHub Actions workflow runs
+2. Dependencies are installed
+3. Build script generates HTML files
+4. Site is deployed to GitHub Pages
+
+### Manual Deployment
+
+If needed, you can manually trigger deployment:
+1. Go to the "Actions" tab in GitHub
+2. Select "Deploy to GitHub Pages"
+3. Click "Run workflow"
+
+### GitHub Pages Setup
+
+Ensure GitHub Pages is configured correctly:
+1. Go to repository Settings → Pages
+2. Source: GitHub Actions
+3. The site will be available at `https://[username].github.io/[repo-name]/`
+
+## Development
+
+### Adding a New Topic
+
+1. Create a new markdown file (e.g., `09-new-topic.md`)
+2. Add the topic to `docs/js/pages.config.js`:
+   ```javascript
+   {
+     id: 'new-topic',
+     title: 'New Topic',
+     source: '09-new-topic.md',
+     file: '09-new-topic.html',
+     description: 'Description of the new topic.',
+     number: 9
+   }
+   ```
+3. Run `npm run build`
+4. Commit and push changes
+
+### Code Quality
+
+```bash
+# Run ESLint
+npm run lint
+
+# Auto-fix ESLint issues
+npm run lint:fix
+
+# Format code with Prettier
+npm run format
+
+# Check formatting
+npm run format:check
+```
+
+## Contributing
+
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+Quick summary:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run linting and formatting
+5. Submit a pull request
 
 ---
 

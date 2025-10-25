@@ -1,3 +1,31 @@
+# Dependencies
 /node_modules
 
+# Development
 /server.js
+
+# IDE and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+
+# Testing
+coverage/
+.nyc_output/

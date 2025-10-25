@@ -114,7 +114,7 @@
 
     const icon = document.getElementById('dark-mode-icon');
     if (icon) {
-      icon.textContent = isDark ? '☀️' : '🌙';
+      icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
     }
   }
 
@@ -188,7 +188,7 @@
 
     const icon = document.getElementById('dark-mode-icon');
     if (icon) {
-      icon.textContent = darkMode ? '☀️' : '🌙';
+      icon.className = darkMode ? 'fas fa-sun' : 'fas fa-moon';
     }
   }
 

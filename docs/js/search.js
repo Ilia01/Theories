@@ -11,11 +11,16 @@
 
   function buildSearchIndex() {
     const links = document.querySelectorAll('#nav-list a');
-    searchIndex = Array.from(links).map(link => ({
-      title: link.textContent.replace(/[✓◐]/g, '').trim(),
-      href: link.getAttribute('href'),
-      element: link
-    })).filter(item => item.href && item.href !== 'index.html');
+    searchIndex = Array.from(links).map(link => {
+      const clone = link.cloneNode(true);
+      const indicators = clone.querySelectorAll('.progress-indicator');
+      indicators.forEach(ind => ind.remove());
+      return {
+        title: clone.textContent.trim(),
+        href: link.getAttribute('href'),
+        element: link
+      };
+    }).filter(item => item.href && item.href !== 'index.html');
   }
 
   function search(query) {

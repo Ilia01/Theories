@@ -5,23 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{TITLE}}</title>
-    <link rel="stylesheet" href="/Theories/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
     <!-- Header Toolbar -->
     <div id="header-toolbar">
         <button id="search-trigger" aria-label="Search" title="Search (Cmd+K)">
-            🔍
+            <i class="fas fa-search"></i>
         </button>
         <button id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle Dark Mode (Cmd+D)">
-            <span id="dark-mode-icon">🌙</span>
+            <i id="dark-mode-icon" class="fas fa-moon"></i>
         </button>
         <button id="shortcuts-help" onclick="window.Shortcuts.show()" aria-label="Keyboard shortcuts"
             title="Shortcuts (?)">
-            ⌨️
+            <i class="fas fa-keyboard"></i>
         </button>
     </div>
 
@@ -63,19 +64,23 @@
     </main>
 
     <!-- Back to Top Button -->
-    <button id="back-to-top" aria-label="Back to top">↑</button>
+    <button id="back-to-top" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
     <!-- Search Modal -->
     <div id="search-modal" class="modal">
         <div class="modal-content search-content">
             <div class="search-header">
                 <input type="text" id="search-input" placeholder="Search topics..." autofocus>
-                <button id="search-close" aria-label="Close search">✕</button>
+                <button id="search-close" aria-label="Close search">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <div id="search-results" class="search-results"></div>
             <div class="search-footer">
-                <span>↑↓ Navigate</span>
-                <span>↵ Select</span>
+                <span><i class="fas fa-arrows-alt-v"></i> Navigate</span>
+                <span><i class="fas fa-level-down-alt"></i> Select</span>
                 <span>Esc Close</span>
             </div>
         </div>
@@ -86,17 +91,19 @@
         <div class="modal-content shortcuts-modal-content">
             <div class="modal-header">
                 <h2>Keyboard Shortcuts</h2>
-                <button id="shortcuts-close" aria-label="Close shortcuts">✕</button>
+                <button id="shortcuts-close" aria-label="Close shortcuts">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <div class="shortcuts-content"></div>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script src="/Theories/js/nav.js"></script>
-    <script src="/Theories/js/progress.js"></script>
-    <script src="/Theories/js/search.js"></script>
-    <script src="/Theories/js/shortcuts.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/progress.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/shortcuts.js"></script>
 </body>
 
 </html>
