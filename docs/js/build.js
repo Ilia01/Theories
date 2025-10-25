@@ -171,16 +171,17 @@ function processPage(page) {
 
     let htmlContent = marked.parse(markdown);
 
-    if (toc) {
-        htmlContent = toc + htmlContent;
-    }
-
     const meta = `
         <div class="page-meta">
             <span class="reading-time"><i class="far fa-clock"></i> ${readingTime} min read</span>
         </div>
     `;
-    htmlContent = toc + htmlContent;
+
+    if (toc) {
+        htmlContent = toc + meta + htmlContent;
+    } else {
+        htmlContent = meta + htmlContent;
+    }
 
     const navButtons = generateNavButtons(page.file);
     htmlContent += navButtons;

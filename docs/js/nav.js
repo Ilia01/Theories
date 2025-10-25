@@ -41,7 +41,7 @@
           }
         }
 
-        for (let link of links) {
+        for (const link of links) {
           const href = link.getAttribute('href');
           link.classList.toggle('active', href === `#${activeId}`)
         };
@@ -51,7 +51,7 @@
     window.addEventListener('scroll', updateActiveHeading);
     updateActiveHeading();
 
-    for (let link of links) {
+    for (const link of links) {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         const targetId = link.getAttribute('href').substring(1);
