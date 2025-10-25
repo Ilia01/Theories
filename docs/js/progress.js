@@ -153,20 +153,16 @@
    * Update UI elements with progress indicators
    */
   function updateUI() {
-    // Update sidebar links with progress indicators
     const links = document.querySelectorAll('#nav-list a');
     links.forEach(link => {
       const href = link.getAttribute('href');
-      if (!href || href === 'index.html') return;
 
       const pageId = href.replace('.html', '');
       const progress = getPageProgress(pageId);
 
-      // Remove existing indicator
       const existing = link.querySelector('.progress-indicator');
       if (existing) existing.remove();
 
-      // Add indicator
       const indicator = document.createElement('span');
       indicator.className = 'progress-indicator';
 
@@ -185,7 +181,6 @@
       }
     });
 
-    // Update progress bar if exists
     const progressBar = document.getElementById('overall-progress-bar');
     if (progressBar) {
       const stats = getStats();
@@ -204,12 +199,10 @@
   function setupControls() {
     const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
 
-    // Mark as visited
     if (currentPage && currentPage !== 'index') {
       markVisited(currentPage);
     }
 
-    // Setup status buttons
     const controls = document.getElementById('progress-controls');
     if (controls && currentPage !== 'index') {
       const progress = getPageProgress(currentPage);
@@ -232,20 +225,17 @@
           const status = btn.dataset.status;
           setPageProgress(currentPage, status);
 
-          // Update active state
           controls.querySelectorAll('.progress-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
         });
       });
     }
 
-    // Setup notes area
     const notesArea = document.getElementById('page-notes');
     if (notesArea && currentPage !== 'index') {
       const notes = getNotes(currentPage);
       notesArea.value = notes;
 
-      // Auto-save on change with debounce
       let saveTimer;
       notesArea.addEventListener('input', () => {
         clearTimeout(saveTimer);
@@ -301,24 +291,20 @@
     reader.readAsText(file);
   }
 
-  // Initialize on page load
   function init() {
     updateUI();
     setupControls();
 
-    // Setup reset button if exists
     const resetBtn = document.getElementById('reset-progress');
     if (resetBtn) {
       resetBtn.addEventListener('click', resetProgress);
     }
 
-    // Setup export button
     const exportBtn = document.getElementById('export-progress');
     if (exportBtn) {
       exportBtn.addEventListener('click', exportProgress);
     }
 
-    // Setup import button
     const importBtn = document.getElementById('import-progress');
     if (importBtn) {
       importBtn.addEventListener('click', () => {
@@ -335,7 +321,6 @@
     }
   }
 
-  // Export public API
   window.ProgressTracker = {
     getProgress,
     getPageProgress,
@@ -350,7 +335,6 @@
     PROGRESS
   };
 
-  // Auto-init
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
