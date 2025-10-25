@@ -1,5 +1,5 @@
 /**
- * Study Guide Configuration
+ * Configuration
  * Single source of truth for all pages/concepts
  */
 

@@ -22,9 +22,6 @@
   let keySequence = [];
   let sequenceTimer = null;
 
-  /**
-   * Show shortcuts modal
-   */
   function showShortcuts() {
     const modal = document.getElementById('shortcuts-modal');
     if (!modal) return;
@@ -62,9 +59,6 @@
     modal.classList.add('active');
   }
 
-  /**
-   * Hide shortcuts modal
-   */
   function hideShortcuts() {
     const modal = document.getElementById('shortcuts-modal');
     if (modal) {
@@ -72,13 +66,9 @@
     }
   }
 
-  /**
-   * Handle keyboard sequences (like gg, gb)
-   */
   function handleKeySequence(key) {
     keySequence.push(key);
 
-    // Clear sequence after 1 second
     clearTimeout(sequenceTimer);
     sequenceTimer = setTimeout(() => {
       keySequence = [];
@@ -86,7 +76,6 @@
 
     const sequence = keySequence.join(' ');
 
-    // Check for matches
     if (sequence === 'g g') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       keySequence = [];
@@ -100,9 +89,6 @@
     return false;
   }
 
-  /**
-   * Navigate to next topic
-   */
   function goToNext() {
     const nextLink = document.querySelector('[data-nav="next"]');
     if (nextLink) {
@@ -110,9 +96,6 @@
     }
   }
 
-  /**
-   * Navigate to previous topic
-   */
   function goToPrevious() {
     const prevLink = document.querySelector('[data-nav="prev"]');
     if (prevLink) {
@@ -120,40 +103,27 @@
     }
   }
 
-  /**
-   * Go to home
-   */
   function goToHome() {
     window.location.href = 'index.html';
   }
 
-  /**
-   * Toggle dark mode
-   */
   function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
     const isDark = document.body.classList.contains('dark-mode');
     localStorage.setItem('dark-mode', isDark ? 'true' : 'false');
 
-    // Update icon if exists
     const icon = document.getElementById('dark-mode-icon');
     if (icon) {
       icon.textContent = isDark ? '☀️' : '🌙';
     }
   }
 
-  /**
-   * Check if element is input/textarea
-   */
   function isInputElement(element) {
     return element.tagName === 'INPUT' ||
       element.tagName === 'TEXTAREA' ||
       element.isContentEditable;
   }
 
-  /**
-   * Setup global keyboard shortcuts
-   */
   function setupShortcuts() {
     document.addEventListener('keydown', (e) => {
       // Don't trigger shortcuts when typing in input fields
@@ -161,56 +131,48 @@
         return;
       }
 
-      // Handle Esc key
       if (e.key === 'Escape') {
         hideShortcuts();
         if (window.Search) window.Search.close();
         return;
       }
 
-      // Handle ? key for help
       if (e.key === '?') {
         e.preventDefault();
         showShortcuts();
         return;
       }
 
-      // Handle Cmd/Ctrl + D for dark mode
       if ((e.metaKey || e.ctrlKey) && e.key === 'd') {
         e.preventDefault();
         toggleDarkMode();
         return;
       }
 
-      // Handle Cmd/Ctrl + J for jump menu (opens search)
       if ((e.metaKey || e.ctrlKey) && e.key === 'j') {
         e.preventDefault();
         if (window.Search) window.Search.open();
         return;
       }
 
-      // Handle n for next
       if (e.key === 'n') {
         e.preventDefault();
         goToNext();
         return;
       }
 
-      // Handle p for previous
       if (e.key === 'p') {
         e.preventDefault();
         goToPrevious();
         return;
       }
 
-      // Handle h for home
       if (e.key === 'h') {
         e.preventDefault();
         goToHome();
         return;
       }
 
-      // Handle g sequences
       if (e.key === 'g') {
         handleKeySequence('g');
         return;
@@ -218,25 +180,18 @@
     });
   }
 
-  /**
-   * Initialize dark mode from localStorage
-   */
   function initDarkMode() {
     const darkMode = localStorage.getItem('dark-mode') === 'true';
     if (darkMode) {
       document.body.classList.add('dark-mode');
     }
 
-    // Update icon
     const icon = document.getElementById('dark-mode-icon');
     if (icon) {
       icon.textContent = darkMode ? '☀️' : '🌙';
     }
   }
 
-  /**
-   * Setup dark mode toggle button
-   */
   function setupDarkModeToggle() {
     const toggle = document.getElementById('dark-mode-toggle');
     if (toggle) {
@@ -244,9 +199,6 @@
     }
   }
 
-  /**
-   * Setup shortcuts modal close button
-   */
   function setupShortcutsModal() {
     const closeBtn = document.getElementById('shortcuts-close');
     if (closeBtn) {
@@ -263,9 +215,6 @@
     }
   }
 
-  /**
-   * Initialize shortcuts system
-   */
   function init() {
     initDarkMode();
     setupShortcuts();
@@ -273,14 +222,12 @@
     setupShortcutsModal();
   }
 
-  // Export public API
   window.Shortcuts = {
     show: showShortcuts,
     hide: hideShortcuts,
     toggleDarkMode
   };
 
-  // Auto-init
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

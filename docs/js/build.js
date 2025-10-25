@@ -17,9 +17,6 @@ const hljs = require('highlight.js');
 
 const config = require('./pages.config.js');
 
-/**
- * Generate GitHub-style slug from heading text (matches marked.js behavior)
- */
 function slugify(text) {
     return text
         .toLowerCase()
@@ -54,9 +51,6 @@ marked.setOptions({
 
 const template = fs.readFileSync(path.join(config.outputDir, 'template.html'), 'utf8');
 
-/**
- * Generate navigation HTML for sidebar
- */
 function generateNavHTML(currentFile) {
     return config.pages.map(page => {
         const isActive = page.file === currentFile;
@@ -65,9 +59,6 @@ function generateNavHTML(currentFile) {
     }).join('\n');
 }
 
-/**
- * Calculate reading time from markdown
- */
 function calculateReadingTime(markdown) {
     const wordsPerMinute = 200;
     const words = markdown.split(/\s+/).length;
@@ -75,9 +66,6 @@ function calculateReadingTime(markdown) {
     return minutes;
 }
 
-/**
- * Generate table of contents from markdown
- */
 function generateToC(markdown) {
     const headings = [];
     const lines = markdown.split('\n');
@@ -109,9 +97,6 @@ function generateToC(markdown) {
     `;
 }
 
-/**
- * Get next and previous pages
- */
 function getNavigation(currentFile) {
     const contentPages = config.pages.filter(p => !p.isHome);
     const currentIndex = contentPages.findIndex(p => p.file === currentFile);
@@ -122,9 +107,6 @@ function getNavigation(currentFile) {
     return { prev, next };
 }
 
-/**
- * Generate navigation buttons HTML
- */
 function generateNavButtons(currentFile) {
     const { prev, next } = getNavigation(currentFile);
 
@@ -138,7 +120,7 @@ function generateNavButtons(currentFile) {
             </a>
         `;
     } else {
-        html += '<div></div>'; // Spacer
+        html += '<div></div>';
     }
 
     if (next) {
@@ -154,9 +136,6 @@ function generateNavButtons(currentFile) {
     return html;
 }
 
-/**
- * Generate final HTML from template
- */
 function generateHTML(title, content, currentFile, readingTime = null) {
     const navHTML = generateNavHTML(currentFile);
 
@@ -175,15 +154,12 @@ function generateHTML(title, content, currentFile, readingTime = null) {
     return html;
 }
 
-/**
- * Process a single content page from markdown
- */
 function processPage(page) {
     const sourcePath = path.join(config.sourceDir, page.source);
     const outputPath = path.join(config.outputDir, page.file);
 
     if (!fs.existsSync(sourcePath)) {
-        console.log(`⚠️  Warning: Source file not found: ${sourcePath}`);
+        console.log(`Warning: Source file not found: ${sourcePath}`);
         return;
     }
 
@@ -199,7 +175,6 @@ function processPage(page) {
         htmlContent = toc + htmlContent;
     }
 
-    // Add reading time meta
     const meta = `
         <div class="page-meta">
             <span class="reading-time">⏱ ${readingTime} min read</span>
@@ -224,14 +199,11 @@ function processPage(page) {
     const html = generateHTML(page.title, htmlContent, page.file, readingTime);
 
     fs.writeFileSync(outputPath, html, 'utf8');
-    console.log(`✅ Generated: ${page.file} (from ${page.source})`);
+    console.log(`Generated: ${page.file} (from ${page.source})`);
 }
 
-/**
- * Main build process
- */
 function main() {
-    console.log('🔨 Building study guide from markdown sources...\n');
+    console.log('Building study guide from markdown sources...\n');
 
     let successCount = 0;
 
@@ -240,7 +212,7 @@ function main() {
         successCount++;
     });
 
-    console.log(`\n✨ Build complete! Generated ${successCount} pages`);
+    console.log(`\nBuild complete! Generated ${successCount} pages`);
 }
 
 main();

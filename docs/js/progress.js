@@ -15,9 +15,6 @@
     COMPLETED: 'completed'
   };
 
-  /**
-   * Get all progress data from localStorage
-   */
   function getProgress() {
     try {
       const data = localStorage.getItem(STORAGE_KEY);
@@ -28,9 +25,6 @@
     }
   }
 
-  /**
-   * Save progress data to localStorage
-   */
   function saveProgress(data) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -41,9 +35,6 @@
     }
   }
 
-  /**
-   * Get progress for a specific page
-   */
   function getPageProgress(pageId) {
     const progress = getProgress();
     return progress[pageId] || {
@@ -53,9 +44,6 @@
     };
   }
 
-  /**
-   * Set progress for a specific page
-   */
   function setPageProgress(pageId, status) {
     const progress = getProgress();
     const now = new Date().toISOString();
@@ -71,9 +59,6 @@
     return true;
   }
 
-  /**
-   * Mark page as visited (in progress if not already completed)
-   */
   function markVisited(pageId) {
     const current = getPageProgress(pageId);
     if (current.status === PROGRESS.NOT_STARTED) {
@@ -81,9 +66,6 @@
     }
   }
 
-  /**
-   * Calculate overall progress statistics
-   */
   function getStats() {
     const progress = getProgress();
     const pages = Object.keys(progress);
@@ -108,9 +90,6 @@
     };
   }
 
-  /**
-   * Reset all progress
-   */
   function resetProgress() {
     if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
       localStorage.removeItem(STORAGE_KEY);
@@ -120,9 +99,6 @@
     }
   }
 
-  /**
-   * Get notes for a page
-   */
   function getNotes(pageId) {
     try {
       const notes = localStorage.getItem(NOTES_KEY);
@@ -133,9 +109,6 @@
     }
   }
 
-  /**
-   * Save notes for a page
-   */
   function saveNotes(pageId, content) {
     try {
       const notes = localStorage.getItem(NOTES_KEY);
@@ -149,9 +122,6 @@
     }
   }
 
-  /**
-   * Update UI elements with progress indicators
-   */
   function updateUI() {
     const links = document.querySelectorAll('#nav-list a');
     links.forEach(link => {
@@ -193,9 +163,6 @@
     }
   }
 
-  /**
-   * Setup progress controls on current page
-   */
   function setupControls() {
     const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
 
@@ -246,9 +213,6 @@
     }
   }
 
-  /**
-   * Export progress as JSON
-   */
   function exportProgress() {
     const progress = getProgress();
     const notes = localStorage.getItem(NOTES_KEY);
@@ -267,9 +231,6 @@
     URL.revokeObjectURL(url);
   }
 
-  /**
-   * Import progress from JSON
-   */
   function importProgress(file) {
     const reader = new FileReader();
     reader.onload = (e) => {
