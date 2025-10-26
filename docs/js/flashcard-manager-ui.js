@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  if (!window.Flashcards) {
+  if (!globalThis.Flashcards) {
     console.error('Flashcards module not loaded');
     return;
   }
@@ -12,12 +12,12 @@
 
 
   function init() {
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(globalThis.location.search);
     currentTopicId = urlParams.get('topic');
 
     if (!currentTopicId) {
       alert('No topic specified. Redirecting to index...');
-      window.location.href = 'index.html';
+      globalThis.location.href = 'index.html';
       return;
     }
 
@@ -65,7 +65,7 @@
     const backBtn = document.getElementById('back-to-topic');
     if (backBtn) {
       backBtn.addEventListener('click', () => {
-        window.location.href = `${currentTopicId}.html`;
+        globalThis.location.href = `${currentTopicId}.html`;
       });
     }
 
@@ -116,7 +116,7 @@
         if (deleteBtn) {
           e.stopPropagation();
           if (confirm('Delete this flashcard?')) {
-            window.Flashcards.deleteFlashcard(currentTopicId, deleteBtn.dataset.id);
+            globalThis.Flashcards.deleteFlashcard(currentTopicId, deleteBtn.dataset.id);
             updateManagerUI();
           }
         }
@@ -137,9 +137,9 @@
     const getApiKeyLink = document.getElementById('get-api-key-link');
 
     if (closeBtn || cancelBtn) {
-      [closeBtn, cancelBtn].forEach(btn => {
+      for (const btn of [closeBtn, cancelBtn]) {
         if (btn) btn.addEventListener('click', () => closeModal(modal));
-      });
+      };
     }
 
     if (modal) {
@@ -168,7 +168,7 @@
           loadAISettings();
         }
       });
-      const settings = window.Flashcards.getSettings();
+      const settings = globalThis.Flashcards.getSettings();
       if (settings.useAIForGeneration) {
         aiToggle.checked = true;
         aiToggle.dispatchEvent(new Event('change'));
@@ -208,7 +208,7 @@
 
     if (questionsPerSection) {
       questionsPerSection.addEventListener('change', () => {
-        saveAISetting('questionsPerSection', parseInt(questionsPerSection.value));
+        saveAISetting('questionsPerSection', Number.parseInt(questionsPerSection.value));
       });
     }
 
@@ -276,9 +276,9 @@
   }
 
   function updateManagerUI() {
-    const cards = window.Flashcards.getFlashcards(currentTopicId);
-    const stats = window.Flashcards.getStats(currentTopicId);
-    const dueCount = window.Flashcards.getDueCount(currentTopicId);
+    const cards = globalThis.Flashcards.getFlashcards(currentTopicId);
+    const stats = globalThis.Flashcards.getStats(currentTopicId);
+    const dueCount = globalThis.Flashcards.getDueCount(currentTopicId);
 
     document.getElementById('total-cards').textContent = stats.totalCards;
     document.getElementById('mastered-cards').textContent = stats.mastered;
@@ -324,7 +324,7 @@
   }
 
   function editFlashcard(cardId) {
-    const cards = window.Flashcards.getFlashcards(currentTopicId);
+    const cards = globalThis.Flashcards.getFlashcards(currentTopicId);
     const card = cards.find(c => c.id === cardId);
 
     if (!card) {
@@ -355,13 +355,13 @@
     }
 
     if (editingCardId) {
-      window.Flashcards.updateFlashcard(currentTopicId, editingCardId, {
+      globalThis.Flashcards.updateFlashcard(currentTopicId, editingCardId, {
         question,
         answer,
       });
       editingCardId = null;
     } else {
-      window.Flashcards.saveFlashcard(currentTopicId, {
+      globalThis.Flashcards.saveFlashcard(currentTopicId, {
         question,
         answer,
         source: 'manual',
@@ -392,7 +392,7 @@
       return;
     }
 
-    const cards = window.Flashcards.parseMarkdownForFlashcards(currentMarkdown, currentTopicId);
+    const cards = globalThis.Flashcards.parseMarkdownForFlashcards(currentMarkdown, currentTopicId);
 
     if (cards.length === 0) {
       alert('No flashcards could be generated from this content.');
@@ -423,7 +423,7 @@
       }
     }
 
-    window._pendingCards = cards;
+    globalThis._pendingCards = cards;
     openModal(document.getElementById('generate-modal'));
   }
 
@@ -438,14 +438,14 @@
   }
 
   function generateWithPatterns() {
-    const cards = window._pendingCards;
+    const cards = globalThis._pendingCards;
     if (!cards) return;
 
-    cards.forEach(card => {
-      window.Flashcards.saveFlashcard(currentTopicId, card);
-    });
+    for (const card of cards) {
+      globalThis.Flashcards.saveFlashcard(currentTopicId, card);
+    };
 
-    window._pendingCards = null;
+    globalThis._pendingCards = null;
     closeModal(document.getElementById('generate-modal'));
     updateManagerUI();
     alert(`Successfully generated ${cards.length} flashcards!`);
@@ -469,8 +469,8 @@
     confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
     try {
-      const settings = window.Flashcards.getSettings();
-      const generator = new window.AIFlashcardGenerator(settings);
+      const settings = globalThis.Flashcards.getSettings();
+      const generator = new globalThis.AIFlashcardGenerator(settings);
 
       const sections = extractMarkdownSections(currentMarkdown);
       let allCards = [];
@@ -488,9 +488,9 @@
         throw new Error('No flashcards were generated. The AI may not have responded correctly.');
       }
 
-      allCards.forEach(card => {
-        window.Flashcards.saveFlashcard(currentTopicId, card);
-      });
+      for (const card of allCards) {
+        globalThis.Flashcards.saveFlashcard(currentTopicId, card);
+      };
 
       closeModal(document.getElementById('generate-modal'));
       updateManagerUI();
@@ -509,12 +509,11 @@
     const lines = markdown.split('\n');
     let currentSection = null;
 
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
+    for (const line of lines) {
       const headingMatch = line.match(/^(#{2,3})\s+(.+)$/);
 
       if (headingMatch) {
-        if (currentSection && currentSection.content.trim()) {
+        if (currentSection ?? currentSection.content.trim()) {
           sections.push(currentSection);
         }
 
@@ -528,7 +527,7 @@
       }
     }
 
-    if (currentSection && currentSection.content.trim()) {
+    if (currentSection ?? currentSection.content.trim()) {
       sections.push(currentSection);
     }
 
@@ -536,7 +535,7 @@
   }
 
   function loadAISettings() {
-    const settings = window.Flashcards.getSettings();
+    const settings = globalThis.Flashcards.getSettings();
     const aiApiKeyInput = document.getElementById('ai-api-key-input');
     const aiProviderSelect = document.getElementById('ai-provider-select');
     const questionsPerSection = document.getElementById('questions-per-section');
@@ -557,9 +556,9 @@
   }
 
   function saveAISetting(key, value) {
-    const settings = window.Flashcards.getSettings();
+    const settings = globalThis.Flashcards.getSettings();
     settings[key] = value;
-    window.Flashcards.saveSettings(settings);
+    globalThis.Flashcards.saveSettings(settings);
   }
 
   async function testAIConnection() {
@@ -576,11 +575,11 @@
     testBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing...';
 
     try {
-      const settings = window.Flashcards.getSettings();
+      const settings = globalThis.Flashcards.getSettings();
       settings.aiApiKey = apiKey;
       settings.aiProvider = provider;
 
-      const generator = new window.AIFlashcardGenerator(settings);
+      const generator = new globalThis.AIFlashcardGenerator(settings);
       const result = await generator.testConnection();
 
       if (result.success) {
@@ -605,7 +604,7 @@
   }
 
   function startStudySession(mode = 'all') {
-    const session = window.Flashcards.startStudySession(currentTopicId, { shuffle: true, mode: mode });
+    const session = globalThis.Flashcards.startStudySession(currentTopicId, { shuffle: true, mode: mode });
 
     if (!session) {
       const message =
@@ -614,7 +613,7 @@
       return;
     }
 
-    window.location.href = `flashcard-study.html?topic=${currentTopicId}&mode=${mode}`;
+    globalThis.location.href = `flashcard-study.html?topic=${currentTopicId}&mode=${mode}`;
   }
 
   function openModal(modal) {
@@ -634,21 +633,22 @@
   function stripMarkdown(text) {
     if (!text) return '';
 
+    // 
     return text
-      .replace(/```[\s\S]*?```/g, '')
-      .replace(/`([^`]+)`/g, '$1')
-      .replace(/^#{1,6}\s+/gm, '')
-      .replace(/\*\*([^*]+)\*\*/g, '$1')
-      .replace(/\*([^*]+)\*/g, '$1')
-      .replace(/__([^_]+)__/g, '$1')
-      .replace(/_([^_]+)_/g, '$1')
-      .replace(/~~([^~]+)~~/g, '$1')
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-      .replace(/^[-*+]\s+/gm, '')
-      .replace(/^\d+\.\s+/gm, '')
-      .replace(/^\s*>\s+/gm, '')
-      .replace(/\n{2,}/g, ' ')
-      .replace(/\s+/g, ' ')
+      .replaceAll(/```[\s\S]*?```/g, '')
+      .replaceAll(/`([^`]+)`/g, '$1')
+      .replaceAll(/^#{1,6}\s+/gm, '')
+      .replaceAll(/\*\*([^*]+)\*\*/g, '$1')
+      .replaceAll(/\*([^*]+)\*/g, '$1')
+      .replaceAll(/__([^_]+)__/g, '$1')
+      .replaceAll(/_([^_]+)_/g, '$1')
+      .replaceAll(/~~([^~]+)~~/g, '$1')
+      .replaceAll(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .replaceAll(/^[-*+]\s+/gm, '')
+      .replaceAll(/^\d+\.\s+/gm, '')
+      .replaceAll(/^\s*>\s+/gm, '')
+      .replaceAll(/\n{2,}/g, ' ')
+      .replaceAll(/\s+/g, ' ')
       .trim();
   }
 
@@ -667,14 +667,14 @@
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       const modals = [document.getElementById('generate-modal'), document.getElementById('add-card-modal')];
-      modals.forEach(modal => {
-        if (modal && modal.classList.contains('active')) {
+      for (const modal of modals) {
+        if (modal ?? modal.classList.contains('active')) {
           if (modal === document.getElementById('add-card-modal')) {
             resetAddCardModal();
           }
           closeModal(modal);
         }
-      });
+      };
     }
 
     if ((e.metaKey || e.ctrlKey) && e.key === 'd') {
@@ -683,7 +683,7 @@
     }
   });
 
-  window.FlashcardManagerUI = {
+  globalThis.FlashcardManagerUI = {
     init,
     updateManagerUI,
   };
