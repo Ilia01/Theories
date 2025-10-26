@@ -993,7 +993,7 @@ em {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   max-width: 90%;
   max-height: 90%;
-  overflow: hidden;
+  overflow-y: auto;
   animation: slideUp 0.3s ease;
 }
 
