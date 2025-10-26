@@ -1,8 +1,7 @@
-/* eslint-disable no-undef */
 (function () {
   'use strict';
 
-  if (!globalThis.Flashcards) {
+  if (!window.Flashcards) {
     console.error('Flashcards module not loaded');
     return;
   }
@@ -11,13 +10,13 @@
   let studyMode = 'all';
 
   function init() {
-    const urlParams = new URLSearchParams(globalThis.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
     currentTopicId = urlParams.get('topic');
     studyMode = urlParams.get('mode') || 'all';
 
     if (!currentTopicId) {
       alert('No topic specified. Redirecting to index...');
-      globalThis.location.href = 'index.html';
+      window.location.href = 'index.html';
       return;
     }
 
@@ -44,8 +43,8 @@
     const backBtn = document.getElementById('back-to-manager');
     if (backBtn) {
       backBtn.addEventListener('click', () => {
-        globalThis.Flashcards.endSession();
-        globalThis.location.href = `flashcard-manager.html?topic=${currentTopicId}`;
+        window.Flashcards.endSession();
+        window.location.href = `flashcard-manager.html?topic=${currentTopicId}`;
       });
     }
 
@@ -69,14 +68,14 @@
 
     if (prevBtn) {
       prevBtn.addEventListener('click', () => {
-        globalThis.Flashcards.skipCard();
+        window.Flashcards.skipCard();
         updateStudyCard();
       });
     }
 
     if (nextBtn) {
       nextBtn.addEventListener('click', () => {
-        globalThis.Flashcards.skipCard();
+        window.Flashcards.skipCard();
         updateStudyCard();
       });
     }
@@ -136,7 +135,7 @@
 
 
   function startStudySession() {
-    const session = globalThis.Flashcards.startStudySession(currentTopicId, {
+    const session = window.Flashcards.startStudySession(currentTopicId, {
       shuffle: true,
       mode: studyMode,
     });
@@ -147,7 +146,7 @@
           ? 'No flashcards are due for review right now!'
           : 'No flashcards to study! Create some first.';
       alert(message);
-      globalThis.location.href = `flashcard-manager.html?topic=${currentTopicId}`;
+      window.location.href = `flashcard-manager.html?topic=${currentTopicId}`;
       return;
     }
 
@@ -155,8 +154,8 @@
   }
 
   function updateStudyCard() {
-    const card = globalThis.Flashcards.getCurrentCard();
-    const stats = globalThis.Flashcards.getSessionStats();
+    const card = window.Flashcards.getCurrentCard();
+    const stats = window.Flashcards.getSessionStats();
 
     if (!card || !stats) {
       endStudySession();
@@ -205,7 +204,7 @@
     const flashcard = document.getElementById('flashcard');
     if (!flashcard) return;
 
-    globalThis.Flashcards.flipCard();
+    window.Flashcards.flipCard();
     flashcard.classList.toggle('flipped');
 
     const answerButtons = document.getElementById('study-answer-buttons');
@@ -219,7 +218,7 @@
   }
 
   function handleAnswer(quality) {
-    const result = globalThis.Flashcards.recordAnswer(quality);
+    const result = window.Flashcards.recordAnswer(quality);
 
     if (!result) return;
 
@@ -231,13 +230,13 @@
   }
 
   function endStudySession() {
-    const stats = globalThis.Flashcards.endSession();
+    const stats = window.Flashcards.endSession();
 
     if (stats) {
       alert(`Study session complete!\n\nCorrect: ${stats.correct}\nTo review: ${stats.review}\n\nKeep it up!`);
     }
 
-    globalThis.location.href = `flashcard-manager.html?topic=${currentTopicId}`;
+    window.location.href = `flashcard-manager.html?topic=${currentTopicId}`;
   }
 
 
@@ -249,7 +248,7 @@
         breaks: true,
         gfm: true,
         highlight: function (code, lang) {
-          if (lang ?? hljs ?? hljs.getLanguage(lang)) {
+          if (lang && hljs && hljs.getLanguage(lang)) {
             return hljs.highlight(code, { language: lang }).value;
           }
           return code;
@@ -257,7 +256,6 @@
       });
       return html;
     } catch (e) {
-      console.error('Markdown rendering error:', e);
       return escapeHtml(text);
     }
   }
@@ -304,11 +302,11 @@
 
     if (e.key === 'ArrowLeft') {
       e.preventDefault();
-      globalThis.Flashcards.skipCard();
+      window.Flashcards.skipCard();
       updateStudyCard();
     } else if (e.key === 'ArrowRight') {
       e.preventDefault();
-      globalThis.Flashcards.skipCard();
+      window.Flashcards.skipCard();
       updateStudyCard();
     }
 
@@ -319,14 +317,14 @@
 
     if (e.key === 'Escape') {
       if (confirm('End study session?')) {
-        globalThis.Flashcards.endSession();
-        globalThis.location.href = `flashcard-manager.html?topic=${currentTopicId}`;
+        window.Flashcards.endSession();
+        window.location.href = `flashcard-manager.html?topic=${currentTopicId}`;
       }
     }
   });
 
 
-  globalThis.FlashcardStudyUI = {
+  window.FlashcardStudyUI = {
     init,
     handleFlipCard,
     handleAnswer,

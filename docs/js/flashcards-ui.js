@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  if (!globalThis.Flashcards) {
+  if (!window.Flashcards) {
     console.error('Flashcards module not loaded');
     return;
   }
@@ -15,7 +15,7 @@
   }
 
   function getCurrentPageId() {
-    const path = globalThis.location.pathname;
+    const path = window.location.pathname;
     const filename = path.split('/').pop();
     return filename.replace('.html', '');
   }
@@ -33,13 +33,13 @@
       return;
     }
 
-    globalThis.location.href = `flashcard-manager.html?topic=${currentTopicId}`;
+    window.location.href = `flashcard-manager.html?topic=${currentTopicId}`;
   }
 
   function updateDueBadge() {
     if (currentTopicId === 'index') return;
 
-    const dueCount = globalThis.Flashcards.getDueCount(currentTopicId);
+    const dueCount = window.Flashcards.getDueCount(currentTopicId);
     const flashcardsBtn = document.getElementById('flashcards-btn');
 
     if (flashcardsBtn) {
@@ -57,7 +57,7 @@
     }
   }
 
-  globalThis.FlashcardsUI = {
+  window.FlashcardsUI = {
     init,
     openFlashcardManager,
   };
