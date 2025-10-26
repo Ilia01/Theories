@@ -12,7 +12,7 @@
   const PROGRESS = {
     NOT_STARTED: 'not-started',
     IN_PROGRESS: 'in-progress',
-    COMPLETED: 'completed'
+    COMPLETED: 'completed',
   };
 
   function getProgress() {
@@ -37,11 +37,13 @@
 
   function getPageProgress(pageId) {
     const progress = getProgress();
-    return progress[pageId] || {
-      status: PROGRESS.NOT_STARTED,
-      lastVisited: null,
-      timeSpent: 0
-    };
+    return (
+      progress[pageId] || {
+        status: PROGRESS.NOT_STARTED,
+        lastVisited: null,
+        timeSpent: 0,
+      }
+    );
   }
 
   function setPageProgress(pageId, status) {
@@ -51,7 +53,7 @@
     progress[pageId] = {
       status: status,
       lastVisited: now,
-      timeSpent: (progress[pageId]?.timeSpent || 0)
+      timeSpent: progress[pageId]?.timeSpent || 0,
     };
 
     saveProgress(progress);
@@ -71,13 +73,9 @@
     const pages = Object.keys(progress);
     const total = pages.length;
 
-    const completed = pages.filter(id =>
-      progress[id].status === PROGRESS.COMPLETED
-    ).length;
+    const completed = pages.filter(id => progress[id].status === PROGRESS.COMPLETED).length;
 
-    const inProgress = pages.filter(id =>
-      progress[id].status === PROGRESS.IN_PROGRESS
-    ).length;
+    const inProgress = pages.filter(id => progress[id].status === PROGRESS.IN_PROGRESS).length;
 
     const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
 
@@ -86,7 +84,7 @@
       completed,
       inProgress,
       notStarted: total - completed - inProgress,
-      percentage
+      percentage,
     };
   }
 
@@ -219,7 +217,7 @@
     const data = {
       progress,
       notes: notes ? JSON.parse(notes) : {},
-      exportDate: new Date().toISOString()
+      exportDate: new Date().toISOString(),
     };
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -233,7 +231,7 @@
 
   function importProgress(file) {
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = e => {
       try {
         const data = JSON.parse(e.target.result);
         if (data.progress) {
@@ -272,7 +270,7 @@
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = '.json';
-        input.onchange = (e) => {
+        input.onchange = e => {
           if (e.target.files[0]) {
             importProgress(e.target.files[0]);
           }
@@ -293,7 +291,7 @@
     saveNotes,
     updateUI,
     exportProgress,
-    PROGRESS
+    PROGRESS,
   };
 
   if (document.readyState === 'loading') {

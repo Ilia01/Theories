@@ -9,6 +9,8 @@
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
 
 <body>
@@ -62,6 +64,9 @@
         <div id="sidebar-footer">
             <button id="reset-progress" class="sidebar-btn">Reset Progress</button>
             <button id="export-progress" class="sidebar-btn">Export</button>
+            <button id="flashcards-btn" class="sidebar-btn">
+                <i class="fas fa-layer-group"></i> Flashcards
+            </button>
         </div>
     </nav>
 
@@ -905,6 +910,917 @@ git tag
             </div>
         </div>
     
+        <div id="markdown-source" style="display: none;"># Git and Version Control Systems
+
+## Table of Contents
+- [Version Control Basics](#version-control-basics)
+- [Git Basic Operations](#git-basic-operations)
+- [Repository Management](#repository-management)
+- [Branching and Merging](#branching-and-merging)
+- [Remote Operations](#remote-operations)
+- [Advanced Git Commands](#advanced-git-commands)
+- [Handling Merge Conflicts](#handling-merge-conflicts)
+- [Gitflow Workflow](#gitflow-workflow)
+- [Tagging](#tagging)
+- [Safe Practices](#safe-practices)
+
+---
+
+## Version Control Basics
+
+### What is a Version Control System (VCS)?
+A system that tracks changes to files over time, allowing you to recall specific versions later.
+
+### Importance of VCS
+- **Collaboration**: Multiple developers can work together without conflicts
+- **History**: Complete record of changes (who, what, when, why)
+- **Revert**: Ability to go back to previous states
+- **Branching**: Experiment with features without affecting main code
+- **Backup**: Disaster recovery and redundancy
+
+### Types of Version Control Systems
+
+#### 1. Local VCS
+- Database of changes on local machine
+- Example: RCS
+- Limited collaboration
+
+#### 2. Centralized VCS (CVCS)
+- Single server contains all versioned files
+- Examples: SVN, Perforce
+- Single point of failure
+- Requires network connection
+
+#### 3. Distributed VCS (DVCS)
+- Every client mirrors the entire repository
+- Examples: Git, Mercurial
+- No single point of failure
+- Works offline
+- Full backup on every client
+
+---
+
+## Git Basic Operations
+
+### Essential Commands
+
+```bash
+# Initialize a new repository
+git init
+
+# Stage changes
+git add &lt;file&gt;        # Stage specific file
+git add .             # Stage all changes
+git add *.js          # Stage all JavaScript files
+
+# Commit staged changes
+git commit -m "Descriptive message"
+
+# Check working directory status
+git status
+
+# View commit history
+git log
+git log --oneline     # Compact view
+git log --graph       # Visual branch graph
+
+# Show unstaged changes
+git diff
+git diff --staged     # Show staged changes
+git diff &lt;commit1&gt; &lt;commit2&gt;  # Compare commits
+```
+
+### Git Workflow
+
+```
+Working Directory → Staging Area (Index) → Local Repository → Remote Repository
+     |                    |                      |                    |
+  git add          git commit              git push            git pull
+```
+
+---
+
+## Repository Management
+
+### Understanding Git Structure
+
+- **Working Directory**: Current state of files you're editing
+- **Staging Area (Index)**: Intermediate area where commits are prepared
+- **Local Repository**: `.git` directory containing all version history
+- **Remote Repository**: Repository hosted on a server (GitHub, GitLab, etc.)
+
+### Repository Commands
+
+```bash
+# Create new repository
+git init
+
+# Clone existing repository
+git clone &lt;url&gt;
+git clone &lt;url&gt; &lt;directory-name&gt;
+
+# Configure settings
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+git config --list  # View configuration
+
+# Remove file from tracking
+git rm &lt;file&gt;           # Delete from working dir and stage deletion
+git rm --cached &lt;file&gt;  # Remove from tracking, keep in working dir
+
+# Rename or move file
+git mv &lt;old-name&gt; &lt;new-name&gt;
+
+# View remote repositories
+git remote -v
+```
+
+---
+
+## Branching and Merging
+
+### Branch Concepts
+
+- **Branch**: Independent line of development
+- **HEAD**: Pointer to current branch/commit
+- **Master/Main**: Default primary branch
+
+### Branch Commands
+
+```bash
+# List branches
+git branch              # Local branches
+git branch -a           # All branches (local + remote)
+git branch -r           # Remote branches only
+
+# Create new branch
+git branch &lt;branch-name&gt;
+
+# Switch to branch
+git checkout &lt;branch-name&gt;
+git switch &lt;branch-name&gt;  # Modern alternative
+
+# Create and switch in one command
+git checkout -b &lt;branch-name&gt;
+git switch -c &lt;branch-name&gt;  # Modern alternative
+
+# Delete branch
+git branch -d &lt;branch-name&gt;   # Safe delete (merged only)
+git branch -D &lt;branch-name&gt;   # Force delete
+
+# Rename branch
+git branch -m &lt;old-name&gt; &lt;new-name&gt;
+
+# Merge branch into current branch
+git merge &lt;branch-name&gt;
+
+# View merged branches
+git branch --merged
+git branch --no-merged
+```
+
+### Merge Types
+
+#### Fast-Forward Merge
+```bash
+# When target branch has no new commits
+git checkout main
+git merge feature
+# Result: main pointer simply moves forward
+```
+
+#### Three-Way Merge
+```bash
+# When both branches have new commits
+git checkout main
+git merge feature
+# Result: new merge commit created
+```
+
+---
+
+## Remote Operations
+
+### Understanding Remotes
+
+- **Remote**: Reference to repository on another server
+- **Origin**: Default name for primary remote
+- **Upstream**: Common name for original repo (in forks)
+
+### Remote Commands
+
+```bash
+# Clone repository (creates local copy)
+git clone &lt;url&gt;
+
+# Add remote
+git remote add origin &lt;url&gt;
+git remote add upstream &lt;url&gt;
+
+# View remotes
+git remote -v
+
+# Remove remote
+git remote remove &lt;name&gt;
+
+# Rename remote
+git remote rename &lt;old-name&gt; &lt;new-name&gt;
+
+# Fetch (download without merging)
+git fetch origin
+git fetch origin &lt;branch&gt;
+git fetch --all  # Fetch all remotes
+
+# Pull (fetch + merge)
+git pull origin main
+git pull --rebase origin main  # Rebase instead of merge
+
+# Push (upload to remote)
+git push origin main
+git push -u origin main  # Set upstream tracking
+git push --all           # Push all branches
+git push --tags          # Push all tags
+
+# View remote branch info
+git remote show origin
+```
+
+### Fetch vs Pull vs Clone
+
+| Command | What it does |
+|---------|--------------|
+| `git clone` | Copy entire repository (first time) |
+| `git fetch` | Download objects/refs, doesn't merge |
+| `git pull` | Fetch + Merge in one operation |
+
+```bash
+# Fetch then manually merge
+git fetch origin
+git merge origin/main
+
+# Equivalent to:
+git pull origin main
+```
+
+---
+
+## Advanced Git Commands
+
+### Reset
+
+Moves HEAD and branch pointer. **Use carefully!**
+
+```bash
+# Soft reset - undo commit, keep changes staged
+git reset --soft HEAD~1
+git reset --soft &lt;commit-hash&gt;
+
+# Mixed reset (default) - undo commit and unstage
+git reset HEAD~1
+git reset --mixed HEAD~1
+
+# Hard reset - undo commit and discard changes
+git reset --hard HEAD~1
+git reset --hard origin/main  # Match remote exactly
+```
+
+**When to use each:**
+- `--soft`: Want to recommit with different message or changes
+- `--mixed`: Want to unstage and re-stage differently
+- `--hard`: Want to completely discard changes (dangerous!)
+
+### Revert
+
+Creates new commit that undoes changes. **Safe for published commits.**
+
+```bash
+# Revert specific commit
+git revert &lt;commit-hash&gt;
+
+# Revert multiple commits
+git revert &lt;commit1&gt;..&lt;commit2&gt;
+
+# Revert without committing (stage changes)
+git revert -n &lt;commit-hash&gt;
+git revert --no-commit &lt;commit-hash&gt;
+
+# Revert merge commit
+git revert -m 1 &lt;merge-commit-hash&gt;
+```
+
+### Reset vs Revert
+
+| Reset | Revert |
+|-------|--------|
+| Moves branch pointer backward | Creates new commit |
+| Rewrites history | Preserves history |
+| Don't use on published commits | Safe for published commits |
+| `git reset --hard HEAD~1` | `git revert HEAD` |
+
+### Blame
+
+Shows who modified each line and when.
+
+```bash
+# Show line-by-line authorship
+git blame &lt;file&gt;
+
+# Blame specific line range
+git blame -L 10,20 &lt;file&gt;
+git blame -L 10,+5 &lt;file&gt;  # 5 lines starting from line 10
+
+# Show email instead of name
+git blame -e &lt;file&gt;
+
+# Ignore whitespace changes
+git blame -w &lt;file&gt;
+
+# Show commit hash in short form
+git blame -s &lt;file&gt;
+```
+
+### Other Useful Advanced Commands
+
+```bash
+# Stash (temporarily save changes)
+git stash
+git stash save "Work in progress"
+git stash list
+git stash pop    # Apply and remove from stash
+git stash apply  # Apply but keep in stash
+
+# Cherry-pick (apply specific commit)
+git cherry-pick &lt;commit-hash&gt;
+
+# Reflog (see all HEAD movements)
+git reflog
+git reflog show &lt;branch&gt;
+
+# Show changes in commit
+git show &lt;commit-hash&gt;
+
+# Interactive rebase
+git rebase -i HEAD~3
+
+# Find bugs with binary search
+git bisect start
+git bisect bad          # Current version is bad
+git bisect good &lt;commit&gt; # Known good commit
+# Git will check out commits for you to test
+git bisect good/bad     # Mark each test result
+git bisect reset        # When done
+```
+
+---
+
+## Handling Merge Conflicts
+
+### What is a Merge Conflict?
+
+Occurs when Git can't automatically merge changes because:
+- Same lines modified in both branches
+- File deleted in one branch, modified in another
+- Same file modified differently
+
+### Conflict Markers
+
+```text
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+Your changes in current branch
+=======
+Their changes from merging branch
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature-branch
+```
+
+### Resolution Process
+
+```bash
+# 1. Start merge
+git merge feature-branch
+# CONFLICT (content): Merge conflict in file.js
+
+# 2. View conflicts
+git status
+
+# 3. Open file(s) and edit manually
+# Remove conflict markers and decide what to keep
+
+# 4. Mark as resolved
+git add &lt;file&gt;
+
+# 5. Complete merge
+git commit
+# Or abort:
+git merge --abort
+```
+
+### Example Resolution
+
+**Before:**
+```javascript
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+function greet(name) {
+    return `Hello, ${name}!`;
+}
+=======
+function greet(name) {
+    return `Hi, ${name}!!!`;
+}
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature-branch
+```
+
+**After resolution:**
+```javascript
+function greet(name) {
+    return `Hello, ${name}!`;
+}
+```
+
+### Tools for Resolving Conflicts
+
+```bash
+# Use merge tool
+git mergetool
+
+# View conflict in different ways
+git diff
+git diff --ours    # Show diff with our version
+git diff --theirs  # Show diff with their version
+git diff --base    # Show diff with base version
+```
+
+### Reverting Commits
+
+```bash
+# Revert last commit (creates new commit)
+git revert HEAD
+
+# Revert specific commit
+git revert &lt;commit-hash&gt;
+
+# Revert range of commits
+git revert &lt;oldest-commit&gt;..&lt;newest-commit&gt;
+
+# Revert but don't commit yet
+git revert -n &lt;commit-hash&gt;
+
+# Undo revert
+git revert &lt;revert-commit-hash&gt;
+```
+
+**Use Revert Instead of Reset When:**
+- Commit is already pushed
+- Collaborating with others
+- Want to preserve history
+- Undoing public changes
+
+---
+
+## Gitflow Workflow
+
+### Overview
+
+Gitflow is a branching model that defines a strict branching structure.
+
+### Branch Types
+
+#### Main Branches (live forever)
+
+1. **main/master**
+   - Production-ready code
+   - Only merge from release or hotfix branches
+   - Tagged with version numbers
+
+2. **develop**
+   - Integration branch
+   - Latest delivered development changes
+   - Base for feature branches
+
+#### Supporting Branches (temporary)
+
+3. **feature/***
+   - Develop new features
+   - Branch from: `develop`
+   - Merge back to: `develop`
+   - Naming: `feature/user-authentication`
+
+4. **release/***
+   - Prepare for production release
+   - Branch from: `develop`
+   - Merge to: `main` AND `develop`
+   - Naming: `release/1.2.0`
+
+5. **hotfix/***
+   - Emergency fixes for production
+   - Branch from: `main`
+   - Merge to: `main` AND `develop`
+   - Naming: `hotfix/1.2.1`
+
+### Gitflow in Action
+
+#### Feature Development
+```bash
+# Start feature
+git checkout develop
+git checkout -b feature/login
+# ... work on feature ...
+git add .
+git commit -m "Add login feature"
+
+# Finish feature
+git checkout develop
+git merge --no-ff feature/login
+git branch -d feature/login
+git push origin develop
+```
+
+#### Release Preparation
+```bash
+# Start release
+git checkout develop
+git checkout -b release/1.2.0
+# ... bump version, update changelog ...
+git commit -m "Prepare release 1.2.0"
+
+# Finish release
+git checkout main
+git merge --no-ff release/1.2.0
+git tag -a v1.2.0 -m "Release version 1.2.0"
+git push origin main --tags
+
+git checkout develop
+git merge --no-ff release/1.2.0
+git push origin develop
+
+git branch -d release/1.2.0
+```
+
+#### Hotfix
+```bash
+# Start hotfix
+git checkout main
+git checkout -b hotfix/1.2.1
+# ... fix critical bug ...
+git commit -m "Fix critical security bug"
+
+# Finish hotfix
+git checkout main
+git merge --no-ff hotfix/1.2.1
+git tag -a v1.2.1 -m "Hotfix 1.2.1"
+git push origin main --tags
+
+git checkout develop
+git merge --no-ff hotfix/1.2.1
+git push origin develop
+
+git branch -d hotfix/1.2.1
+```
+
+### Benefits of Gitflow
+- Clear separation of concerns
+- Parallel development
+- Easy to scale with teams
+- Structured release process
+- Emergency fixes don't disrupt development
+
+---
+
+## Tagging
+
+### What are Tags?
+
+Named references to specific commits, typically used for marking releases.
+
+### Types of Tags
+
+#### Lightweight Tag
+Simple pointer to a commit (like a branch that doesn't change).
+
+```bash
+git tag v1.0.0
+git tag v1.0.0 &lt;commit-hash&gt;
+```
+
+#### Annotated Tag
+Full object with metadata (message, tagger name, email, date). **Recommended for releases.**
+
+```bash
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git tag -a v1.0.0 &lt;commit-hash&gt; -m "Release 1.0.0"
+```
+
+### Tag Commands
+
+```bash
+# List tags
+git tag
+git tag -l "v1.*"  # List tags matching pattern
+
+# View tag details
+git show v1.0.0
+
+# Create tag
+git tag v1.0.0                          # Lightweight
+git tag -a v1.0.0 -m "Release 1.0.0"   # Annotated
+
+# Tag old commit
+git tag -a v1.0.0 &lt;commit-hash&gt; -m "Release 1.0.0"
+
+# Push tags
+git push origin v1.0.0    # Push specific tag
+git push origin --tags    # Push all tags
+git push --follow-tags    # Push commits and annotated tags
+
+# Delete tag
+git tag -d v1.0.0              # Delete local
+git push origin --delete v1.0.0 # Delete remote
+git push origin :refs/tags/v1.0.0  # Alternative delete
+
+# Checkout tag
+git checkout v1.0.0  # Detached HEAD state
+git checkout -b version1 v1.0.0  # Create branch from tag
+```
+
+### Tag Naming Conventions
+
+**Semantic Versioning (SemVer):**
+```
+v&lt;MAJOR&gt;.&lt;MINOR&gt;.&lt;PATCH&gt;
+
+v1.0.0   - Initial release
+v1.1.0   - New features (backward compatible)
+v1.1.1   - Bug fixes
+v2.0.0   - Breaking changes
+```
+
+**Pre-release versions:**
+```
+v1.0.0-alpha
+v1.0.0-beta.1
+v1.0.0-rc.1  (release candidate)
+```
+
+### Significance of Tagging
+
+- **Mark release points**: Clear identification of versions
+- **Easy rollback**: Quickly checkout stable version
+- **Changelog reference**: Link changes to versions
+- **Deployment**: Deploy specific tagged versions
+- **Documentation**: Version docs with releases
+- **Compliance**: Track exactly what was released
+
+---
+
+## Safe Practices for Destructive Commands
+
+### Destructive Commands
+
+Commands that can permanently lose data or rewrite history:
+- `git reset --hard`
+- `git clean -fd`
+- `git push --force`
+- `git branch -D`
+- `git rebase`
+- `git filter-branch`
+
+### Safe Practices
+
+#### 1. Always Backup
+
+```bash
+# Create backup branch before risky operations
+git branch backup-$(date +%s)
+git branch backup-before-rebase
+
+# Or tag current state
+git tag backup-20250123
+```
+
+#### 2. Use Dry Run When Available
+
+```bash
+# See what would be deleted
+git clean -n
+git clean --dry-run
+
+# Preview what would be pushed
+git push --dry-run origin main
+```
+
+#### 3. Use Git Reflog for Recovery
+
+```bash
+# View all HEAD movements
+git reflog
+
+# Recover "lost" commits
+git reflog
+# Find commit before mistake
+git reset --hard HEAD@{5}
+
+# Recover deleted branch
+git reflog
+git checkout -b recovered-branch &lt;commit-hash&gt;
+```
+
+#### 4. Use --force-with-lease Instead of --force
+
+```bash
+# BAD - overwrites remote regardless
+git push --force origin main
+
+# GOOD - fails if remote has changes you don't have
+git push --force-with-lease origin main
+```
+
+#### 5. Avoid Force Push on Shared Branches
+
+```bash
+# Never force push to:
+# - main/master
+# - develop
+# - Any branch others are using
+
+# Only force push to:
+# - Your personal feature branches
+# - After coordinating with team
+```
+
+#### 6. Use Revert Instead of Reset for Published Commits
+
+```bash
+# If commit is pushed:
+git revert &lt;commit-hash&gt;  # SAFE - creates new commit
+
+# Don't use:
+git reset --hard HEAD~1   # DANGEROUS - rewrites history
+```
+
+#### 7. Stash Before Switching Context
+
+```bash
+# Save work in progress
+git stash
+git stash save "WIP: implementing feature X"
+
+# Switch to other work
+git checkout other-branch
+
+# Return and restore
+git checkout original-branch
+git stash pop
+```
+
+#### 8. Double-Check Branch Name
+
+```bash
+# Before destructive operation, verify branch
+git branch  # Shows current branch with *
+
+# Use git status
+git status
+
+# Full verification
+git rev-parse --abbrev-ref HEAD
+```
+
+#### 9. Test Destructive Commands Locally First
+
+```bash
+# Create test repository
+mkdir test-repo
+cd test-repo
+git init
+# ... test your commands here ...
+# Delete when done
+```
+
+#### 10. Configure Git Aliases for Safety
+
+```bash
+# Add confirmation prompts
+git config --global alias.delete-branch '!git branch -d'
+
+# Safer force push
+git config --global alias.pushf 'push --force-with-lease'
+
+# Better log
+git config --global alias.lg "log --graph --oneline --all"
+```
+
+### Recovery Scenarios
+
+#### Scenario 1: Accidentally Deleted Commits
+
+```bash
+# Find the commit in reflog
+git reflog
+
+# Reset to before mistake
+git reset --hard HEAD@{2}
+```
+
+#### Scenario 2: Accidentally Reset Hard
+
+```bash
+# Commits aren't truly deleted for ~30 days
+git reflog
+git cherry-pick &lt;commit-hash&gt;  # Recover specific commits
+# Or
+git reset --hard &lt;commit-hash&gt;  # Reset to before the reset
+```
+
+#### Scenario 3: Deleted Branch
+
+```bash
+# Find branch commit in reflog
+git reflog | grep "branch-name"
+
+# Recreate branch
+git checkout -b recovered-branch &lt;commit-hash&gt;
+```
+
+#### Scenario 4: Merge Gone Wrong
+
+```bash
+# Immediately after merge
+git merge --abort
+
+# After merge commit
+git reset --hard HEAD~1
+
+# Or revert the merge
+git revert -m 1 &lt;merge-commit-hash&gt;
+```
+
+### Checklist Before Destructive Operations
+
+- [ ] Current branch is correct
+- [ ] Changes are committed or stashed
+- [ ] Created backup branch or tag
+- [ ] Tested command in safe environment
+- [ ] Confirmed with team (if shared branch)
+- [ ] Know how to recover (reflog)
+- [ ] Using safer alternatives when possible
+
+### Configuration for Extra Safety
+
+```bash
+# Require explicit push for new branches
+git config --global push.default nothing
+
+# Warn before deleting
+git config --global advice.detachedHead true
+
+# Enable automatic garbage collection safety
+git config --global gc.reflogExpire 90
+git config --global gc.reflogExpireUnreachable 60
+
+# Prevent accidental commit to main
+# (use pre-commit hook)
+```
+
+---
+
+## Summary
+
+### Key Takeaways
+
+1. **Version Control** is essential for collaboration and code management
+2. **Git** is a distributed VCS with powerful features
+3. **Branching** enables parallel development
+4. **Remote operations** facilitate team collaboration
+5. **Gitflow** provides structured workflow for releases
+6. **Tags** mark important points in history
+7. **Safety practices** prevent data loss
+
+### Best Practices
+
+- Commit often with meaningful messages
+- Pull before push
+- Use branches for features and fixes
+- Never rewrite published history
+- Keep commits atomic and focused
+- Review changes before committing
+- Use `.gitignore` appropriately
+- Document your workflow
+
+### Essential Commands to Master
+
+```bash
+git status
+git add / git commit
+git push / git pull
+git branch / git checkout
+git merge
+git log
+git diff
+git stash
+git reset / git revert
+git tag
+```
+</div>
+    
     </main>
 
     <!-- Back to Top Button -->
@@ -943,11 +1859,129 @@ git tag
         </div>
     </div>
 
+    <!-- Auto-Generate Confirmation Modal -->
+    <div id="generate-modal" class="modal">
+        <div class="modal-content generate-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-magic"></i> Auto-Generate Flashcards</h2>
+                <button id="generate-close" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="generate-body">
+                <!-- AI Toggle -->
+                <div class="ai-toggle-section">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="use-ai-toggle">
+                        <span class="toggle-text">
+                            <i class="fas fa-robot"></i> Use AI-Powered Generation
+                            <small>(More diverse & intelligent questions)</small>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- AI Settings (shown when toggle is ON) -->
+                <div id="ai-settings-section" class="ai-settings hidden">
+                    <div class="form-group">
+                        <label for="ai-provider-select">AI Provider:</label>
+                        <select id="ai-provider-select">
+                            <option value="groq" selected>Groq (Recommended - Free & Fast)</option>
+                            <option value="gemini">Google Gemini</option>
+                            <option value="huggingface">Hugging Face</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ai-api-key-input">
+                            API Key:
+                            <a href="#" id="get-api-key-link" target="_blank" class="help-link">
+                                <i class="fas fa-external-link-alt"></i> Get Free Key
+                            </a>
+                        </label>
+                        <input type="password" id="ai-api-key-input" placeholder="Enter your API key">
+                        <small class="help-text">Your key is stored locally and never shared</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="questions-per-section">Questions per Section:</label>
+                        <input type="number" id="questions-per-section" value="3" min="1" max="10">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="question-diversity">Question Diversity:</label>
+                        <select id="question-diversity">
+                            <option value="low">Low (Similar questions)</option>
+                            <option value="medium">Medium (Balanced)</option>
+                            <option value="high" selected>High (Maximum variety)</option>
+                        </select>
+                    </div>
+
+                    <button id="test-ai-connection" class="action-btn">
+                        <i class="fas fa-plug"></i> Test Connection
+                    </button>
+                    <div id="ai-test-result" class="test-result hidden"></div>
+                </div>
+
+                <!-- Pattern Matching Stats (shown when AI is OFF) -->
+                <div id="pattern-stats-section" class="generate-stats">
+                    <p>Found <strong id="gen-total-count">0</strong> potential flashcards:</p>
+                    <div class="gen-breakdown">
+                        <div><i class="fas fa-heading"></i> From headings: <span id="gen-heading-count">0</span></div>
+                        <div><i class="fas fa-book"></i> From definitions: <span id="gen-def-count">0</span></div>
+                        <div><i class="fas fa-list"></i> From lists: <span id="gen-list-count">0</span></div>
+                        <div><i class="fas fa-code"></i> From code: <span id="gen-code-count">0</span></div>
+                    </div>
+                </div>
+
+                <div class="generate-preview">
+                    <h3>Preview:</h3>
+                    <ul id="generate-preview-list"></ul>
+                </div>
+                <div class="generate-actions">
+                    <button id="generate-cancel-btn" class="action-btn">Cancel</button>
+                    <button id="generate-confirm-btn" class="action-btn primary">
+                        <i class="fas fa-magic"></i> <span id="generate-btn-text">Generate All</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Card Modal -->
+    <div id="add-card-modal" class="modal">
+        <div class="modal-content add-card-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus"></i> Add Flashcard</h2>
+                <button id="add-card-close" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="add-card-body">
+                <div class="form-group">
+                    <label for="card-question">Question:</label>
+                    <textarea id="card-question" rows="3" placeholder="Enter the question..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="card-answer">Answer:</label>
+                    <textarea id="card-answer" rows="5" placeholder="Enter the answer..."></textarea>
+                </div>
+                <div class="add-card-actions">
+                    <button id="save-card-btn" class="action-btn primary">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="js/nav.js"></script>
     <script src="js/progress.js"></script>
     <script src="js/search.js"></script>
     <script src="js/shortcuts.js"></script>
+    <script src="js/flashcards.js"></script>
+    <script src="js/ai-flashcard-generator.js"></script>
+    <script src="js/flashcards-ui.js"></script>
 </body>
 
 </html>

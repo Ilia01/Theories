@@ -11,25 +11,25 @@
 
   function buildSearchIndex() {
     const links = document.querySelectorAll('#nav-list a');
-    searchIndex = Array.from(links).map(link => {
-      const clone = link.cloneNode(true);
-      const indicators = clone.querySelectorAll('.progress-indicator');
-      indicators.forEach(ind => ind.remove());
-      return {
-        title: clone.textContent.trim(),
-        href: link.getAttribute('href'),
-        element: link
-      };
-    }).filter(item => item.href && item.href !== 'index.html');
+    searchIndex = Array.from(links)
+      .map(link => {
+        const clone = link.cloneNode(true);
+        const indicators = clone.querySelectorAll('.progress-indicator');
+        indicators.forEach(ind => ind.remove());
+        return {
+          title: clone.textContent.trim(),
+          href: link.getAttribute('href'),
+          element: link,
+        };
+      })
+      .filter(item => item.href && item.href !== 'index.html');
   }
 
   function search(query) {
     if (!query) return searchIndex;
 
     const lowerQuery = query.toLowerCase();
-    return searchIndex.filter(item =>
-      item.title.toLowerCase().includes(lowerQuery)
-    );
+    return searchIndex.filter(item => item.title.toLowerCase().includes(lowerQuery));
   }
 
   function displayResults(results, query) {
@@ -45,16 +45,20 @@
       return;
     }
 
-    resultsContainer.innerHTML = results.map((result, index) => `
+    resultsContainer.innerHTML = results
+      .map(
+        (result, index) => `
       <a href="${result.href}"
          class="search-result ${index === 0 ? 'selected' : ''}"
          data-index="${index}">
         <span class="search-result-title">${highlightMatch(result.title, query)}</span>
       </a>
-    `).join('');
+    `
+      )
+      .join('');
 
     resultsContainer.querySelectorAll('.search-result').forEach(el => {
-      el.addEventListener('click', (e) => {
+      el.addEventListener('click', e => {
         e.preventDefault();
         window.location.href = el.getAttribute('href');
       });
@@ -146,7 +150,7 @@
   }
 
   function setupShortcuts() {
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', e => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         if (isSearchOpen) {
@@ -181,7 +185,7 @@
 
     const modal = document.getElementById('search-modal');
     if (modal) {
-      modal.addEventListener('click', (e) => {
+      modal.addEventListener('click', e => {
         if (e.target === modal) {
           closeSearch();
         }
@@ -192,7 +196,7 @@
   window.Search = {
     open: openSearch,
     close: closeSearch,
-    search
+    search,
   };
 
   if (document.readyState === 'loading') {

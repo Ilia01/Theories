@@ -16,7 +16,7 @@ Thank you for your interest in contributing to this study guide! This document p
 1. **Fork the repository** to your GitHub account
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/YOUR-USERNAME/Theories.git
+   git clone https://github.com/Ilia01/Theories.git
    cd Theories
    ```
 3. **Install dependencies**:

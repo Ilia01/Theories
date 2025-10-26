@@ -16,7 +16,14 @@
     { key: 'h', description: 'Go to home', category: 'Navigation' },
     { key: 'g g', description: 'Scroll to top', category: 'Navigation' },
     { key: 'g b', description: 'Scroll to bottom', category: 'Navigation' },
-    { key: 'Esc', description: 'Close modal', category: 'General' }
+    { key: 'Esc', description: 'Close modal', category: 'General' },
+    { key: 'f', description: 'Open flashcards', category: 'Flashcards' },
+    { key: 'Space', description: 'Flip card (in study mode)', category: 'Flashcards' },
+    { key: '1', description: 'Again (forgot)', category: 'Flashcards' },
+    { key: '2', description: 'Hard (difficult)', category: 'Flashcards' },
+    { key: '3', description: 'Good (correct)', category: 'Flashcards' },
+    { key: '4', description: 'Easy (too easy)', category: 'Flashcards' },
+    { key: '←/→', description: 'Previous/Next card', category: 'Flashcards' },
   ];
 
   let keySequence = [];
@@ -40,12 +47,16 @@
         <div class="shortcuts-category">
           <h3>${category}</h3>
           <div class="shortcuts-list">
-            ${grouped[category].map(s => `
+            ${grouped[category]
+              .map(
+                s => `
               <div class="shortcut-item">
                 <kbd>${s.key}</kbd>
                 <span>${s.description}</span>
               </div>
-            `).join('')}
+            `
+              )
+              .join('')}
           </div>
         </div>
       `;
@@ -119,13 +130,13 @@
   }
 
   function isInputElement(element) {
-    return element.tagName === 'INPUT' ||
-      element.tagName === 'TEXTAREA' ||
-      element.isContentEditable;
+    return (
+      element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || element.isContentEditable
+    );
   }
 
   function setupShortcuts() {
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', e => {
       // Don't trigger shortcuts when typing in input fields
       if (isInputElement(e.target)) {
         return;
@@ -177,6 +188,12 @@
         handleKeySequence('g');
         return;
       }
+
+      if (e.key === 'f') {
+        e.preventDefault();
+        if (window.FlashcardsUI) window.FlashcardsUI.openFlashcardManager();
+        return;
+      }
     });
   }
 
@@ -207,7 +224,7 @@
 
     const modal = document.getElementById('shortcuts-modal');
     if (modal) {
-      modal.addEventListener('click', (e) => {
+      modal.addEventListener('click', e => {
         if (e.target === modal) {
           hideShortcuts();
         }
@@ -225,7 +242,7 @@
   window.Shortcuts = {
     show: showShortcuts,
     hide: hideShortcuts,
-    toggleDarkMode
+    toggleDarkMode,
   };
 
   if (document.readyState === 'loading') {

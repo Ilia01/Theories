@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Mode</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+
+<body>
+    <!-- Header Toolbar -->
+    <div id="header-toolbar">
+        <button id="back-to-manager" aria-label="Back to manager" title="Back to Manager">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <button id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle Dark Mode (Cmd+D)">
+            <i id="dark-mode-icon" class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <!-- Progress Bar -->
+    <div id="progress-bar">
+        <div id="progress-fill"></div>
+    </div>
+
+    <!-- Study Mode Content -->
+    <main id="flashcard-study-page">
+        <div class="study-header">
+            <h1><i class="fas fa-brain"></i> Study Mode</h1>
+            <p id="topic-title">Loading...</p>
+        </div>
+
+        <div class="study-progress">
+            <span id="study-card-number">Card 1/10</span>
+            <div class="study-session-stats">
+                <span><i class="fas fa-check"></i> <span id="study-correct">0</span></span>
+                <span><i class="fas fa-redo"></i> <span id="study-review">0</span></span>
+            </div>
+        </div>
+
+        <div class="flashcard-container" id="flashcard-container">
+            <div class="flashcard" id="flashcard">
+                <div class="flashcard-front">
+                    <div class="flashcard-icon"><i class="fas fa-question-circle"></i></div>
+                    <div class="flashcard-text" id="flashcard-question"></div>
+                    <div class="flashcard-confidence" id="flashcard-confidence"></div>
+                    <div class="flip-hint"><i class="fas fa-sync-alt"></i> Space to flip</div>
+                </div>
+                <div class="flashcard-back">
+                    <div class="flashcard-icon"><i class="fas fa-lightbulb"></i></div>
+                    <div class="flashcard-text" id="flashcard-answer"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="study-controls">
+            <div class="study-navigation">
+                <button id="study-prev" class="nav-control">
+                    <i class="fas fa-arrow-left"></i> Prev
+                </button>
+                <button id="study-flip" class="nav-control primary">
+                    <i class="fas fa-sync-alt"></i> Flip
+                </button>
+                <button id="study-next" class="nav-control">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="study-answer-buttons" id="study-answer-buttons" style="display: none;">
+                <button id="study-again-btn" class="answer-btn again" data-quality="1">
+                    <i class="fas fa-times"></i> Again
+                </button>
+                <button id="study-hard-btn" class="answer-btn hard" data-quality="2">
+                    <i class="fas fa-exclamation"></i> Hard
+                </button>
+                <button id="study-good-btn" class="answer-btn good" data-quality="4">
+                    <i class="fas fa-check"></i> Good
+                </button>
+                <button id="study-easy-btn" class="answer-btn easy" data-quality="5">
+                    <i class="fas fa-check-double"></i> Easy
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/flashcards.js"></script>
+    <script src="js/flashcard-study-ui.js"></script>
+</body>
+
+</html>

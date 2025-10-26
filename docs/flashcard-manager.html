@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{TITLE}}</title>
+    <title>Flashcard Manager</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
@@ -16,93 +16,58 @@
 <body>
     <!-- Header Toolbar -->
     <div id="header-toolbar">
-        <button id="search-trigger" aria-label="Search" title="Search (Cmd+K)">
-            <i class="fas fa-search"></i>
+        <button id="back-to-topic" aria-label="Back to topic" title="Back to Topic">
+            <i class="fas fa-arrow-left"></i>
         </button>
         <button id="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle Dark Mode (Cmd+D)">
             <i id="dark-mode-icon" class="fas fa-moon"></i>
         </button>
-        <button id="shortcuts-help" onclick="window.Shortcuts.show()" aria-label="Keyboard shortcuts"
-            title="Shortcuts (?)">
-            <i class="fas fa-keyboard"></i>
-        </button>
     </div>
-
-    <!-- Mobile Menu Toggle -->
-    <button id="menu-toggle" aria-label="Toggle menu">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
 
     <!-- Progress Bar -->
     <div id="progress-bar">
         <div id="progress-fill"></div>
     </div>
 
-    <!-- Overall Progress Indicator -->
-    <div id="overall-progress">
-        <div id="overall-progress-bar" style="width: 0%"></div>
-        <span id="progress-text">0/0 topics completed</span>
-    </div>
-
-    <!-- Sidebar Navigation -->
-    <nav id="sidebar">
-        <div id="sidebar-header">
-            <h2>{{SITE_TITLE}}</h2>
+    <!-- Main Content -->
+    <main id="flashcard-manager-page">
+        <div class="flashcard-manager-header">
+            <h1><i class="fas fa-layer-group"></i> Flashcards</h1>
+            <p id="topic-title">Loading...</p>
         </div>
-        <ul id="nav-list">
-            {{NAV_LIST}}
-        </ul>
-        <div id="sidebar-footer">
-            <button id="reset-progress" class="sidebar-btn">Reset Progress</button>
-            <button id="export-progress" class="sidebar-btn">Export</button>
-            <button id="flashcards-btn" class="sidebar-btn">
-                <i class="fas fa-layer-group"></i> Flashcards
+
+        <div class="flashcard-stats">
+            <div class="stat-item">
+                <i class="fas fa-layer-group"></i>
+                <span id="total-cards">0</span> cards
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-check-circle"></i>
+                <span id="mastered-cards">0</span> mastered
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-redo"></i>
+                <span id="review-cards">0</span> to review
+            </div>
+        </div>
+
+        <div class="flashcard-actions">
+            <button id="auto-generate-btn" class="action-btn primary">
+                <i class="fas fa-magic"></i> Auto-Generate
+            </button>
+            <button id="study-due-btn" class="action-btn primary">
+                <i class="fas fa-clock"></i> Study Due (<span id="due-count">0</span>)
+            </button>
+            <button id="study-all-btn" class="action-btn">
+                <i class="fas fa-brain"></i> Study All
+            </button>
+            <button id="add-flashcard-btn" class="action-btn">
+                <i class="fas fa-plus"></i> Add Card
             </button>
         </div>
-    </nav>
 
-    <!-- Main Content -->
-    <main id="main-content">
-        {{CONTENT}}
+        <div class="flashcard-list" id="flashcard-list"></div>
     </main>
-
-    <!-- Back to Top Button -->
-    <button id="back-to-top" aria-label="Back to top">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
-    <!-- Search Modal -->
-    <div id="search-modal" class="modal">
-        <div class="modal-content search-content">
-            <div class="search-header">
-                <input type="text" id="search-input" placeholder="Search topics..." autofocus>
-                <button id="search-close" aria-label="Close search">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="search-results" class="search-results"></div>
-            <div class="search-footer">
-                <span><i class="fas fa-arrows-alt-v"></i> Navigate</span>
-                <span><i class="fas fa-level-down-alt"></i> Select</span>
-                <span>Esc Close</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Shortcuts Modal -->
-    <div id="shortcuts-modal" class="modal">
-        <div class="modal-content shortcuts-modal-content">
-            <div class="modal-header">
-                <h2>Keyboard Shortcuts</h2>
-                <button id="shortcuts-close" aria-label="Close shortcuts">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="shortcuts-content"></div>
-        </div>
-    </div>
 
     <!-- Auto-Generate Confirmation Modal -->
     <div id="generate-modal" class="modal">
@@ -220,13 +185,9 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/nav.js"></script>
-    <script src="js/progress.js"></script>
-    <script src="js/search.js"></script>
-    <script src="js/shortcuts.js"></script>
     <script src="js/flashcards.js"></script>
     <script src="js/ai-flashcard-generator.js"></script>
-    <script src="js/flashcards-ui.js"></script>
+    <script src="js/flashcard-manager-ui.js"></script>
 </body>
 
 </html>
