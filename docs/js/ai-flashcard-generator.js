@@ -288,5 +288,5 @@ Return ONLY the JSON array, nothing else:`;
     }
   }
 
-  globalThis.AIFlashcardGenerator = AIFlashcardGenerator;
+  window.AIFlashcardGenerator = AIFlashcardGenerator;
 })();
