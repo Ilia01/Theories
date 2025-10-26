@@ -246,15 +246,13 @@
   }
 
   function initDarkMode() {
-    const savedMode = localStorage.getItem('darkMode');
+    const savedMode = localStorage.getItem('dark-mode');
     const darkModeIcon = document.getElementById('dark-mode-icon');
 
-    if (savedMode === 'enabled') {
-      document.body.classList.add('dark-mode');
-      if (darkModeIcon) {
-        darkModeIcon.classList.remove('fa-moon');
-        darkModeIcon.classList.add('fa-sun');
-      }
+    document.body.classList.toggle('dark-mode', savedMode === 'true');
+    if (darkModeIcon) {
+      darkModeIcon.classList.remove('fa-moon');
+      darkModeIcon.classList.add('fa-sun');
     }
   }
 
