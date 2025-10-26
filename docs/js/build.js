@@ -214,6 +214,53 @@ function processPage(page) {
   console.log(`Generated: ${page.file} (from ${page.source})`);
 }
 
+function generateIndexRedirect() {
+  const firstPage = config.pages[0];
+  const indexHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="0; url=${firstPage.file}">
+  <title>Redirecting...</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .redirect-message {
+      text-align: center;
+      color: white;
+      font-size: 1.2rem;
+    }
+    .redirect-message a {
+      color: white;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="redirect-message">
+    <p>Redirecting to the study guide...</p>
+    <p><a href="${firstPage.file}">Click here if you are not redirected automatically</a></p>
+  </div>
+  <script>
+    window.location.href = '${firstPage.file}';
+  </script>
+</body>
+</html>`;
+
+  const indexPath = path.join(config.outputDir, 'index.html');
+  fs.writeFileSync(indexPath, indexHTML, 'utf8');
+  console.log(`Generated: index.html (redirects to ${firstPage.file})`);
+}
+
 function main() {
   console.log('Building study guide from markdown sources...\n');
 
@@ -223,6 +270,8 @@ function main() {
     processPage(page);
     successCount++;
   });
+
+  generateIndexRedirect();
 
   console.log(`\nBuild complete! Generated ${successCount} pages`);
 }
